@@ -1,2 +1,3 @@
 # Streamlabs-Chatbot-Scripts
-Some useful scripts for Streamlabs chatbot
+
+This repository contains some useful Streamlabs chatbot scripts.
