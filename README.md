@@ -9,9 +9,9 @@ This repository contains some useful Streamlabs Chatbot (SL Chatbot) scripts.
 
 ## How to install any script
 
-1. Download repository. You can download target script from Releases. In that case, go to the step 4.
+1. Download repository. You can download target script from [Releases](Releases). In that case, go to the step 4.
 2. Go to the target script directory (starting from the root where SCRIPT_StreamlabsSystem is located).
-   Example: `Streamlabs-Chatbot-Scripts/Scripts/Score/`
+   Example: `Streamlabs-Chatbot-Scripts/Scripts/Score`
 3. Create a ZIP archive for target script directory.
 4. Open SL Chatbot, go to the "Script" tab, click "Import" and select ZIP archive with script directory.
 5. If script will import successfully, you're good to go!
