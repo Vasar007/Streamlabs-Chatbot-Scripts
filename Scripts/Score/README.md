@@ -12,7 +12,7 @@ Score script adds score counter between two opponents.
 
 ## How to install script
 
-Check common instruction [here](../../README.md#How_to_install_any_script).
+Check common instruction [here](../../README.md#how-to-install-any-script).
 
 ## How to use
 
