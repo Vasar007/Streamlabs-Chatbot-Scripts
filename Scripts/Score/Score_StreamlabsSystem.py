@@ -13,12 +13,14 @@ from shutil import copyfile
 
 # Load own modules.
 ScriptDir = os.path.dirname(__file__)
+LibraryDirName = "Library"
+SettingsDirName = "Settings"
 
 # Point at current folder for classes/references.
 sys.path.append(ScriptDir)
 
 # Point at lib folder for classes/references.
-sys.path.append(os.path.join(ScriptDir, "lib"))
+sys.path.append(os.path.join(ScriptDir, LibraryDirName))
 
 import clr
 clr.AddReference("IronPython.SQLite.dll")
@@ -34,7 +36,7 @@ from score import Score
 from score_settings import ScoreSettings
 
 sys.path.remove(ScriptDir)
-sys.path.remove(os.path.join(ScriptDir, "lib"))
+sys.path.remove(os.path.join(ScriptDir, LibraryDirName))
 
 #---------------------------
 # [Required] Script Information (must be existing in this main file).
@@ -58,12 +60,12 @@ ScoreStorage = {0: None}  # Player1 1:0 Player2
 #---------------------------
 def Init():
     # Create Settings Directory.
-    directory = os.path.join(ScriptDir, "Settings")
+    directory = os.path.join(ScriptDir, SettingsDirName)
     if not os.path.exists(directory):
         os.makedirs(directory)
 
     # Load settings.
-    SettingsFile = os.path.join(ScriptDir, "Settings", "settings.json")
+    SettingsFile = os.path.join(ScriptDir, SettingsDirName, "settings.json")
     global ScriptSettings
     ScriptSettings = ScoreSettings(Parent, SettingsFile)
 
@@ -91,72 +93,32 @@ def Execute(data):
     # Check if the propper command is used, the command is not on cooldown and
     # the user has permission to use the command.
     command = data.GetParam(0).lower()
-    has_permissions = Parent.HasPermission(data.User, ScriptSettings.Permission, ScriptSettings.Info)
+    has_permissions = Parent.HasPermission(
+        data.User, ScriptSettings.Permission, ScriptSettings.PermissionInfo
+    )
+    func = None
 
     # !score
-    if command == ScriptSettings.GetScoreCommand:
-        try:
-            if not ScoreStorage:
-                Parent.SendStreamMessage("No score found.")
-            else:
-                current_score = ScoreStorage[0]
-                if current_score is None:
-                    Parent.SendStreamMessage("No score found.")
-                else:
-                    Parent.SendStreamMessage("Current score " + str(current_score))
-        except Exception as ex:
-            Log("Failed to get score: " + str(ex))
+    if command == ScriptSettings.CommandGetScore:
+        func = ProcessGetCommand
 
     # !new_score
-    elif command == ScriptSettings.NewScoreCommand and has_permissions:
-        try:
-            if not ScoreStorage:
-                new_score  = score.create_score_from_string(Parent, data.Message)
-                ScoreStorage = {0: new_score}
-                Parent.SendStreamMessage("Created new score: " + str(new_score))
-            else:
-                current_score = ScoreStorage[0]
-                if current_score is None:
-                    new_score  = score.create_score_from_string(Parent, data.Message)
-                    ScoreStorage[0] = new_score
-                    Parent.SendStreamMessage("Created new score: " + str(new_score))
-                else:
-                    new_score = current_score.reset()
-                    ScoreStorage[0] = new_score
-                    Parent.SendStreamMessage("Score has created already, resetted it instead: " + str(current_score))
-        except Exception as ex:
-            Log("Failed to create score: " + str(ex))
+    elif command == ScriptSettings.CommandNewScore and has_permissions:
+        func = ProcessNewCommand
 
     # !update_score
-    elif command == ScriptSettings.UpdateScoreCommand and has_permissions:
-        try:
-            if not ScoreStorage:
-                Parent.SendStreamMessage("No score found, nothing to update.")
-            else:
-                current_score = ScoreStorage[0]
-                if current_score is None:
-                    Parent.SendStreamMessage("No score found, nothing to update.")
-                else:
-                    current_score.update_by_string(data.Message)
-                    Parent.SendStreamMessage("Updated score: " + str(current_score))
-        except Exception as ex:
-            Log("Failed to update score: " + str(ex))
+    elif command == ScriptSettings.CommandUpdateScore and has_permissions:
+        func = ProcessUpdateCommand
 
     # !reset_score
-    elif command == ScriptSettings.ResetScoreCommand and has_permissions:
-        try:
-            if not ScoreStorage:
-                Parent.SendStreamMessage("No score found, nothing to reset.")
-            else:
-                current_score = ScoreStorage[0]
-                if current_score is None:
-                    Parent.SendStreamMessage("No score found, nothing to reset.")
-                else:
-                    current_score.reset()
-                    Parent.SendStreamMessage("Resetted score: " + str(current_score))
-        except Exception as ex:
-            Log("Failed to reset score: " + str(ex))
+    elif command == ScriptSettings.CommandResetScore and has_permissions:
+        func = ProcessResetCommand
 
+    # !reload_score
+    elif command == ScriptSettings.CommandReloadScore and has_permissions:
+        func = ProcessReloadCommand
+
+    ScoreStorage = func(ScoreStorage, data)
 
 #---------------------------
 # [Required] Tick method (Gets called during every iteration even when there
@@ -246,3 +208,83 @@ def UpdateDataFile(username):
 def FixDatafileAfterReconnect():
     Log("Reconnected, reload saved data.")
     return config.ResponseReloadScore
+
+
+def ProcessGetCommand(scoreStorage, data):
+    try:
+        if not scoreStorage:
+            Parent.SendStreamMessage("No score found.")
+        else:
+            current_score = scoreStorage[0]
+            if current_score is None:
+                Parent.SendStreamMessage("No score found.")
+            else:
+                Parent.SendStreamMessage("Current score " + str(current_score))
+
+        return scoreStorage
+    except Exception as ex:
+        Log("Failed to get score: " + str(ex))
+
+
+def ProcessNewCommand(scoreStorage, data):
+    try:
+        new_score  = score.create_score_from_string(Parent, data.Message)
+        if not scoreStorage:
+            scoreStorage = {0: new_score}
+            Parent.SendStreamMessage("Created new score: " + str(new_score))
+        else:
+            current_score = scoreStorage[0]
+            if current_score is None:
+                scoreStorage[0] = new_score
+                Parent.SendStreamMessage("Created new score: " + str(new_score))
+            else:
+                scoreStorage[0] = new_score
+                Parent.SendStreamMessage("Score has created already, created the new one: " + str(new_score))
+
+        return scoreStorage
+    except Exception as ex:
+        Log("Failed to create score: " + str(ex))
+
+
+def ProcessUpdateCommand(scoreStorage, data):
+    try:
+        if not scoreStorage:
+            Parent.SendStreamMessage("No score found, nothing to update.")
+        else:
+            current_score = scoreStorage[0]
+            if current_score is None:
+                Parent.SendStreamMessage("No score found, nothing to update.")
+            else:
+                current_score.update_by_string(data.Message)
+                Parent.SendStreamMessage("Updated score: " + str(current_score))
+
+        return scoreStorage
+    except Exception as ex:
+        Log("Failed to update score: " + str(ex))
+
+
+def ProcessResetCommand(scoreStorage, data):
+    try:
+        if not scoreStorage:
+            Parent.SendStreamMessage("No score found, nothing to reset.")
+        else:
+            current_score = scoreStorage[0]
+            if current_score is None:
+                Parent.SendStreamMessage("No score found, nothing to reset.")
+            else:
+                current_score.reset()
+                Parent.SendStreamMessage("Resetted score: " + str(current_score))
+
+        return scoreStorage
+    except Exception as ex:
+        Log("Failed to reset score: " + str(ex))
+
+
+def ProcessReloadCommand(scoreStorage, data):
+    try:
+        # TODO: implement reload command.
+        Log("Reload score command is not implemented.")
+
+        return scoreStorage
+    except Exception as ex:
+        Log("Failed to reload score: " + str(ex))

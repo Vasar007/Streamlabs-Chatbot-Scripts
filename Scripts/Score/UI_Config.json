@@ -1,10 +1,31 @@
 {
     "output_file": "Settings/settings.json",
-    "Command": {
+    "CommandGetScore": {
       "type": "textbox",
       "value": "!score",
-      "label": "Command",
-      "tooltip": "The command that will be responded to.",
+      "label": "Get Command",
+      "tooltip": "The command to show current score.",
+      "group": "Core"
+    },
+    "CommandNewScore": {
+      "type": "textbox",
+      "value": "!new_score",
+      "label": "New Command",
+      "tooltip": "The command to create new score.",
+      "group": "Core"
+    },
+    "CommandUpdateScore": {
+      "type": "textbox",
+      "value": "!update_score",
+      "label": "Update Command",
+      "tooltip": "The command to update current score.",
+      "group": "Core"
+    },
+    "CommandResetScore": {
+      "type": "textbox",
+      "value": "!reset_score",
+      "label": "Reset Command",
+      "tooltip": "The command to reset current score.",
       "group": "Core"
     },
     "Permission": {
@@ -15,9 +36,9 @@
       "tooltip": "Who is able to use the command",
       "group": "Core"
     },
-    "Info": {
+    "PermissionInfo": {
         "type": "textbox",
-        "value": "",
+        "value": "Permission denied: You have to be a Moderator to use this command!",
         "label": "Info",
         "tooltip": "This field should only be filled when using the user_specific permission.",
         "group": "Core"

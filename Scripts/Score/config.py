@@ -35,6 +35,6 @@ CommandUpdateScore = "!update_score"
 CommandResetScore = "!reset_score"
 CommandReloadScore = "!reload_score"
 
+PermissionInfo = "Permission denied: You have to be a Moderator to use this command!"
 ResponseReloadScore = "Okay, I've reset the score and reload the last one."
-ResponsePermissionDeniedMod = "Permission denied: You have to be a Moderator to use this command!"
 ResponseOnlyWhenLive = "ERROR: This command is only available, when the stream is live. Sorry!"

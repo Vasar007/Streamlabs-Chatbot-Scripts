@@ -7,12 +7,13 @@ import json
 
 # Load own modules.
 ScriptDir = os.path.dirname(__file__)
+LibraryDirName = "Library"
 
 # Point at current folder for classes/references.
 sys.path.append(ScriptDir)
 
 # Point at lib folder for classes/references.
-sys.path.append(os.path.join(ScriptDir, "lib"))
+sys.path.append(os.path.join(ScriptDir, LibraryDirName))
 
 import clr
 clr.AddReference("IronPython.SQLite.dll")
@@ -22,7 +23,7 @@ clr.AddReference("IronPython.Modules.dll")
 from Settings_Module import MySettings
 
 sys.path.remove(ScriptDir)
-sys.path.remove(os.path.join(ScriptDir, "lib"))
+sys.path.remove(os.path.join(ScriptDir, LibraryDirName))
 
 #---------------------------
 #   [Required] Script Information
