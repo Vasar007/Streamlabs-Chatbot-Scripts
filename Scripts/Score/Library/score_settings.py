@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
+
 import os
 import codecs
 import json
 
-import config
-import helpers
+import score_config as config
+import score_helpers as helpers
 
 
 class ScoreSettings(object):
@@ -49,7 +51,7 @@ class ScoreSettings(object):
             f.write(content)
 
     def _set_default(self):
-         # Setup group.
+        # Setup group.
         self.CommandGetScore = config.CommandGetScore
         self.CommandNewScore = config.CommandNewScore
         self.CommandUpdateScore = config.CommandUpdateScore

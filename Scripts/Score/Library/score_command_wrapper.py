@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import helpers
+import score_helpers as helpers
 
 
-class CommandWrapper(object):
+class ScoreCommandWrapper(object):
 
     def __init__(self, command, func, required_permission):
         self.command = str(command)

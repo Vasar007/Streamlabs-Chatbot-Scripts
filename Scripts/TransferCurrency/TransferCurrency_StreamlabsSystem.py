@@ -24,14 +24,15 @@ sys.path.append(ScriptDir)
 # Point at lib folder for classes/references.
 sys.path.append(os.path.join(ScriptDir, LibraryDirName))
 
-import config
-import helpers
+import transfer_config as config
+import transfer_helpers as helpers
 
 # Import Settings class.
 from transfer_settings import TransferSettings
 
 sys.path.remove(ScriptDir)
 sys.path.remove(os.path.join(ScriptDir, LibraryDirName))
+
 
 # [Required] Script Information (must be existing in this main file).
 ScriptName = config.ScriptName
@@ -73,21 +74,23 @@ def Execute(data):
     # Check if the propper command is used, the command is not on cooldown and
     # the user has permission to use the command.
     command = data.GetParam(0).lower()
-    required_permission = ScriptSettings.Permission
-    has_permissions = Parent.HasPermission(
-        data.User, required_permission, ScriptSettings.PermissionInfo
-    )
-    if not has_permissions:
-        HandleNoPermission(required_permission)
 
     # !give
     if command == ScriptSettings.CommandGive:
-        ProcessGiveCommand(
-            data.User,
-            data.GetParam(1),
-            ScriptSettings.CurrencyName,
-            data.GetParam(2)
+        required_permission = ScriptSettings.Permission
+        has_permissions = Parent.HasPermission(
+            data.User, required_permission, ScriptSettings.PermissionInfo
         )
+
+        if has_permissions:
+            ProcessGiveCommand(
+                data.User,
+                data.GetParam(1),
+                ScriptSettings.CurrencyName,
+                data.GetParam(2)
+            )
+        else:
+            HandleNoPermission(required_permission)
 
 
 def Tick():
@@ -178,7 +181,7 @@ def ProcessGiveCommand(user, target, currency_name, amount):
             else:
                 HandleInvalidTarget(user, currency_name)
     except Exception as ex:
-        Log("Failed to get score: " + str(ex))
+        Log("Failed to transfer currency: " + str(ex))
 
 
 def HandleInvalidAmount(user, amount):

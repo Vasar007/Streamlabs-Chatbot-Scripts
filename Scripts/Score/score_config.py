@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-from definitions import ROOT_DIR
+from score_definitions import ROOT_DIR
 
 
 # [Required] Script Information.
@@ -31,7 +31,7 @@ CommandUpdateScore = "!update_score"
 CommandResetScore = "!reset_score"
 CommandReloadScore = "!reload_score"
 
-# Values: everyone, moderator, subscriber, user_specific, editor
+# Values: everyone, moderator, subscriber, user_specific, editor.
 PermissionOnGet = "everyone"
 PermissionOnEdit = "moderator"
 

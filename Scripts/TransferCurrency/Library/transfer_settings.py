@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
+
 import os
 import codecs
 import json
 
-import config
-import helpers
+import transfer_config as config
+import transfer_helpers as helpers
 
 
 class TransferSettings(object):

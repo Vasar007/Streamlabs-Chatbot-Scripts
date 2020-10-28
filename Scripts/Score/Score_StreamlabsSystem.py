@@ -24,12 +24,12 @@ sys.path.append(ScriptDir)
 # Point at lib folder for classes/references.
 sys.path.append(os.path.join(ScriptDir, LibraryDirName))
 
-import config
-import helpers
+import score_config as config
+import score_helpers as helpers
 
 import score
 from score import Score
-from command_wrapper import CommandWrapper
+from score_command_wrapper import ScoreCommandWrapper
 
 # Import Settings class.
 from score_settings import ScoreSettings
@@ -238,7 +238,7 @@ def TryProcessCommand(command, user):
             ProcessReloadCommand, user, required_permission
         )
 
-    return CommandWrapper(command, func, required_permission)
+    return ScoreCommandWrapper(command, func, required_permission)
 
 
 def GetFuncToProcessIfHasPermission(process_command, user,

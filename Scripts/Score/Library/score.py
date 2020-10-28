@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import helpers
+import score_helpers as helpers
 
 
 class PlayerScore(object):

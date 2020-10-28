@@ -27,6 +27,7 @@ from template_settings import TemplateSettings
 sys.path.remove(ScriptDir)
 sys.path.remove(os.path.join(ScriptDir, LibraryDirName))
 
+
 # [Required] Script Information.
 ScriptName = "Template Script"
 Website = "https://www.streamlabs.com"

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-from definitions import ROOT_DIR
 
 
 # [Required] Script Information.
@@ -10,7 +9,7 @@ Website = "https://github.com/Vasar007/Streamlabs-Chatbot-Scripts"
 Description = (
     "Allows viewers to transfer Streamlabs currency between eachother."
 )
-Creator = "Vasar007, Kemtalis"
+Creator = "Vasar007"
 Version = "0.0.1"
 
 # Command settings and responses (caution: some of the response texts are
@@ -18,7 +17,7 @@ Version = "0.0.1"
 CommandGive = "!give"
 CurrencyName = "points"
 
-# Values: everyone, moderator, subscriber, user_specific, editor
+# Values: everyone, moderator, subscriber, user_specific, editor.
 Permission = "everyone"
 
 PermissionDenied = (
