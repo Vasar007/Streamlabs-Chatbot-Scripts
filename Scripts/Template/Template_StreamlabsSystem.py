@@ -30,8 +30,8 @@ sys.path.remove(os.path.join(ScriptDir, LibraryDirName))
 # [Required] Script Information.
 ScriptName = "Template Script"
 Website = "https://www.streamlabs.com"
-Description = "!test will post a message in chat"
-Creator = "AnkhHeart"
+Description = "Basic boilerplate script to play with"
+Creator = "Vasar007"
 Version = "1.0.0.0"
 
 # Define Global Variables.

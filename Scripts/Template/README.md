@@ -1,4 +1,4 @@
-# Boilerplate Script
+# Template Script
 
 Basic boilerplate script to play with.
 
