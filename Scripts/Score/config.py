@@ -17,7 +17,7 @@ Version = "0.0.2"
 ScoreDataFolder = "data"
 ScoreDataFilename = "scoredata.json"
 ScoreDataFilepath = os.path.join(ROOT_DIR, ScoreDataFolder, ScoreDataFilename)
-ScoreDataBackupFolder = "archive"  # inside data path
+ScoreDataBackupFolder = "archive"  # Inside data path.
 ScoreDataBackupFilePrefix = "scoredata_bak-"
 ScoreDataBackupPath = os.path.join(
     ROOT_DIR, ScoreDataFolder, ScoreDataBackupFolder
@@ -25,16 +25,20 @@ ScoreDataBackupPath = os.path.join(
 
 # Command settings and responses (caution: some of the response texts are
 # overwritten later / not refactored yet).
-Permission = "moderator"
-
 CommandGetScore = "!score"
 CommandNewScore = "!new_score"
 CommandUpdateScore = "!update_score"
 CommandResetScore = "!reset_score"
 CommandReloadScore = "!reload_score"
 
-PermissionInfo = (
-    "Permission denied: You have to be a Moderator to use this command!"
+# Values: everyone, moderator, subscriber, user_specific, editor
+Permission = "moderator"
+
+# This field should only be filled when using the user_specific permission.
+PermissionInfo = ""
+
+ResponsePermissionDenied = (
+    "Permission denied: You have to be a {0} to use this command!"
 )
 ResponseReloadScore = "Okay, I've reset the score and reload the last one."
 ResponseOnlyWhenLive = (

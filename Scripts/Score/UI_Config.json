@@ -1,46 +1,47 @@
 {
     "output_file": "Settings/settings.json",
-    "CommandGetScore": {
-      "type": "textbox",
-      "value": "!score",
-      "label": "Get Command",
-      "tooltip": "The command to show current score.",
-      "group": "Core"
+
+    "command_get_score": {
+        "type": "textbox",
+        "value": "!score",
+        "label": "Get Command",
+        "tooltip": "The command to show current score.",
+        "group": "Setup"
     },
     "CommandNewScore": {
-      "type": "textbox",
-      "value": "!new_score",
-      "label": "New Command",
-      "tooltip": "The command to create new score.",
-      "group": "Core"
+        "type": "textbox",
+        "value": "!new_score",
+        "label": "New Command",
+        "tooltip": "The command to create new score.",
+        "group": "Setup"
     },
     "CommandUpdateScore": {
-      "type": "textbox",
-      "value": "!update_score",
-      "label": "Update Command",
-      "tooltip": "The command to update current score.",
-      "group": "Core"
+        "type": "textbox",
+        "value": "!update_score",
+        "label": "Update Command",
+        "tooltip": "The command to update current score.",
+        "group": "Setup"
     },
     "CommandResetScore": {
-      "type": "textbox",
-      "value": "!reset_score",
-      "label": "Reset Command",
-      "tooltip": "The command to reset current score.",
-      "group": "Core"
+        "type": "textbox",
+        "value": "!reset_score",
+        "label": "Reset Command",
+        "tooltip": "The command to reset current score.",
+        "group": "Setup"
     },
     "Permission": {
-      "type": "dropdown",
-      "value": "moderator",
-      "items": ["everyone","moderator","subscriber","user_specific","editor"],
-      "label": "Permission",
-      "tooltip": "Who is able to use the command",
-      "group": "Core"
+        "type": "dropdown",
+        "value": "moderator",
+        "items": ["everyone", "moderator", "subscriber", "user_specific", "editor"],
+        "label": "Permission",
+        "tooltip": "Who is able to use the command.",
+        "group": "Setup"
     },
     "PermissionInfo": {
         "type": "textbox",
-        "value": "Permission denied: You have to be a Moderator to use this command!",
+        "value": "",
         "label": "Info",
         "tooltip": "This field should only be filled when using the user_specific permission.",
-        "group": "Core"
+        "group": "Setup"
     }
 }

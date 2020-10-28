@@ -9,7 +9,10 @@ import helpers
 class ScoreSettings(object):
 
     def __init__(self, Parent=None, settingsfile=None):
-        if (settingsfile is None):
+        """
+        Load in saved settings file if available or else set default values.
+        """
+        if settingsfile is None:
             self._set_default()
         else:
             try:
@@ -24,23 +27,26 @@ class ScoreSettings(object):
                     helpers.log(Parent, "Failed to load setting: " + str(ex))
                 self._set_default()
 
-    def Reload(self, jsondata):
+    def reload(self, jsondata):
+        """
+        Reload settings from Chatbot user interface by given json data.
+        """
         self.__dict__ = json.loads(jsondata, encoding="utf-8")
 
-    def Save(self, settingsfile, Parent):
-        try:
-            helpers.save_json(self.__dict__, settingsfile)
+    def save(self, settingsfile):
+        """
+        Save settings contained within to .json and .js settings files.
+        """
+        helpers.save_json(self.__dict__, settingsfile)
 
-            with codecs.open(settingsfile.replace("json", "js"),
-                             encoding="utf-8-sig", mode="w+") as f:
-                content = (
-                    "var settings = {0};".format(
-                        json.dumps(self.__dict__, encoding="utf-8")
-                    )
+        with codecs.open(settingsfile.replace("json", "js"),
+                         encoding="utf-8-sig", mode="w+") as f:
+            content = (
+                "var settings = {0};".format(
+                    json.dumps(self.__dict__, encoding="utf-8")
                 )
-                f.write(content)
-        except Exception as ex:
-            helpers.log(Parent, "Failed to save settings to file: " + str(ex))
+            )
+            f.write(content)
 
     def _set_default(self):
         self.CommandGetScore = config.CommandGetScore

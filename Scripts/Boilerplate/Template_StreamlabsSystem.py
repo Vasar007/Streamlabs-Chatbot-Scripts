@@ -13,6 +13,7 @@ clr.AddReference("IronPython.Modules.dll")
 # Load own modules.
 ScriptDir = os.path.dirname(__file__)
 LibraryDirName = "Library"
+SettingsDirName = "Settings"
 
 # Point at current folder for classes/references.
 sys.path.append(ScriptDir)
@@ -39,22 +40,26 @@ SettingsFile = ""
 global ScriptSettings
 ScriptSettings = MySettings()
 
+
 def Init():
     """
     [Required] Initialize Data (Only called on load).
     """
 
     # Create Settings Directory.
-    directory = os.path.join(os.path.dirname(__file__), "Settings")
+    directory = os.path.join(ScriptDir, SettingsDirName)
     if not os.path.exists(directory):
         os.makedirs(directory)
 
     # Load settings.
     global SettingsFile
     global ScriptSettings
-    SettingsFile = os.path.join(os.path.dirname(__file__), r"Settings\settings.json")
-    ScriptSettings = MySettings(SettingsFile)
+    SettingsFile = os.path.join(ScriptDir, SettingsDirName, "settings.json")
+    ScriptSettings = MySettings(Parent, SettingsFile)
     ScriptSettings.Response = "Overwritten pong! ^_^"
+
+    Log("Script successfully initialized.")
+
 
 def Execute(data):
     """
@@ -64,9 +69,10 @@ def Execute(data):
     if not data.IsChatMessage():
         return
 
-    if (command == ScriptSettings.Command and
-        Parent.IsOnUserCooldown(ScriptName, ScriptSettings.Command, data.User)):
+    if not command == ScriptSettings.Command:
+        return
 
+    if Parent.IsOnUserCooldown(ScriptName, ScriptSettings.Command, data.User):
         cooldown = Parent.GetUserCooldownDuration(
             ScriptName, ScriptSettings.Command, data.User
         )
@@ -74,15 +80,18 @@ def Execute(data):
 
     # Check if the propper command is used, the command is not on cooldown
     # and the user has permission to use the command.
-    if (command == ScriptSettings.Command and
-        not Parent.IsOnUserCooldown(ScriptName, ScriptSettings.Command, data.User)
-        and Parent.HasPermission(data.User, ScriptSettings.Permission, ScriptSettings.Info)):
+    if (not Parent.IsOnUserCooldown(ScriptName, ScriptSettings.Command, data.User)
+        and Parent.HasPermission(data.User, ScriptSettings.Permission, ScriptSettings.PermissionInfo)):
 
         Parent.BroadcastWsEvent("EVENT_MINE","{'show':false}")
         # Send your message to chat.
         Parent.SendStreamMessage(ScriptSettings.Response)
         # Put the command on cooldown.
-        Parent.AddUserCooldown(ScriptName,ScriptSettings.Command,data.User,ScriptSettings.Cooldown)
+        Parent.AddUserCooldown(
+            ScriptName,
+            ScriptSettings.Command,data.User,
+            ScriptSettings.Cooldown
+        )
 
 
 def Tick():
@@ -109,18 +118,19 @@ def ReloadSettings(jsonData):
     [Optional] Reload Settings (Called when a user clicks the Save Settings
     button in the Chatbot UI).
     """
-    # Execute json reloading here
-    ScriptSettings.__dict__ = json.loads(jsonData)
-    ScriptSettings.Save(SettingsFile)
-    return
-
+    # Execute json reloading here.
+    try:
+        ScriptSettings.reload()
+        ScriptSettings.save(SettingsFile)
+    except Exception as ex:
+        Log("Failed to save or reload settings to file: " + str(ex))
 
 def Unload():
     """
     [Optional] Unload (Called when a user reloads their scripts or closes
     the bot/cleanup stuff).
     """
-    return
+    Log("Script unloaded.")
 
 
 def ScriptToggled(state):
@@ -129,3 +139,17 @@ def ScriptToggled(state):
     enables it).
     """
     return
+
+
+#############################################
+# END: Generic Chatbot functions.
+#############################################
+
+
+def Log(message):
+    """
+    Log helper (for logging into Script Logs of the Chatbot).
+    Note that you need to pass the "Parent" object and use the normal
+    "Parent.Log" function if you want to log something inside of a module.
+    """
+    Parent.Log(str(message))

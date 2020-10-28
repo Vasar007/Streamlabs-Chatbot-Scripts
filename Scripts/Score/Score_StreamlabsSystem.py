@@ -60,8 +60,9 @@ def Init():
         os.makedirs(directory)
 
     # Load settings.
-    SettingsFile = os.path.join(ScriptDir, SettingsDirName, "settings.json")
+    global SettingsFile
     global ScriptSettings
+    SettingsFile = os.path.join(ScriptDir, SettingsDirName, "settings.json")
     ScriptSettings = ScoreSettings(Parent, SettingsFile)
 
     # Generate data and archive directory if they don't exist (uses
@@ -143,9 +144,12 @@ def ReloadSettings(jsonData):
     button in the Chatbot UI).
     """
     # Execute json reloading here.
-    ScriptSettings.Reload(jsonData)
-    ScriptSettings.Save(SettingsFile, Parent)
-    Log("Settings reloaded.")
+    try:
+        ScriptSettings.reload()
+        ScriptSettings.save(SettingsFile)
+        Log("Settings reloaded.")
+    except Exception as ex:
+        Log("Failed to save or reload settings to file: " + str(ex))
 
 
 def Unload():
@@ -168,6 +172,7 @@ def ScriptToggled(state):
 #############################################
 # END: Generic Chatbot functions.
 #############################################
+
 
 def Log(message):
     """
