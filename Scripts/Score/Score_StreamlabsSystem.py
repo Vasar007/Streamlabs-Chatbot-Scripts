@@ -90,32 +90,49 @@ def Execute(data):
     # Check if the propper command is used, the command is not on cooldown and
     # the user has permission to use the command.
     command = data.GetParam(0).lower()
-    has_permissions = Parent.HasPermission(
-        data.User, ScriptSettings.Permission, ScriptSettings.PermissionInfo
-    )
     func = None
+    required_permission = None
 
     # !score
     if command == ScriptSettings.CommandGetScore:
-        func = ProcessGetCommand
+        required_permission = ScriptSettings.PermissionOnGet
+        func = GetFuncToProcessIfHasPermission(
+            ProcessGetCommand, data.User, required_permission
+        )
 
     # !new_score
-    elif command == ScriptSettings.CommandNewScore and has_permissions:
-        func = ProcessNewCommand
+    elif command == ScriptSettings.CommandNewScore:
+        required_permission = ScriptSettings.PermissionOnEdit
+        func = GetFuncToProcessIfHasPermission(
+            ProcessNewCommand, data.User, required_permission
+        )
 
     # !update_score
-    elif command == ScriptSettings.CommandUpdateScore and has_permissions:
-        func = ProcessUpdateCommand
+    elif command == ScriptSettings.CommandUpdateScore:
+        required_permission = ScriptSettings.PermissionOnEdit
+        func = GetFuncToProcessIfHasPermission(
+            ProcessUpdateCommand, data.User, required_permission
+        )
 
     # !reset_score
-    elif command == ScriptSettings.CommandResetScore and has_permissions:
-        func = ProcessResetCommand
+    elif command == ScriptSettings.CommandResetScore:
+        required_permission = ScriptSettings.PermissionOnEdit
+        func = GetFuncToProcessIfHasPermission(
+            ProcessResetCommand, data.User, required_permission
+        )
 
     # !reload_score
-    elif command == ScriptSettings.CommandReloadScore and has_permissions:
-        func = ProcessReloadCommand
+    elif command == ScriptSettings.CommandReloadScore:
+        required_permission = ScriptSettings.PermissionOnEdit
+        func = GetFuncToProcessIfHasPermission(
+            ProcessReloadCommand, data.User, required_permission
+        )
 
-    ScoreStorage = func(ScoreStorage, data)
+    # If user doesn't have permission, "func" will be equal to "None".
+    if func is not None:
+        ScoreStorage = func(ScoreStorage, data)
+    else:
+        HandleNoPermission(required_permission)
 
 
 def Tick():
@@ -213,23 +230,39 @@ def FixDatafileAfterReconnect():
     return config.ResponseReloadScore
 
 
-def ProcessGetCommand(scoreStorage, data):
+def GetFuncToProcessIfHasPermission(process_command, user,
+                                    required_permission):
+    has_permissions = Parent.HasPermission(
+        user,
+        required_permission,
+        ScriptSettings.PermissionInfo
+    )
+    return process_command if has_permissions else None
+
+
+def HandleNoPermission(required_permission):
+    message = str(ScriptSettings.PermissionDenied).format(required_permission)
+    Log(message)
+    Parent.SendTwitchMessage(message)
+
+
+def ProcessGetCommand(score_storage, data):
     try:
-        if not scoreStorage:
+        if not score_storage:
             Parent.SendStreamMessage("No score found.")
         else:
-            current_score = scoreStorage[0]
+            current_score = score_storage[0]
             if current_score is None:
                 Parent.SendStreamMessage("No score found.")
             else:
                 Parent.SendStreamMessage("Current score " + str(current_score))
 
-        return scoreStorage
+        return score_storage
     except Exception as ex:
         Log("Failed to get score: " + str(ex))
 
 
-def ProcessNewCommand(scoreStorage, data):
+def ProcessNewCommand(score_storage, data):
     # Input example: !new_score Player1 Player2
     # Command Player1Name Player2Name
     try:
@@ -237,36 +270,36 @@ def ProcessNewCommand(scoreStorage, data):
             Parent, data.GetParam(1), data.GetParam(2)
         )
 
-        if not scoreStorage:
-            scoreStorage = {0: new_score}
+        if not score_storage:
+            score_storage = {0: new_score}
             Parent.SendStreamMessage("Created new score: " + str(new_score))
         else:
-            current_score = scoreStorage[0]
+            current_score = score_storage[0]
             if current_score is None:
-                scoreStorage[0] = new_score
+                score_storage[0] = new_score
                 Parent.SendStreamMessage(
                     "Created new score: " + str(new_score)
                 )
             else:
-                scoreStorage[0] = new_score
+                score_storage[0] = new_score
                 Parent.SendStreamMessage(
                     "Score has created already, created the new one: " +
                     str(new_score)
                 )
 
-        return scoreStorage
+        return score_storage
     except Exception as ex:
         Log("Failed to create score: " + str(ex))
 
 
-def ProcessUpdateCommand(scoreStorage, data):
+def ProcessUpdateCommand(score_storage, data):
     # Input example: !update_score 1 1
     # Command PlayerId NewValue
     try:
-        if not scoreStorage:
+        if not score_storage:
             Parent.SendStreamMessage("No score found, nothing to update.")
         else:
-            current_score = scoreStorage[0]
+            current_score = score_storage[0]
             if current_score is None:
                 Parent.SendStreamMessage("No score found, nothing to update.")
             else:
@@ -291,17 +324,17 @@ def ProcessUpdateCommand(scoreStorage, data):
                     "Updated score: " + str(current_score)
                 )
 
-        return scoreStorage
+        return score_storage
     except Exception as ex:
         Log("Failed to update score: " + str(ex))
 
 
-def ProcessResetCommand(scoreStorage, data):
+def ProcessResetCommand(score_storage, data):
     try:
-        if not scoreStorage:
+        if not score_storage:
             Parent.SendStreamMessage("No score found, nothing to reset.")
         else:
-            current_score = scoreStorage[0]
+            current_score = score_storage[0]
             if current_score is None:
                 Parent.SendStreamMessage("No score found, nothing to reset.")
             else:
@@ -310,16 +343,16 @@ def ProcessResetCommand(scoreStorage, data):
                     "Resetted score: " + str(current_score)
                 )
 
-        return scoreStorage
+        return score_storage
     except Exception as ex:
         Log("Failed to reset score: " + str(ex))
 
 
-def ProcessReloadCommand(scoreStorage, data):
+def ProcessReloadCommand(score_storage, data):
     try:
         # TODO: implement reload command.
         Log("Reload score command is not implemented.")
 
-        return scoreStorage
+        return score_storage
     except Exception as ex:
         Log("Failed to reload score: " + str(ex))

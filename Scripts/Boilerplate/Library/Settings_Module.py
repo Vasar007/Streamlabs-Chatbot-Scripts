@@ -47,8 +47,11 @@ class MySettings(object):
             f.write(content)
 
     def _set_default(self):
+        # Setup group.
         self.Command = "!ping"
         self.Response = "Pong!"
         self.Cooldown = 10
+
+        # Permission group.
         self.Permission = "everyone"
         self.PermissionInfo = ""

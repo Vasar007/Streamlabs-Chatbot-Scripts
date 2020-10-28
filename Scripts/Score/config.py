@@ -32,14 +32,16 @@ CommandResetScore = "!reset_score"
 CommandReloadScore = "!reload_score"
 
 # Values: everyone, moderator, subscriber, user_specific, editor
-Permission = "moderator"
+PermissionOnGet = "everyone"
+PermissionOnEdit = "moderator"
+
+PermissionDenied = (
+    "Permission denied: You have to be a {0} to use this command!"
+)
 
 # This field should only be filled when using the user_specific permission.
 PermissionInfo = ""
 
-ResponsePermissionDenied = (
-    "Permission denied: You have to be a {0} to use this command!"
-)
 ResponseReloadScore = "Okay, I've reset the score and reload the last one."
 ResponseOnlyWhenLive = (
     "ERROR: This command is only available, when the stream is live. Sorry!"

@@ -49,10 +49,15 @@ class ScoreSettings(object):
             f.write(content)
 
     def _set_default(self):
+         # Setup group.
         self.CommandGetScore = config.CommandGetScore
         self.CommandNewScore = config.CommandNewScore
         self.CommandUpdateScore = config.CommandUpdateScore
         self.CommandResetScore = config.CommandResetScore
         self.CommandReloadScore = config.CommandReloadScore
-        self.Permission = config.Permission
+
+        # Permission group.
+        self.PermissionOnGet = config.PermissionOnGet
+        self.PermissionOnEdit = config.PermissionOnEdit
+        self.PermissionDenied = config.PermissionDenied
         self.PermissionInfo = config.PermissionInfo
