@@ -14,7 +14,8 @@ class ScoreSettings(object):
         else:
             try:
                 if os.path.isfile(settingsfile):
-                    with codecs.open(settingsfile, encoding="utf-8-sig", mode="r") as f:
+                    with codecs.open(settingsfile, encoding="utf-8-sig",
+                                     mode="r") as f:
                         self.__dict__ = json.load(f, encoding="utf-8")
                 else:
                     self._set_default()
@@ -30,8 +31,14 @@ class ScoreSettings(object):
         try:
             helpers.save_json(self.__dict__, settingsfile)
 
-            with codecs.open(settingsfile.replace("json", "js"), encoding="utf-8-sig", mode="w+") as f:
-                f.write("var settings = {0};".format(json.dumps(self.__dict__, encoding="utf-8")))
+            with codecs.open(settingsfile.replace("json", "js"),
+                             encoding="utf-8-sig", mode="w+") as f:
+                content = (
+                    "var settings = {0};".format(
+                        json.dumps(self.__dict__, encoding="utf-8")
+                    )
+                )
+                f.write(content)
         except Exception as ex:
             helpers.log(Parent, "Failed to save settings to file: " + str(ex))
 

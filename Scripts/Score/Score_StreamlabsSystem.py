@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-#---------------------------
 # Import Libraries.
-#---------------------------
 import os
 import sys
 import json
@@ -10,6 +8,10 @@ import time
 import collections
 from pprint import pprint
 from shutil import copyfile
+
+import clr
+clr.AddReference("IronPython.SQLite.dll")
+clr.AddReference("IronPython.Modules.dll")
 
 # Load own modules.
 ScriptDir = os.path.dirname(__file__)
@@ -21,10 +23,6 @@ sys.path.append(ScriptDir)
 
 # Point at lib folder for classes/references.
 sys.path.append(os.path.join(ScriptDir, LibraryDirName))
-
-import clr
-clr.AddReference("IronPython.SQLite.dll")
-clr.AddReference("IronPython.Modules.dll")
 
 import config
 import helpers
@@ -38,27 +36,24 @@ from score_settings import ScoreSettings
 sys.path.remove(ScriptDir)
 sys.path.remove(os.path.join(ScriptDir, LibraryDirName))
 
-#---------------------------
 # [Required] Script Information (must be existing in this main file).
 # TODO: Some stuff from here should be moved to a GUI settings file later.
-#---------------------------
 ScriptName = config.ScriptName
 Website = config.Website
 Description = config.Description
 Creator = config.Creator
 Version = config.Version
 
-#---------------------------
 # Define Global Variables.
-#---------------------------
 SettingsFile = ""
 ScriptSettings = ScoreSettings()
 ScoreStorage = {0: None}  # Player1 1:0 Player2
 
-#---------------------------
-# [Required] Initialize Data (only called on load).
-#---------------------------
+
 def Init():
+    """
+    [Required] Initialize Data (only called on load).
+    """
     # Create Settings Directory.
     directory = os.path.join(ScriptDir, SettingsDirName)
     if not os.path.exists(directory):
@@ -81,10 +76,11 @@ def Init():
 
     Log("Script successfully initialized.")
 
-#---------------------------
-# [Required] Execute Data/Process messages.
-#---------------------------
+
 def Execute(data):
+    """
+    [Required] Execute Data/Process messages.
+    """
     if not data.IsChatMessage():
         return
 
@@ -120,51 +116,52 @@ def Execute(data):
 
     ScoreStorage = func(ScoreStorage, data)
 
-#---------------------------
-# [Required] Tick method (Gets called during every iteration even when there
-# is no incoming data).
-#---------------------------
+
 def Tick():
+    """
+    [Required] Tick method (Gets called during every iteration even when there
+    is no incoming data).
+    """
     return
 
 
-#---------------------------
-# [Optional] Parse method (Allows you to create your own custom $parameters).
-# Here"s where the magic happens, all the strings are sent and processed
-# through this function.
-#
-# Parent.FUNCTION allows to use functions of the Chatbot and other outside APIs
-# (see: https://github.com/AnkhHeart/Streamlabs-Chatbot-Python-Boilerplate/wiki/Parent).
-#---------------------------
 def Parse(parse_string, userid, username, targetid, targetname, message):
+    """
+    [Optional] Parse method (Allows you to create your own custom $parameters).
+    Here"s where the magic happens, all the strings are sent and processed
+    through this function.
+
+    Parent.FUNCTION allows to use functions of the Chatbot and other outside
+    APIs (see: https://github.com/AnkhHeart/Streamlabs-Chatbot-Python-Boilerplate/wiki/Parent).
+    """
     return parse_string
 
 
-#---------------------------
-# [Optional] Reload Settings (called when a user clicks the Save Settings
-# button in the Chatbot UI).
-#---------------------------
 def ReloadSettings(jsonData):
+    """
+    [Optional] Reload Settings (called when a user clicks the Save Settings
+    button in the Chatbot UI).
+    """
     # Execute json reloading here.
     ScriptSettings.Reload(jsonData)
     ScriptSettings.Save(SettingsFile, Parent)
     Log("Settings reloaded.")
 
 
-#---------------------------
-# [Optional] Unload (called when a user reloads their scripts or closes the
-# bot/cleanup stuff).
-#---------------------------
 def Unload():
+    """
+    [Optional] Unload (called when a user reloads their scripts or closes the
+    bot/cleanup stuff).
+    """
     helpers.backup_data_file()
     Log("Script unloaded.")
 
 
-#---------------------------
-# [Optional] ScriptToggled (notifies you when a user disables your script or
-# enables it).
-#---------------------------
 def ScriptToggled(state):
+    """
+    [Optional] ScriptToggled (notifies you when a user disables your script or
+    enables it).
+    """
     return
 
 
@@ -172,22 +169,23 @@ def ScriptToggled(state):
 # END: Generic Chatbot functions.
 #############################################
 
-#---------------------------
-# Log helper (for logging into Script Logs of the Chatbot).
-# Note that you need to pass the "Parent" object and use the normal
-# "Parent.Log" function if you want to log something inside of a module.
-#---------------------------
 def Log(message):
+    """
+    Log helper (for logging into Script Logs of the Chatbot).
+    Note that you need to pass the "Parent" object and use the normal
+    "Parent.Log" function if you want to log something inside of a module.
+    """
     helpers.log(Parent, str(message))
 
 
-#---------------------------
-# UpdateDataFile: Function for modifying the file which contains the data,
-# see data/scoredata.json.
-# Returns the parse string for parse(Function).
-#---------------------------
 def UpdateDataFile(username):
-    #currentday = helpers.get_current_day_formatted_date()
+    """
+    UpdateDataFile: Function for modifying the file which contains the data,
+    see data/scoredata.json.
+
+    Returns the parse string for parse(Function).
+    """
+    # currentday = helpers.get_current_day_formatted_date()
     response = "error"
 
     # This loads the data of file vipdata.json into variable "data".
@@ -195,17 +193,17 @@ def UpdateDataFile(username):
     response = "NotImplemented"
 
     # After everything was modified and updated, we need to write the stuff
-    # from our "data" variable to the "scoredata.json" file. 
+    # from our "data" variable to the "scoredata.json" file.
     os.remove(config.ScoreDataFilepath)
     helpers.save_json(datafile, config.ScoreDataFilepath)
 
     return response
 
 
-#---------------------------
-# Fixes data file after reconnect.
-#---------------------------
 def FixDatafileAfterReconnect():
+    """
+    Fixes data file after reconnect.
+    """
     Log("Reconnected, reload saved data.")
     return config.ResponseReloadScore
 
@@ -227,8 +225,13 @@ def ProcessGetCommand(scoreStorage, data):
 
 
 def ProcessNewCommand(scoreStorage, data):
+    # Input example: !new_score Player1 Player2
+    # Command Player1Name Player2Name
     try:
-        new_score  = score.create_score_from_string(Parent, data.Message)
+        new_score = score.create_score_from_string(
+            Parent, data.GetParam(1), data.GetParam(2)
+        )
+
         if not scoreStorage:
             scoreStorage = {0: new_score}
             Parent.SendStreamMessage("Created new score: " + str(new_score))
@@ -236,10 +239,15 @@ def ProcessNewCommand(scoreStorage, data):
             current_score = scoreStorage[0]
             if current_score is None:
                 scoreStorage[0] = new_score
-                Parent.SendStreamMessage("Created new score: " + str(new_score))
+                Parent.SendStreamMessage(
+                    "Created new score: " + str(new_score)
+                )
             else:
                 scoreStorage[0] = new_score
-                Parent.SendStreamMessage("Score has created already, created the new one: " + str(new_score))
+                Parent.SendStreamMessage(
+                    "Score has created already, created the new one: " +
+                    str(new_score)
+                )
 
         return scoreStorage
     except Exception as ex:
@@ -247,6 +255,8 @@ def ProcessNewCommand(scoreStorage, data):
 
 
 def ProcessUpdateCommand(scoreStorage, data):
+    # Input example: !update_score 1 1
+    # Command PlayerId NewValue
     try:
         if not scoreStorage:
             Parent.SendStreamMessage("No score found, nothing to update.")
@@ -255,8 +265,26 @@ def ProcessUpdateCommand(scoreStorage, data):
             if current_score is None:
                 Parent.SendStreamMessage("No score found, nothing to update.")
             else:
-                current_score.update_by_string(data.Message)
-                Parent.SendStreamMessage("Updated score: " + str(current_score))
+                raw_player_id = data.GetParam(1)
+                player_id = helpers.safe_cast(raw_player_id, int)
+                if player_id is None:
+                    Log(
+                        "Failed to update score: invalid player ID " +
+                        str(raw_player_id)
+                    )
+
+                raw_new_score = data.GetParam(2)
+                new_score = helpers.safe_cast(raw_new_score, int)
+                if new_score is None:
+                    Log(
+                        "Failed to update score: invalid score value " +
+                        str(raw_new_score)
+                    )
+
+                current_score.update_by_string(player_id, new_score)
+                Parent.SendStreamMessage(
+                    "Updated score: " + str(current_score)
+                )
 
         return scoreStorage
     except Exception as ex:
@@ -273,7 +301,9 @@ def ProcessResetCommand(scoreStorage, data):
                 Parent.SendStreamMessage("No score found, nothing to reset.")
             else:
                 current_score.reset()
-                Parent.SendStreamMessage("Resetted score: " + str(current_score))
+                Parent.SendStreamMessage(
+                    "Resetted score: " + str(current_score)
+                )
 
         return scoreStorage
     except Exception as ex:

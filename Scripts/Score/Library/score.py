@@ -37,7 +37,7 @@ class PlayerScore(object):
 
 
 class Score(object):
-    
+
     def __init__(self, Parent, player1, player2, space_number=1):
         self.Parent = Parent
         self.player1 = player1
@@ -49,30 +49,14 @@ class Score(object):
         self.player2.reset()
         helpers.log(self.Parent, "Resetted score for both players.")
 
-    def update_by_string(self, value_string):
-        # Input example: !update_score 1 1
-        # Command PlayerId NewValue
-        components = value_string.split(" ")
-
-        if len(components) != 3:
-            message = (
-                "Failed to update score: invalid value " +
-                 str(value_string)
-            )
-            helpers.log(self.Parent, message)
-            return
-
-        player_id = int(components[1])
-        new_score = int(components[2])
-
+    def update_by_string(self, player_id, new_score):
         if player_id == 1:
             self._update_player_score(self.player1, new_score)
         elif player_id == 2:
             self._update_player_score(self.player2, new_score)
         else:
             message = (
-                "Failed to update score: invalid player ID " +
-                 str(value_string)
+                "Failed to update score: invalid player ID " + str(player_id)
             )
             helpers.log(self.Parent, message)
 
@@ -92,22 +76,8 @@ class Score(object):
         )
 
 
-def create_score_from_string(Parent, value_string, space_number=1):
-    # Input example: !new_score Player1 Player2
-    # Command Player1Name Player2Name
-    components = value_string.split(" ")
-
-    if len(components) != 3:
-        message = (
-            "Failed to create score: invalid value " +
-            str(value_string)
-        )
-        helpers.log(Parent, message)
-        return
-
-    player1_name = str(components[1])
-    player2_name = str(components[2])
-
+def create_score_from_string(Parent, player1_name, player2_name,
+                             space_number=1):
     player1 = PlayerScore(player1_name)
     player2 = PlayerScore(player2_name)
     score = Score(Parent, player1, player2, space_number)
