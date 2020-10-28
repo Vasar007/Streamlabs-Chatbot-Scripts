@@ -3,9 +3,9 @@ import codecs
 import json
 
 
-class MySettings(object):
+class TemplateSettings(object):
 
-    def __init__(self, settingsfile=None):
+    def __init__(self, Parent=None, settingsfile=None):
         """
         Load in saved settings file if available or else set default values.
         """

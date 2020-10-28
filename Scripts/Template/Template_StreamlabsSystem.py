@@ -22,7 +22,7 @@ sys.path.append(ScriptDir)
 sys.path.append(os.path.join(ScriptDir, LibraryDirName))
 
 # Import your Settings class.
-from Settings_Module import MySettings
+from template_settings import TemplateSettings
 
 sys.path.remove(ScriptDir)
 sys.path.remove(os.path.join(ScriptDir, LibraryDirName))
@@ -38,7 +38,7 @@ Version = "1.0.0.0"
 global SettingsFile
 SettingsFile = ""
 global ScriptSettings
-ScriptSettings = MySettings()
+ScriptSettings = TemplateSettings()
 
 
 def Init():
@@ -55,7 +55,7 @@ def Init():
     global SettingsFile
     global ScriptSettings
     SettingsFile = os.path.join(ScriptDir, SettingsDirName, "settings.json")
-    ScriptSettings = MySettings(Parent, SettingsFile)
+    ScriptSettings = TemplateSettings(Parent, SettingsFile)
     ScriptSettings.Response = "Overwritten pong! ^_^"
 
     Log("Script successfully initialized.")
@@ -89,7 +89,8 @@ def Execute(data):
         # Put the command on cooldown.
         Parent.AddUserCooldown(
             ScriptName,
-            ScriptSettings.Command,data.User,
+            ScriptSettings.Command,
+            data.User,
             ScriptSettings.Cooldown
         )
 
@@ -152,4 +153,4 @@ def Log(message):
     Note that you need to pass the "Parent" object and use the normal
     "Parent.Log" function if you want to log something inside of a module.
     """
-    Parent.Log(str(message))
+    Parent.Log(ScriptName, str(message))

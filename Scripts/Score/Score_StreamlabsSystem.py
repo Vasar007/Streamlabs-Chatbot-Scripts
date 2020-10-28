@@ -29,6 +29,7 @@ import helpers
 
 import score
 from score import Score
+from command_wrapper import CommandWrapper
 
 # Import Settings class.
 from score_settings import ScoreSettings
@@ -90,49 +91,17 @@ def Execute(data):
     # Check if the propper command is used, the command is not on cooldown and
     # the user has permission to use the command.
     command = data.GetParam(0).lower()
-    func = None
-    required_permission = None
+    parsed_command = TryProcessCommand(command, data.User)
 
-    # !score
-    if command == ScriptSettings.CommandGetScore:
-        required_permission = ScriptSettings.PermissionOnGet
-        func = GetFuncToProcessIfHasPermission(
-            ProcessGetCommand, data.User, required_permission
-        )
-
-    # !new_score
-    elif command == ScriptSettings.CommandNewScore:
-        required_permission = ScriptSettings.PermissionOnEdit
-        func = GetFuncToProcessIfHasPermission(
-            ProcessNewCommand, data.User, required_permission
-        )
-
-    # !update_score
-    elif command == ScriptSettings.CommandUpdateScore:
-        required_permission = ScriptSettings.PermissionOnEdit
-        func = GetFuncToProcessIfHasPermission(
-            ProcessUpdateCommand, data.User, required_permission
-        )
-
-    # !reset_score
-    elif command == ScriptSettings.CommandResetScore:
-        required_permission = ScriptSettings.PermissionOnEdit
-        func = GetFuncToProcessIfHasPermission(
-            ProcessResetCommand, data.User, required_permission
-        )
-
-    # !reload_score
-    elif command == ScriptSettings.CommandReloadScore:
-        required_permission = ScriptSettings.PermissionOnEdit
-        func = GetFuncToProcessIfHasPermission(
-            ProcessReloadCommand, data.User, required_permission
-        )
+    # Unknown command.
+    if parsed_command.is_unknown_command():
+        return
 
     # If user doesn't have permission, "func" will be equal to "None".
-    if func is not None:
-        ScoreStorage = func(ScoreStorage, data)
+    if parsed_command.has_func():
+        ScoreStorage = parsed_command.func(ScoreStorage, data)
     else:
-        HandleNoPermission(required_permission)
+        HandleNoPermission(parsed_command.required_permission)
 
 
 def Tick():
@@ -228,6 +197,48 @@ def FixDatafileAfterReconnect():
     """
     Log("Reconnected, reload saved data.")
     return config.ResponseReloadScore
+
+
+def TryProcessCommand(command, user):
+    func = None
+    required_permission = None
+
+    # !score
+    if command == ScriptSettings.CommandGetScore:
+        required_permission = ScriptSettings.PermissionOnGet
+        func = GetFuncToProcessIfHasPermission(
+            ProcessGetCommand, user, required_permission
+        )
+
+    # !new_score
+    elif command == ScriptSettings.CommandNewScore:
+        required_permission = ScriptSettings.PermissionOnEdit
+        func = GetFuncToProcessIfHasPermission(
+            ProcessNewCommand, user, required_permission
+        )
+
+    # !update_score
+    elif command == ScriptSettings.CommandUpdateScore:
+        required_permission = ScriptSettings.PermissionOnEdit
+        func = GetFuncToProcessIfHasPermission(
+            ProcessUpdateCommand, user, required_permission
+        )
+
+    # !reset_score
+    elif command == ScriptSettings.CommandResetScore:
+        required_permission = ScriptSettings.PermissionOnEdit
+        func = GetFuncToProcessIfHasPermission(
+            ProcessResetCommand, user, required_permission
+        )
+
+    # !reload_score
+    elif command == ScriptSettings.CommandReloadScore:
+        required_permission = ScriptSettings.PermissionOnEdit
+        func = GetFuncToProcessIfHasPermission(
+            ProcessReloadCommand, user, required_permission
+        )
+
+    return CommandWrapper(command, func, required_permission)
 
 
 def GetFuncToProcessIfHasPermission(process_command, user,
