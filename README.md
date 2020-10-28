@@ -6,6 +6,7 @@ This repository contains some useful Streamlabs Chatbot (SL Chatbot) scripts.
 
 - [Boilerplate](Scripts/Boilerplate) — basic boilerplate script to play with.
 - [Score](Scripts/Score) — script that adds score counter between two opponents.
+- [TransferCurrency](Scripts/TransferCurrency) — script that allows viewers to transfer Streamlabs currency between eachother.
 
 ## How to install any script
 
@@ -19,12 +20,13 @@ This repository contains some useful Streamlabs Chatbot (SL Chatbot) scripts.
 
 If you're having trouble with loading scripts in the SL Chatbot, see: [Scripts Explained video](youtube.com/watch?v=l3FBpY-0880)
 
-Finally, feel free to create new Issue or contact me directly (vasar007@yandex.ru) if you have any question or problems.
+Finally, feel free to [create new Issue](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/issues/new) or contact me directly (vasar007@yandex.ru) if you have any question or problems.
 
 ## How to use
 
-You don't really need to (and can, because the user config in SL Chatbot is still buggy) configure much.
-Just enable script in your stream and have fun!
+Enable script in your stream and have fun!
+
+Notice that the script settings in SL Chatbot can be buggy so if you cannot change some settings, you can try to change it directly in config file (`config.py` which stores default values).
 
 ## License information
 
