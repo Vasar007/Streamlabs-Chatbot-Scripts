@@ -163,66 +163,88 @@ def HandleNoPermission(required_permission):
     Parent.SendTwitchMessage(message)
 
 
-def ProcessGiveCommand(user, target, currency_name, amount):
+def ProcessGiveCommand(userid, targetid, currency_name, amount):
     # Input example: !give Vasar 42
-    # Command TargetUserName Amount
+    # Command TargetUserNameOrId Amount
     try:
-        if target in Parent.GetViewerList():
+        if targetid in Parent.GetViewerList():
             amount_int = helpers.safe_cast(amount, int)
             if amount_int is None or amount_int <= 0:
-                HandleInvalidAmount(user, amount)
-            elif amount_int <= Parent.GetPoints(user):
-                HandleTransferCurrency(user, target, currency_name, amount_int)
+                HandleInvalidAmount(userid, amount)
+            elif amount_int <= Parent.GetPoints(userid):
+                HandleTransferCurrency(userid, targetid, currency_name, amount_int)
             else:
-                HandleNotEnoughFunds(user, currency_name)
+                HandleNotEnoughFunds(userid, currency_name)
         else:
-            if not target:
-                HandleNoTarget(user, currency_name)
+            if not targetid:
+                HandleNoTarget(userid, currency_name)
             else:
-                HandleInvalidTarget(user, currency_name)
+                HandleInvalidTarget(userid, targetid)
     except Exception as ex:
         Log("Failed to transfer currency: " + str(ex))
 
 
-def HandleInvalidAmount(user, amount):
-    message = str(ScriptSettings.InvalidAmountMessage).format(user, amount)
+def HandleInvalidAmount(userid, amount):
+    message = str(ScriptSettings.InvalidAmountMessage).format(userid, amount)
     Log(message)
     Parent.SendTwitchMessage(message)
 
 
-def HandleTransferCurrency(user, target, currency_name, amount_int):
-    Parent.RemovePoints(user, amount_int)
-    Parent.AddPoints(target, amount_int)
+def HandleTransferCurrency(userid, targetid, currency_name, amount_int):
+    current_user_points = Parent.GetPoints(userid)
+    current_target_points = Parent.GetPoints(targetid)
+    Log(
+        "User {0} has {1} {2} before transfer"
+        .format(userid, current_user_points, currency_name)
+    )
+    Log(
+        "User {0} has {1} {2} before transfer"
+        .format(target, current_target_points, currency_name)
+    )
+
+    Parent.RemovePoints(userid, amount_int)
+    Parent.AddPoints(targetid, amount_int)
     message = (
         str(ScriptSettings.SuccessfulTransferMessage)
-        .format(user, amount_int, currency_name, target)
+        .format(userid, amount_int, currency_name, targetid)
     )
     Log(message)
-    Parent.SendTwitchMessage()
+    Parent.SendTwitchMessage(message)
+
+    current_user_points = Parent.GetPoints(userid)
+    current_target_points = Parent.GetPoints(targetid)
+    Log(
+        "User {0} has {1} {2} after transfer"
+        .format(userid, current_user_points, currency_name)
+    )
+    Log(
+        "User {0} has {1} {2} after transfer"
+        .format(targetid, current_target_points, currency_name)
+    )
 
 
-def HandleNotEnoughFunds(user, currency_name):
+def HandleNotEnoughFunds(userid, currency_name):
     message = (
         str(ScriptSettings.NotEnoughFundsMessage)
-        .format(user, currency_name)
+        .format(userid, currency_name)
     )
     Log(message)
     Parent.SendTwitchMessage(message)
 
 
-def HandleNoTarget(user, currency_name):
+def HandleNoTarget(userid, currency_name):
     message = (
         str(ScriptSettings.NoTargetMessage)
-        .format(user, currency_name)
+        .format(userid, currency_name)
     )
     Log(message)
     Parent.SendTwitchMessage(message)
 
 
-def HandleInvalidTarget(user, currency_name):
+def HandleInvalidTarget(userid, targetid):
     message = (
         str(ScriptSettings.InvalidTargetMessage)
-        .format(user, currency_name)
+        .format(userid, targetid)
     )
     Log(message)
     Parent.SendTwitchMessage(message)

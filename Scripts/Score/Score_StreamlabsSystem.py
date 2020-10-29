@@ -199,7 +199,7 @@ def FixDatafileAfterReconnect():
     return config.ResponseReloadScore
 
 
-def TryProcessCommand(command, user):
+def TryProcessCommand(command, userid):
     func = None
     required_permission = None
 
@@ -207,44 +207,44 @@ def TryProcessCommand(command, user):
     if command == ScriptSettings.CommandGetScore:
         required_permission = ScriptSettings.PermissionOnGet
         func = GetFuncToProcessIfHasPermission(
-            ProcessGetCommand, user, required_permission
+            ProcessGetCommand, userid, required_permission
         )
 
     # !new_score
     elif command == ScriptSettings.CommandNewScore:
         required_permission = ScriptSettings.PermissionOnEdit
         func = GetFuncToProcessIfHasPermission(
-            ProcessNewCommand, user, required_permission
+            ProcessNewCommand, userid, required_permission
         )
 
     # !update_score
     elif command == ScriptSettings.CommandUpdateScore:
         required_permission = ScriptSettings.PermissionOnEdit
         func = GetFuncToProcessIfHasPermission(
-            ProcessUpdateCommand, user, required_permission
+            ProcessUpdateCommand, userid, required_permission
         )
 
     # !reset_score
     elif command == ScriptSettings.CommandResetScore:
         required_permission = ScriptSettings.PermissionOnEdit
         func = GetFuncToProcessIfHasPermission(
-            ProcessResetCommand, user, required_permission
+            ProcessResetCommand, userid, required_permission
         )
 
     # !reload_score
     elif command == ScriptSettings.CommandReloadScore:
         required_permission = ScriptSettings.PermissionOnEdit
         func = GetFuncToProcessIfHasPermission(
-            ProcessReloadCommand, user, required_permission
+            ProcessReloadCommand, userid, required_permission
         )
 
     return ScoreCommandWrapper(command, func, required_permission)
 
 
-def GetFuncToProcessIfHasPermission(process_command, user,
+def GetFuncToProcessIfHasPermission(process_command, userid,
                                     required_permission):
     has_permissions = Parent.HasPermission(
-        user,
+        userid,
         required_permission,
         ScriptSettings.PermissionInfo
     )
