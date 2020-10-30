@@ -10,7 +10,7 @@ import codecs
 from datetime import datetime
 from shutil import copyfile
 
-import transfer_config as config
+import transfer_config as config  # pylint:disable=import-error
 
 
 def get_current_day_formatted_date():

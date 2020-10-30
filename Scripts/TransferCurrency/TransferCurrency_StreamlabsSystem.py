@@ -26,14 +26,19 @@ sys.path.append(ScriptDir)
 sys.path.append(os.path.join(ScriptDir, LibraryDirName))
 
 import transfer_config as config
-import transfer_helpers as helpers
+import transfer_helpers as helpers  # pylint:disable=import-error
 
 # Import Settings class.
-from transfer_settings import TransferSettings
+from transfer_settings import TransferSettings  # pylint:disable=import-error
 
 sys.path.remove(ScriptDir)
 sys.path.remove(os.path.join(ScriptDir, LibraryDirName))
 
+
+# Have pylint know the parent variable.
+if False:  # pylint: disable=using-constant-test
+    Parent = Parent  # pylint:disable=undefined-variable
+# pylint: enable=invalid-name
 
 # [Required] Script Information (must be existing in this main file).
 ScriptName = config.ScriptName
@@ -200,7 +205,7 @@ def HandleTransferCurrency(userid, targetid, currency_name, amount_int):
     )
     Log(
         "User {0} has {1} {2} before transfer"
-        .format(target, current_target_points, currency_name)
+        .format(targetid, current_target_points, currency_name)
     )
 
     Parent.RemovePoints(userid, amount_int)

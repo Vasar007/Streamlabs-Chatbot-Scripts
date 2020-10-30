@@ -26,17 +26,24 @@ sys.path.append(ScriptDir)
 sys.path.append(os.path.join(ScriptDir, LibraryDirName))
 
 import score_config as config
-import score_helpers as helpers
+import score_helpers as helpers  # pylint:disable=import-error
 
-import score
-from score import Score
+import score  # pylint:disable=import-error
+from score import Score  # pylint:disable=import-error
+# pylint:disable=import-error
 from score_command_wrapper import ScoreCommandWrapper
 
 # Import Settings class.
-from score_settings import ScoreSettings
+from score_settings import ScoreSettings  # pylint:disable=import-error
 
 sys.path.remove(ScriptDir)
 sys.path.remove(os.path.join(ScriptDir, LibraryDirName))
+
+
+# Have pylint know the parent variable.
+if False:  # pylint: disable=using-constant-test
+    Parent = Parent  # pylint:disable=undefined-variable
+# pylint: enable=invalid-name
 
 # [Required] Script Information (must be existing in this main file).
 # TODO: Some stuff from here should be moved to a GUI settings file later.

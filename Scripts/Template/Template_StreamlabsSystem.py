@@ -23,11 +23,16 @@ sys.path.append(ScriptDir)
 sys.path.append(os.path.join(ScriptDir, LibraryDirName))
 
 # Import your Settings class.
-from template_settings import TemplateSettings
+from template_settings import TemplateSettings  # pylint:disable=import-error
 
 sys.path.remove(ScriptDir)
 sys.path.remove(os.path.join(ScriptDir, LibraryDirName))
 
+
+# Have pylint know the parent variable.
+if False:  # pylint: disable=using-constant-test
+    Parent = Parent  # pylint:disable=undefined-variable
+# pylint: enable=invalid-name
 
 # [Required] Script Information.
 ScriptName = "Template Script"

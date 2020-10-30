@@ -4,7 +4,7 @@ import os
 import codecs
 import json
 
-import score_config as config
+import score_config as config  # pylint:disable=import-error
 import score_helpers as helpers
 
 
