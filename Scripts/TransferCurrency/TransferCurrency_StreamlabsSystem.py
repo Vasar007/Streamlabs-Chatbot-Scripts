@@ -30,6 +30,7 @@ import transfer_helpers as helpers  # pylint:disable=import-error
 
 # Import Settings class.
 from transfer_settings import TransferSettings  # pylint:disable=import-error
+from transfer_broker import TransferBroker  # pylint:disable=import-error
 
 sys.path.remove(ScriptDir)
 sys.path.remove(os.path.join(ScriptDir, LibraryDirName))
@@ -173,84 +174,7 @@ def ProcessGiveCommand(userid, targetid, currency_name, amount):
     # Input example: !give Vasar 42
     # Command TargetUserNameOrId Amount
     try:
-        if targetid in Parent.GetViewerList():
-            amount_int = helpers.safe_cast(amount, int)
-            if amount_int is None or amount_int <= 0:
-                HandleInvalidAmount(userid, amount)
-            elif amount_int <= Parent.GetPoints(userid):
-                HandleTransferCurrency(userid, targetid, currency_name, amount_int)
-            else:
-                HandleNotEnoughFunds(userid, currency_name)
-        else:
-            if not targetid:
-                HandleNoTarget(userid, currency_name)
-            else:
-                HandleInvalidTarget(userid, targetid)
+        broker = TransferBroker(Parent, ScriptSettings)
+        broker.try_send_transfer(userid, targetid, currency_name, amount)
     except Exception as ex:
         Log("Failed to transfer currency: " + str(ex))
-
-
-def HandleInvalidAmount(userid, amount):
-    message = str(ScriptSettings.InvalidAmountMessage).format(userid, amount)
-    Log(message)
-    Parent.SendTwitchMessage(message)
-
-
-def HandleTransferCurrency(userid, targetid, currency_name, amount_int):
-    current_user_points = Parent.GetPoints(userid)
-    current_target_points = Parent.GetPoints(targetid)
-    Log(
-        "User {0} has {1} {2} before transfer"
-        .format(userid, current_user_points, currency_name)
-    )
-    Log(
-        "User {0} has {1} {2} before transfer"
-        .format(targetid, current_target_points, currency_name)
-    )
-
-    Parent.RemovePoints(userid, amount_int)
-    Parent.AddPoints(targetid, amount_int)
-    message = (
-        str(ScriptSettings.SuccessfulTransferMessage)
-        .format(userid, amount_int, currency_name, targetid)
-    )
-    Log(message)
-    Parent.SendTwitchMessage(message)
-
-    current_user_points = Parent.GetPoints(userid)
-    current_target_points = Parent.GetPoints(targetid)
-    Log(
-        "User {0} has {1} {2} after transfer"
-        .format(userid, current_user_points, currency_name)
-    )
-    Log(
-        "User {0} has {1} {2} after transfer"
-        .format(targetid, current_target_points, currency_name)
-    )
-
-
-def HandleNotEnoughFunds(userid, currency_name):
-    message = (
-        str(ScriptSettings.NotEnoughFundsMessage)
-        .format(userid, currency_name)
-    )
-    Log(message)
-    Parent.SendTwitchMessage(message)
-
-
-def HandleNoTarget(userid, currency_name):
-    message = (
-        str(ScriptSettings.NoTargetMessage)
-        .format(userid, currency_name)
-    )
-    Log(message)
-    Parent.SendTwitchMessage(message)
-
-
-def HandleInvalidTarget(userid, targetid):
-    message = (
-        str(ScriptSettings.InvalidTargetMessage)
-        .format(userid, targetid)
-    )
-    Log(message)
-    Parent.SendTwitchMessage(message)
