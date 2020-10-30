@@ -8,13 +8,6 @@
         "tooltip": "Command that users will use when they want to transfer currency.",
         "group": "Setup"
     },
-    "CurrencyName": {
-        "type": "textbox",
-        "value": "Money",
-        "label": "Currency Name",
-        "tooltip": "The name of your currency.",
-        "group": "Setup"
-    },
 
     "Permission": {
         "type": "dropdown",

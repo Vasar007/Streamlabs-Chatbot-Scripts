@@ -90,12 +90,7 @@ def Execute(data):
         )
 
         if has_permissions:
-            ProcessGiveCommand(
-                data.User,
-                data.GetParam(1),
-                ScriptSettings.CurrencyName,
-                data.GetParam(2)
-            )
+            ProcessGiveCommand(data)
         else:
             HandleNoPermission(required_permission, command)
 
@@ -173,10 +168,15 @@ def HandleNoPermission(required_permission, command):
     Parent.SendTwitchMessage(message)
 
 
-def ProcessGiveCommand(userid, targetid, currency_name, amount):
+def ProcessGiveCommand(data):
     # Input example: !give Vasar 42
     # Command TargetUserNameOrId Amount
     try:
+        userid = data.User
+        targetid = data.GetParam(1)
+        amount = data.GetParam(2)
+        currency_name = Parent.GetCurrencyName()
+ 
         broker = TransferBroker(Parent, ScriptSettings)
         broker.try_send_transfer(userid, targetid, currency_name, amount)
     except Exception as ex:

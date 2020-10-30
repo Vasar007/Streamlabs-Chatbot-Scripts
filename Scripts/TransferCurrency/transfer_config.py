@@ -13,7 +13,6 @@ Version = "0.0.2"
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).
 CommandGive = "!give"
-CurrencyName = "points"
 
 # Values: everyone, moderator, subscriber, user_specific, editor.
 Permission = "everyone"

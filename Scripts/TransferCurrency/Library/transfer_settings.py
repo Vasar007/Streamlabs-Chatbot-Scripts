@@ -53,7 +53,6 @@ class TransferSettings(object):
     def _set_default(self):
         # Setup group.
         self.CommandGive = config.CommandGive
-        self.CurrencyName = config.CurrencyName
 
         # Permission group.
         self.Permission = config.Permission
