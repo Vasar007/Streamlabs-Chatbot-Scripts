@@ -57,7 +57,7 @@ class TransferSettings(object):
 
         # Permission group.
         self.Permission = config.Permission
-        self.PermissionDenied = config.PermissionDenied
+        self.PermissionDeniedMessage = config.PermissionDeniedMessage
         self.PermissionInfo = config.PermissionInfo
 
         # Chat Messages group.

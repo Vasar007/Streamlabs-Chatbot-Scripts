@@ -34,11 +34,11 @@
         "tooltip": "Who is able to use the script commands.",
         "group": "Permission"
     },
-    "PermissionDenied": {
+    "PermissionDeniedMessage": {
         "type": "textbox",
-        "value": "Permission denied: You have to be a {0} to use this command!",
+        "value": "Permission denied: You have to be a {0} to use {1} command!",
         "label": "Permission Denied Message",
-        "tooltip": "Chat message will be sent on failed permission check. 0 — required permission.",
+        "tooltip": "Chat message will be sent on failed permission check. 0 — required permission, 1 — command.",
         "group": "Permission"
     },
     "PermissionInfo": {

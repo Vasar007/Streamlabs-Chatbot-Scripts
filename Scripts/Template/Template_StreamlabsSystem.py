@@ -22,6 +22,9 @@ sys.path.append(ScriptDir)
 # Point at lib folder for classes/references.
 sys.path.append(os.path.join(ScriptDir, LibraryDirName))
 
+import template_config as config
+import template_helpers as helpers  # pylint:disable=import-error
+
 # Import your Settings class.
 from template_settings import TemplateSettings  # pylint:disable=import-error
 
@@ -35,16 +38,14 @@ if False:  # pylint: disable=using-constant-test
 # pylint: enable=invalid-name
 
 # [Required] Script Information.
-ScriptName = "Template Script"
-Website = "https://www.streamlabs.com"
-Description = "Basic boilerplate script to play with"
-Creator = "Vasar007"
-Version = "1.0.0.0"
+ScriptName = config.ScriptName
+Website = config.Website
+Description = config.Description
+Creator = config.Creator
+Version = config.Version
 
 # Define Global Variables.
-global SettingsFile
 SettingsFile = ""
-global ScriptSettings
 ScriptSettings = TemplateSettings()
 
 
@@ -76,19 +77,28 @@ def Execute(data):
     if not data.IsChatMessage():
         return
 
-    if not command == ScriptSettings.Command:
+    if command != ScriptSettings.Command:
         return
 
-    if Parent.IsOnUserCooldown(ScriptName, ScriptSettings.Command, data.User):
+    is_on_user_cooldown = Parent.IsOnUserCooldown(
+        ScriptName, ScriptSettings.Command, data.User
+    )
+
+    # Check if the propper command is used, the command is not on cooldown
+    # and the user has permission to use the command.
+    if is_on_user_cooldown:
         cooldown = Parent.GetUserCooldownDuration(
             ScriptName, ScriptSettings.Command, data.User
         )
         Parent.SendStreamMessage("Time Remaining " + str(cooldown))
-
-    # Check if the propper command is used, the command is not on cooldown
-    # and the user has permission to use the command.
-    if (not Parent.IsOnUserCooldown(ScriptName, ScriptSettings.Command, data.User)
-        and Parent.HasPermission(data.User, ScriptSettings.Permission, ScriptSettings.PermissionInfo)):
+    else:
+        required_permission = ScriptSettings.Permission
+        has_permission = Parent.HasPermission(
+            data.User, required_permission, ScriptSettings.PermissionInfo
+        )
+        if not has_permission:
+            HandleNoPermission(required_permission, command)
+            return
 
         Parent.BroadcastWsEvent("EVENT_MINE","{'show':false}")
         # Send your message to chat.
@@ -160,4 +170,13 @@ def Log(message):
     Note that you need to pass the "Parent" object and use the normal
     "Parent.Log" function if you want to log something inside of a module.
     """
-    Parent.Log(ScriptName, str(message))
+    helpers.log(Parent, str(message))
+
+
+def HandleNoPermission(required_permission, command):
+    message = (
+        str(ScriptSettings.PermissionDeniedMessage)
+        .format(required_permission, command)
+    )
+    Log(message)
+    Parent.SendTwitchMessage(message)

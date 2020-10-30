@@ -61,5 +61,8 @@ class ScoreSettings(object):
         # Permission group.
         self.PermissionOnGet = config.PermissionOnGet
         self.PermissionOnEdit = config.PermissionOnEdit
-        self.PermissionDenied = config.PermissionDenied
+        self.PermissionDeniedMessage = config.PermissionDeniedMessage
         self.PermissionInfo = config.PermissionInfo
+
+        # Chat Messages group.
+        self.InvalidCommandCall = config.InvalidCommandCall

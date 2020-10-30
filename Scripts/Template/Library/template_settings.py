@@ -4,6 +4,9 @@ import os
 import codecs
 import json
 
+import template_config as config  # pylint:disable=import-error
+import template_helpers as helpers
+
 
 class TemplateSettings(object):
 
@@ -23,7 +26,7 @@ class TemplateSettings(object):
                     self._set_default()
             except Exception as ex:
                 if Parent is not None:
-                    Parent.Log("Failed to load setting: " + str(ex))
+                    helpers.log(Parent, "Failed to load setting: " + str(ex))
                 self._set_default()
 
     def reload(self, jsondata):
@@ -36,8 +39,7 @@ class TemplateSettings(object):
         """
         Save settings contained within to .json and .js settings files.
         """
-        with codecs.open(settingsfile, encoding="utf-8-sig", mode="w+") as f:
-            json.dump(self.__dict__, f, encoding="utf-8")
+        helpers.save_json(self.__dict__, settingsfile)
 
         with codecs.open(settingsfile.replace("json", "js"),
                          encoding="utf-8-sig", mode="w+") as f:
@@ -50,10 +52,11 @@ class TemplateSettings(object):
 
     def _set_default(self):
         # Setup group.
-        self.Command = "!ping"
-        self.Response = "Pong!"
-        self.Cooldown = 10
+        self.Command = config.Command
+        self.Cooldown = config.Cooldown
+        self.Response = config.Response
 
         # Permission group.
-        self.Permission = "everyone"
-        self.PermissionInfo = ""
+        self.Permission = config.Permission
+        self.PermissionDeniedMessage = config.PermissionDeniedMessage
+        self.PermissionInfo = config.PermissionInfo

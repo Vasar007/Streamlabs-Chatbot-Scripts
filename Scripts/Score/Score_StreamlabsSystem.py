@@ -89,17 +89,28 @@ def Execute(data):
     # Check if the propper command is used, the command is not on cooldown and
     # the user has permission to use the command.
     command = data.GetParam(0).lower()
-    parsed_command = TryProcessCommand(command, data.User)
+    parsed_command = TryProcessCommand(command, data)
 
-    # Unknown command.
+    # Check if it is unknown command.
     if parsed_command.is_unknown_command():
+        return
+
+    # Check if it is invalid command call.
+    if parsed_command.is_invalid_command_call():
+        message = (
+            ScriptSettings.InvalidCommandCall
+            .format(parsed_command.command)
+        )
+        Parent.SendStreamMessage(message)
         return
 
     # If user doesn't have permission, "func" will be equal to "None".
     if parsed_command.has_func():
         ScoreStorage = parsed_command.func(ScoreStorage, data)
     else:
-        HandleNoPermission(parsed_command.required_permission)
+        HandleNoPermission(
+            parsed_command.required_permission, parsed_command.command
+        )
 
 
 def Tick():
@@ -166,46 +177,65 @@ def Log(message):
     helpers.log(Parent, str(message))
 
 
-def TryProcessCommand(command, userid):
+def HandleNoPermission(required_permission, command):
+    message = (
+        str(ScriptSettings.PermissionDeniedMessage)
+        .format(required_permission, command)
+    )
+    Log(message)
+    Parent.SendTwitchMessage(message)
+
+
+def TryProcessCommand(command, data):
     func = None
     required_permission = None
+    is_valid_call = None
+
+    param_count = data.GetParamCount()
 
     # !score
     if command == ScriptSettings.CommandGetScore:
         required_permission = ScriptSettings.PermissionOnGet
         func = GetFuncToProcessIfHasPermission(
-            ProcessGetCommand, userid, required_permission
+            ProcessGetCommand, data.User, required_permission
         )
+        is_valid_call = True  # Get command call will always be valid.
 
     # !new_score
     elif command == ScriptSettings.CommandNewScore:
         required_permission = ScriptSettings.PermissionOnEdit
         func = GetFuncToProcessIfHasPermission(
-            ProcessNewCommand, userid, required_permission
+            ProcessNewCommand, data.User, required_permission
         )
+        is_valid_call = param_count == 3
 
     # !update_score
     elif command == ScriptSettings.CommandUpdateScore:
         required_permission = ScriptSettings.PermissionOnEdit
         func = GetFuncToProcessIfHasPermission(
-            ProcessUpdateCommand, userid, required_permission
+            ProcessUpdateCommand, data.User, required_permission
         )
+        is_valid_call = param_count == 3
 
     # !reset_score
     elif command == ScriptSettings.CommandResetScore:
         required_permission = ScriptSettings.PermissionOnEdit
         func = GetFuncToProcessIfHasPermission(
-            ProcessResetCommand, userid, required_permission
+            ProcessResetCommand, data.User, required_permission
         )
+        is_valid_call = param_count == 1
 
     # !reload_score
     elif command == ScriptSettings.CommandReloadScore:
         required_permission = ScriptSettings.PermissionOnEdit
         func = GetFuncToProcessIfHasPermission(
-            ProcessReloadCommand, userid, required_permission
+            ProcessReloadCommand, data.User, required_permission
         )
+        is_valid_call = param_count == 1
 
-    return ScoreCommandWrapper(command, func, required_permission)
+    return ScoreCommandWrapper(
+        command, func, required_permission, is_valid_call
+    )
 
 
 def GetFuncToProcessIfHasPermission(process_command, userid,
@@ -216,12 +246,6 @@ def GetFuncToProcessIfHasPermission(process_command, userid,
         ScriptSettings.PermissionInfo
     )
     return process_command if has_permissions else None
-
-
-def HandleNoPermission(required_permission):
-    message = str(ScriptSettings.PermissionDenied).format(required_permission)
-    Log(message)
-    Parent.SendTwitchMessage(message)
 
 
 def ProcessGetCommand(score_storage, data):

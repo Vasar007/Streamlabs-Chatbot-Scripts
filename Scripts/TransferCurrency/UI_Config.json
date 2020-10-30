@@ -24,11 +24,11 @@
         "tooltip": "Who is able to use the script commands.",
         "group": "Permission"
     },
-    "PermissionDenied": {
+    "PermissionDeniedMessage": {
         "type": "textbox",
-        "value": "Permission denied: You have to be a {0} to use this command!",
+        "value": "Permission denied: You have to be a {0} to use {1} command!",
         "label": "Permission Denied Message",
-        "tooltip": "Chat message will be sent on failed permission check. 0 — required permission.",
+        "tooltip": "Chat message will be sent on failed permission check. 0 — required permission, 1 — command.",
         "group": "Permission"
     },
     "PermissionInfo": {
@@ -64,14 +64,14 @@
         "type": "textbox",
         "value": "Sorry {0}, but you didn't say who to send the {1} to.",
         "label": "No Target Message",
-        "tooltip": "Chat message will be sent if user doesn't specify a target. 0 — user 1 — currency.",
+        "tooltip": "Chat message will be sent if user doesn't specify a target. 0 — user, 1 — currency.",
         "group": "Chat Messages"
     },
     "InvalidTargetMessage": {
         "type": "textbox",
         "value": "Sorry {0}, but {1} doesn't exist.",
         "label": "No Target Message",
-        "tooltip": "Chat message will be sent if user specifies an invalid target. 0 — user 1 — target.",
+        "tooltip": "Chat message will be sent if user specifies an invalid target. 0 — user, 1 — target.",
         "group": "Chat Messages"
     }
 }

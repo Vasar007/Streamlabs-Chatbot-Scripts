@@ -3,10 +3,13 @@
 import score_helpers as helpers
 
 
+default_player_name = "Player"
+
+
 class PlayerScore(object):
 
     def __init__(self, name, initial_score=0):
-        self.name = str(name) if not None else "Player"
+        self.name = str(name) if name else default_player_name
         self.score = initial_score if initial_score >= 0 else 0
 
     def reset(self, initial_value=0):
@@ -76,8 +79,18 @@ class Score(object):
         )
 
 
+def fix_player_name_if_needed(player_name, number):
+    if player_name:
+        return str(player_name)
+
+    return default_player_name + str(number)
+
+
 def create_score_from_string(Parent, player1_name, player2_name,
                              space_number=1):
+    player1_name = fix_player_name_if_needed(player1_name, 1)
+    player2_name = fix_player_name_if_needed(player2_name, 2)
+
     player1 = PlayerScore(player1_name)
     player2 = PlayerScore(player2_name)
     score = Score(Parent, player1, player2, space_number)

@@ -46,11 +46,11 @@
         "tooltip": "Who is able to use the script commands to create/update/reset score.",
         "group": "Permission"
     },
-    "PermissionDenied": {
+    "PermissionDeniedMessage": {
         "type": "textbox",
-        "value": "Permission denied: You have to be a {0} to use this command!",
+        "value": "Permission denied: You have to be a {0} to use {1} command!",
         "label": "Permission Denied Message",
-        "tooltip": "Chat message will be sent on failed permission check. 0 — required permission.",
+        "tooltip": "Chat message will be sent on failed permission check. 0 — required permission, 1 — command.",
         "group": "Permission"
     },
     "PermissionInfo": {
@@ -59,5 +59,13 @@
         "label": "Info",
         "tooltip": "This field should only be filled when using the user_specific permission.",
         "group": "Permission"
+    },
+
+    "InvalidCommandCall": {
+        "type": "textbox",
+        "value": "Invalid {0} command call.",
+        "label": "No Target Message",
+        "tooltip": "Chat message will be sent if user calls a command with invalid parameters. 0 — command.",
+        "group": "Chat Messages"
     }
 }

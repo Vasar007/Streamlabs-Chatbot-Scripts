@@ -97,7 +97,7 @@ def Execute(data):
                 data.GetParam(2)
             )
         else:
-            HandleNoPermission(required_permission)
+            HandleNoPermission(required_permission, command)
 
 
 def Tick():
@@ -164,8 +164,11 @@ def Log(message):
     helpers.log(Parent, str(message))
 
 
-def HandleNoPermission(required_permission):
-    message = str(ScriptSettings.PermissionDenied).format(required_permission)
+def HandleNoPermission(required_permission, command):
+    message = (
+        str(ScriptSettings.PermissionDeniedMessage)
+        .format(required_permission, command)
+    )
     Log(message)
     Parent.SendTwitchMessage(message)
 
