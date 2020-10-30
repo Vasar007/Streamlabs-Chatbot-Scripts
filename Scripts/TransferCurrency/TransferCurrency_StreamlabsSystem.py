@@ -17,6 +17,7 @@ clr.AddReference("IronPython.Modules.dll")
 ScriptDir = os.path.dirname(__file__)
 LibraryDirName = "Library"
 SettingsDirName = "Settings"
+SettingsFileName = "settings.json"
 
 # Point at current folder for classes/references.
 sys.path.append(ScriptDir)
@@ -58,7 +59,7 @@ def Init():
     # Load settings.
     global SettingsFile
     global ScriptSettings
-    SettingsFile = os.path.join(ScriptDir, SettingsDirName, "settings.json")
+    SettingsFile = os.path.join(ScriptDir, SettingsDirName, SettingsFileName)
     ScriptSettings = TransferSettings(Parent, SettingsFile)
 
     Log("Script successfully initialized.")

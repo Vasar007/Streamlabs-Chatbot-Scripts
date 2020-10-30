@@ -17,6 +17,7 @@ clr.AddReference("IronPython.Modules.dll")
 ScriptDir = os.path.dirname(__file__)
 LibraryDirName = "Library"
 SettingsDirName = "Settings"
+SettingsFileName = "settings.json"
 
 # Point at current folder for classes/references.
 sys.path.append(ScriptDir)
@@ -63,18 +64,8 @@ def Init():
     # Load settings.
     global SettingsFile
     global ScriptSettings
-    SettingsFile = os.path.join(ScriptDir, SettingsDirName, "settings.json")
+    SettingsFile = os.path.join(ScriptDir, SettingsDirName, SettingsFileName)
     ScriptSettings = ScoreSettings(Parent, SettingsFile)
-
-    # Generate data and archive directory if they don't exist (uses
-    # "ScoreDataBackupPath" because it includes the data path).
-    if not os.path.isdir(config.ScoreDataBackupPath):
-        os.makedirs(config.ScoreDataBackupPath)
-
-    # Creates an empty data file if it doesn't exist.
-    if not os.path.isfile(config.ScoreDataFilepath):
-        # Generate empty data file and save it.
-        helpers.create_json(config.ScoreDataFilepath)
 
     Log("Script successfully initialized.")
 
@@ -143,7 +134,6 @@ def Unload():
     [Optional] Unload (called when a user reloads their scripts or closes the
     bot/cleanup stuff).
     """
-    helpers.backup_data_file()
     Log("Script unloaded.")
 
 
@@ -167,36 +157,6 @@ def Log(message):
     "Parent.Log" function if you want to log something inside of a module.
     """
     helpers.log(Parent, str(message))
-
-
-def UpdateDataFile(username):
-    """
-    UpdateDataFile: Function for modifying the file which contains the data,
-    see data/scoredata.json.
-
-    Returns the parse string for parse(Function).
-    """
-    # currentday = helpers.get_current_day_formatted_date()
-    response = "error"
-
-    # This loads the data of file vipdata.json into variable "data".
-    datafile = helpers.get_json(config.ScoreDataFilepath)
-    response = "NotImplemented"
-
-    # After everything was modified and updated, we need to write the stuff
-    # from our "data" variable to the "scoredata.json" file.
-    os.remove(config.ScoreDataFilepath)
-    helpers.save_json(datafile, config.ScoreDataFilepath)
-
-    return response
-
-
-def FixDatafileAfterReconnect():
-    """
-    Fixes data file after reconnect.
-    """
-    Log("Reconnected, reload saved data.")
-    return config.ResponseReloadScore
 
 
 def TryProcessCommand(command, userid):
