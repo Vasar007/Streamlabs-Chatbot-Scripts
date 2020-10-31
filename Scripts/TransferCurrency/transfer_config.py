@@ -1,5 +1,21 @@
 # -*- coding: utf-8 -*-
 
+import logging
+
+
+# Logging.
+LogLevels = {
+    "Debug": logging.DEBUG,
+    "Info": logging.INFO,
+    "Warning": logging.WARNING,
+    "Error": logging.ERROR,
+    "Off": logging.CRITICAL  # Allow to print only fatal messages.
+}
+
+LogFormat = "[%(asctime)s] %(levelname)s    %(message)s"
+LogDateFormat = "%d/%m/%Y %H:%M:%S"
+DefaultLoggingLevel = logging.INFO
+LoggingLevel = "Info"
 
 # [Required] Script Information.
 ScriptName = "Transfer Currency Script"
@@ -8,7 +24,7 @@ Description = (
     "Allows viewers to transfer Streamlabs currency between eachother."
 )
 Creator = "Vasar007"
-Version = "0.0.2"
+Version = "0.0.3.0"
 
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).

@@ -67,5 +67,14 @@
         "label": "No Target Message",
         "tooltip": "Chat message will be sent if user calls a command with invalid parameters. 0 — command.",
         "group": "Chat Messages"
+    },
+
+    "LoggingLevel": {
+        "type": "dropdown",
+        "value": "Info",
+        "items": ["Debug", "Info", "Warning", "Error", "Off"],
+        "label": "Logging Level",
+        "tooltip": "Specifies Logging Level for script.",
+        "group": "Debugging"
     }
 }

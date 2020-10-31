@@ -66,5 +66,14 @@
         "label": "No Target Message",
         "tooltip": "Chat message will be sent if user specifies an invalid target. 0 — user, 1 — target.",
         "group": "Chat Messages"
+    },
+
+    "LoggingLevel": {
+        "type": "dropdown",
+        "value": "Info",
+        "items": ["Debug", "Info", "Warning", "Error", "Off"],
+        "label": "Logging Level",
+        "tooltip": "Specifies Logging Level for script.",
+        "group": "Debugging"
     }
 }

@@ -41,16 +41,16 @@ class PlayerScore(object):
 
 class Score(object):
 
-    def __init__(self, Parent, player1, player2, space_number=1):
-        self.Parent = Parent
+    def __init__(self, logger, player1, player2, space_number=1):
         self.player1 = player1
         self.player2 = player2
         self.space_number = space_number
+        self._logger = logger
 
     def reset(self):
         self.player1.reset()
         self.player2.reset()
-        helpers.log(self.Parent, "Resetted score for both players.")
+        self._logger.info("Resetted score for both players.")
 
     def update_by_string(self, player_id, new_score):
         if player_id == 1:
@@ -61,7 +61,7 @@ class Score(object):
             message = (
                 "Failed to update score: invalid player ID " + str(player_id)
             )
-            helpers.log(self.Parent, message)
+            self._logger.info(message)
 
     def _update_player_score(self, player, new_score):
         player.update(new_score)
@@ -69,7 +69,7 @@ class Score(object):
             "Updated score for player " + player.name +
             ", new score " + str(new_score)
         )
-        helpers.log(self.Parent, message)
+        self._logger.info(message)
 
     def __str__(self):
         return (
@@ -86,16 +86,16 @@ def fix_player_name_if_needed(player_name, number):
     return default_player_name + str(number)
 
 
-def create_score_from_string(Parent, player1_name, player2_name,
-                             space_number=1):
+def create_score_from_string(player1_name, player2_name, space_number=1):
     player1_name = fix_player_name_if_needed(player1_name, 1)
     player2_name = fix_player_name_if_needed(player2_name, 2)
 
     player1 = PlayerScore(player1_name)
     player2 = PlayerScore(player2_name)
-    score = Score(Parent, player1, player2, space_number)
+    logger = helpers.get_logger()
+    score = Score(logger, player1, player2, space_number)
 
     message = "Created new score: " + str(score)
-    helpers.log(Parent, message)
+    logger.info(message)
 
     return score

@@ -1,5 +1,21 @@
 # -*- coding: utf-8 -*-
 
+import logging
+
+
+# Logging.
+LogLevels = {
+    "Debug": logging.DEBUG,
+    "Info": logging.INFO,
+    "Warning": logging.WARNING,
+    "Error": logging.ERROR,
+    "Off": logging.CRITICAL  # Allow to print only fatal messages.
+}
+
+LogFormat = "[%(asctime)s] %(levelname)s    %(message)s"
+LogDateFormat = "%d/%m/%Y %H:%M:%S"
+DefaultLoggingLevel = logging.INFO
+LoggingLevel = "Info"
 
 # [Required] Script Information.
 ScriptName = "Boilerplate Script"

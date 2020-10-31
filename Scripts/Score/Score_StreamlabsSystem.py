@@ -74,7 +74,8 @@ def Init():
     SettingsFile = os.path.join(ScriptDir, SettingsDirName, SettingsFileName)
     ScriptSettings = ScoreSettings(Parent, SettingsFile)
 
-    Log("Script successfully initialized.")
+    helpers.init_logging(Parent, ScriptSettings)
+    Logger().info("Script successfully initialized.")
 
 
 def Execute(data):
@@ -140,11 +141,13 @@ def ReloadSettings(jsonData):
     """
     # Execute json reloading here.
     try:
-        ScriptSettings.reload()
+        ScriptSettings.reload(jsonData)
         ScriptSettings.save(SettingsFile)
-        Log("Settings reloaded.")
+        Logger().info("Settings reloaded.")
     except Exception as ex:
-        Log("Failed to save or reload settings to file: " + str(ex))
+        Logger().exception(
+            "Failed to save or reload settings to file: " + str(ex)
+        )
 
 
 def Unload():
@@ -152,7 +155,7 @@ def Unload():
     [Optional] Unload (called when a user reloads their scripts or closes the
     bot/cleanup stuff).
     """
-    Log("Script unloaded.")
+    Logger().info("Script unloaded.")
 
 
 def ScriptToggled(state):
@@ -168,13 +171,8 @@ def ScriptToggled(state):
 #############################################
 
 
-def Log(message):
-    """
-    Log helper (for logging into Script Logs of the Chatbot).
-    Note that you need to pass the "Parent" object and use the normal
-    "Parent.Log" function if you want to log something inside of a module.
-    """
-    helpers.log(Parent, str(message))
+def Logger():
+    return helpers.get_logger()
 
 
 def HandleNoPermission(required_permission, command):
@@ -182,7 +180,7 @@ def HandleNoPermission(required_permission, command):
         str(ScriptSettings.PermissionDeniedMessage)
         .format(required_permission, command)
     )
-    Log(message)
+    Logger().info(message)
     Parent.SendTwitchMessage(message)
 
 
@@ -261,7 +259,7 @@ def ProcessGetCommand(score_storage, data):
 
         return score_storage
     except Exception as ex:
-        Log("Failed to get score: " + str(ex))
+        Logger().exception("Failed to get score: " + str(ex))
 
 
 def ProcessNewCommand(score_storage, data):
@@ -269,7 +267,7 @@ def ProcessNewCommand(score_storage, data):
     # Command Player1Name Player2Name
     try:
         new_score = score.create_score_from_string(
-            Parent, data.GetParam(1), data.GetParam(2)
+            data.GetParam(1), data.GetParam(2)
         )
 
         if not score_storage:
@@ -291,7 +289,7 @@ def ProcessNewCommand(score_storage, data):
 
         return score_storage
     except Exception as ex:
-        Log("Failed to create score: " + str(ex))
+        Logger().exception("Failed to create score: " + str(ex))
 
 
 def ProcessUpdateCommand(score_storage, data):
@@ -308,7 +306,7 @@ def ProcessUpdateCommand(score_storage, data):
                 raw_player_id = data.GetParam(1)
                 player_id = helpers.safe_cast(raw_player_id, int)
                 if player_id is None:
-                    Log(
+                    Logger().error(
                         "Failed to update score: invalid player ID " +
                         str(raw_player_id)
                     )
@@ -316,7 +314,7 @@ def ProcessUpdateCommand(score_storage, data):
                 raw_new_score = data.GetParam(2)
                 new_score = helpers.safe_cast(raw_new_score, int)
                 if new_score is None:
-                    Log(
+                    Logger().error(
                         "Failed to update score: invalid score value " +
                         str(raw_new_score)
                     )
@@ -328,7 +326,7 @@ def ProcessUpdateCommand(score_storage, data):
 
         return score_storage
     except Exception as ex:
-        Log("Failed to update score: " + str(ex))
+        Logger().excpetion("Failed to update score: " + str(ex))
 
 
 def ProcessResetCommand(score_storage, data):
@@ -347,14 +345,14 @@ def ProcessResetCommand(score_storage, data):
 
         return score_storage
     except Exception as ex:
-        Log("Failed to reset score: " + str(ex))
+        Logger().exception("Failed to reset score: " + str(ex))
 
 
 def ProcessReloadCommand(score_storage, data):
     try:
         # TODO: implement reload command.
-        Log("Reload score command is not implemented.")
+        Logger().error("Reload score command is not implemented.")
 
         return score_storage
     except Exception as ex:
-        Log("Failed to reload score: " + str(ex))
+        Logger().exception("Failed to reload score: " + str(ex))

@@ -47,5 +47,14 @@
         "label": "Info",
         "tooltip": "This field should only be filled when using the user_specific permission.",
         "group": "Permission"
+    },
+
+    "LoggingLevel": {
+        "type": "dropdown",
+        "value": "Info",
+        "items": ["Debug", "Info", "Warning", "Error", "Off"],
+        "label": "Logging Level",
+        "tooltip": "Specifies Logging Level for script.",
+        "group": "Debugging"
     }
 }

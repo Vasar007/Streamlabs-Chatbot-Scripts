@@ -10,6 +10,8 @@ import template_helpers as helpers
 
 class TemplateSettings(object):
 
+    _reload_callback = None
+
     def __init__(self, Parent=None, settingsfile=None):
         """
         Load in saved settings file if available or else set default values.
@@ -25,8 +27,9 @@ class TemplateSettings(object):
                 else:
                     self._set_default()
             except Exception as ex:
-                if Parent is not None:
-                    helpers.log(Parent, "Failed to load setting: " + str(ex))
+                helpers.get_logger().exception(
+                    "Failed to load setting: " + str(ex)
+                )
                 self._set_default()
 
     def reload(self, jsondata):
@@ -34,6 +37,10 @@ class TemplateSettings(object):
         Reload settings from Chatbot user interface by given json data.
         """
         self.__dict__ = json.loads(jsondata, encoding="utf-8")
+
+        if TemplateSettings._reload_callback is not None:
+            # pylint:disable=not-callable
+            TemplateSettings._reload_callback(self)
 
     def save(self, settingsfile):
         """
@@ -50,6 +57,14 @@ class TemplateSettings(object):
             )
             f.write(content)
 
+    @classmethod
+    def set_reload_callback(cls, reload_callback):
+        """
+        Allows to set callback on settings reload event.
+        Callback should accept single parameter — current settings class. 
+        """
+        cls._reload_callback = reload_callback
+
     def _set_default(self):
         # Setup group.
         self.Command = config.Command
@@ -60,3 +75,6 @@ class TemplateSettings(object):
         self.Permission = config.Permission
         self.PermissionDeniedMessage = config.PermissionDeniedMessage
         self.PermissionInfo = config.PermissionInfo
+
+        # Debugging group.
+        self.LoggingLevel = config.LoggingLevel

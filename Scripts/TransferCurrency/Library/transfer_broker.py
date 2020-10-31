@@ -5,12 +5,13 @@ import transfer_helpers as helpers
 
 class TransferBroker(object):
 
-    def __init__(self, Parent, settings):
+    def __init__(self, Parent, settings, logger):
         self.Parent = Parent
         self.settings = settings
+        self.logger = logger
 
     def _log(self, message):
-        helpers.log(self.Parent, message)
+        self.logger.info(message)
 
     def try_send_transfer(self, userid, targetid, currency_name, amount):
         if targetid in self.Parent.GetViewerList():

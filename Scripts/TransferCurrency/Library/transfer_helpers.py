@@ -11,6 +11,7 @@ from datetime import datetime
 from shutil import copyfile
 
 import transfer_config as config  # pylint:disable=import-error
+from transfer_log_wrapper import TransferLoggerFactory as LoggerFactory
 
 
 def get_current_day_formatted_date():
@@ -33,8 +34,9 @@ def log_all_variables_of_video_object(Parent, video_object):
     """
     Helper class to log all variables of last stream object (debugging).
     """
+    logger = get_logger()
     for attributes in video_object:
-        log(Parent, attributes)
+        logger.debug(attributes)
 
 
 def get_attribute_by_video_list_id(Parent, attribute, list_id,
@@ -84,6 +86,7 @@ def get_video_of_video_object_storage_by_list_id(Parent, video_object_storage,
     # list.
     videos_list = parsed_data_response.get("videos")
 
+    log = get_logger()
     while (int(videos_list[list_id].get("broadcast_id")) == 1 or
            videos_list[list_id].get("status") == "recording"):
 
@@ -110,34 +113,17 @@ def get_stream_object_by_object_storage(stream_object_torage):
     parsed_data_response = json.loads(data_response)  # dict.
     return parsed_data_response.get("stream")
 
-
-def log(Parent, message):
+def init_logging(Parent, settings):
     """
-    Log helper (for logging into Script Logs of the Chatbot).
-    Note that you need to pass the "Parent" object and use the normal
-    "Parent.Log" function if you want to log something inside of a module.
+    Initializes logging for script.
     """
-    Parent.Log(config.ScriptName, str(message))
+    LoggerFactory.init_logging(Parent, settings)
 
-
-def backup_data_file():
+def get_logger():
     """
-    Backups the data file in the "archive" folder with current date and
-    timestamp for ease of use.
+    Retrive actual logger or NullLogger if logging is not initialized.
     """
-    if os.path.isfile(config.ScoreDataFilepath):
-        if not os.path.isdir(config.ScoreDataBackupPath):
-            os.makedirs(config.ScoreDataBackupPath)
-
-        dst_filename = (
-            config.ScoreDataBackupFilePrefix +
-            str(get_current_day_formatted_date()) +
-            "_" +
-            str(int(time.time())) +
-            ".json"
-        )
-        dst_filepath = os.path.join(config.ScoreDataBackupPath, dst_filename)
-        copyfile(config.ScoreDataFilepath, dst_filepath)
+    return LoggerFactory.get_logger()
 
 
 def get_json(filename, work_dir=None):

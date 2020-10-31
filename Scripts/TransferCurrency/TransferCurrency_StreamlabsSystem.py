@@ -68,7 +68,8 @@ def Init():
     SettingsFile = os.path.join(ScriptDir, SettingsDirName, SettingsFileName)
     ScriptSettings = TransferSettings(Parent, SettingsFile)
 
-    Log("Script successfully initialized.")
+    helpers.init_logging(Parent, ScriptSettings)
+    Logger().info("Script successfully initialized.")
 
 
 def Execute(data):
@@ -122,11 +123,13 @@ def ReloadSettings(jsonData):
     """
     # Execute json reloading here.
     try:
-        ScriptSettings.reload()
+        ScriptSettings.reload(jsonData)
         ScriptSettings.save(SettingsFile)
-        Log("Settings reloaded.")
+        Logger().info("Settings reloaded.")
     except Exception as ex:
-        Log("Failed to save or reload settings to file: " + str(ex))
+        Logger().exception(
+            "Failed to save or reload settings to file: " + str(ex)
+        )
 
 
 def Unload():
@@ -134,7 +137,7 @@ def Unload():
     [Optional] Unload (called when a user reloads their scripts or closes the
     bot/cleanup stuff).
     """
-    Log("Script unloaded.")
+    Logger().info("Script unloaded.")
 
 
 def ScriptToggled(state):
@@ -150,13 +153,8 @@ def ScriptToggled(state):
 #############################################
 
 
-def Log(message):
-    """
-    Log helper (for logging into Script Logs of the Chatbot).
-    Note that you need to pass the "Parent" object and use the normal
-    "Parent.Log" function if you want to log something inside of a module.
-    """
-    helpers.log(Parent, str(message))
+def Logger():
+    return helpers.get_logger()
 
 
 def HandleNoPermission(required_permission, command):
@@ -164,7 +162,7 @@ def HandleNoPermission(required_permission, command):
         str(ScriptSettings.PermissionDeniedMessage)
         .format(required_permission, command)
     )
-    Log(message)
+    Logger().info(message)
     Parent.SendTwitchMessage(message)
 
 
@@ -176,8 +174,8 @@ def ProcessGiveCommand(data):
         targetid = data.GetParam(1)
         amount = data.GetParam(2)
         currency_name = Parent.GetCurrencyName()
- 
-        broker = TransferBroker(Parent, ScriptSettings)
+
+        broker = TransferBroker(Parent, ScriptSettings, Logger())
         broker.try_send_transfer(userid, targetid, currency_name, amount)
     except Exception as ex:
-        Log("Failed to transfer currency: " + str(ex))
+        Logger().exception("Failed to transfer currency: " + str(ex))

@@ -53,7 +53,6 @@ def Init():
     """
     [Required] Initialize Data (Only called on load).
     """
-
     # Create Settings Directory.
     directory = os.path.join(ScriptDir, SettingsDirName)
     if not os.path.exists(directory):
@@ -66,7 +65,8 @@ def Init():
     ScriptSettings = TemplateSettings(Parent, SettingsFile)
     ScriptSettings.Response = "Overwritten pong! ^_^"
 
-    Log("Script successfully initialized.")
+    helpers.init_logging(Parent, ScriptSettings)
+    Logger().info("Script successfully initialized.")
 
 
 def Execute(data):
@@ -122,12 +122,16 @@ def Tick():
 
 def Parse(parseString, userid, username, targetid, targetname, message):
     """
-    [Optional] Parse method (Allows you to create your own custom
-    $parameters).
+    [Optional] Parse method (Allows you to create your own custom $parameters).
+    Here"s where the magic happens, all the strings are sent and processed
+    through this function.
+
+    Parent.FUNCTION allows to use functions of the Chatbot and other outside
+    APIs (see: https://github.com/AnkhHeart/Streamlabs-Chatbot-Python-Boilerplate/wiki/Parent).
     """
     if "$myparameter" in parseString:
         return parseString.replace("$myparameter", "I am a cat!")
-    
+
     return parseString
 
 
@@ -138,17 +142,19 @@ def ReloadSettings(jsonData):
     """
     # Execute json reloading here.
     try:
-        ScriptSettings.reload()
+        ScriptSettings.reload(jsonData)
         ScriptSettings.save(SettingsFile)
     except Exception as ex:
-        Log("Failed to save or reload settings to file: " + str(ex))
+        Logger().exception(
+            "Failed to save or reload settings to file: " + str(ex)
+        )
 
 def Unload():
     """
     [Optional] Unload (Called when a user reloads their scripts or closes
     the bot/cleanup stuff).
     """
-    Log("Script unloaded.")
+    Logger().info("Script unloaded.")
 
 
 def ScriptToggled(state):
@@ -164,13 +170,8 @@ def ScriptToggled(state):
 #############################################
 
 
-def Log(message):
-    """
-    Log helper (for logging into Script Logs of the Chatbot).
-    Note that you need to pass the "Parent" object and use the normal
-    "Parent.Log" function if you want to log something inside of a module.
-    """
-    helpers.log(Parent, str(message))
+def Logger():
+    return helpers.get_logger()
 
 
 def HandleNoPermission(required_permission, command):
@@ -178,5 +179,5 @@ def HandleNoPermission(required_permission, command):
         str(ScriptSettings.PermissionDeniedMessage)
         .format(required_permission, command)
     )
-    Log(message)
+    Logger().info(message)
     Parent.SendTwitchMessage(message)
