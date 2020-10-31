@@ -113,11 +113,13 @@ def get_stream_object_by_object_storage(stream_object_torage):
     parsed_data_response = json.loads(data_response)  # dict.
     return parsed_data_response.get("stream")
 
+
 def init_logging(Parent, settings):
     """
     Initializes logging for script.
     """
     LoggerFactory.init_logging(Parent, settings)
+
 
 def get_logger():
     """
@@ -134,8 +136,8 @@ def get_json(filename, work_dir=None):
     if work_dir is not None:
         path = os.path.join(work_dir, filename)
 
-    with codecs.open(path, encoding="utf-8-sig") as file:
-        result = json.load(file, encoding="utf-8-sig")
+    with codecs.open(path, encoding="utf-8") as file:
+        result = json.load(file, encoding="utf-8")
     return result
 
 
@@ -147,8 +149,8 @@ def create_json(filename, work_dir=None):
     if work_dir is not None:
         path = os.path.join(work_dir, filename)
 
-    with codecs.open(path, "w", encoding="utf-8-sig") as file:
-        json.dump({}, file, encoding="utf-8-sig")
+    with codecs.open(path, "w", encoding="utf-8") as file:
+        json.dump({}, file, encoding="utf-8")
 
 
 def save_json(dictionary, filename, work_dir=None):
@@ -159,9 +161,9 @@ def save_json(dictionary, filename, work_dir=None):
     if work_dir is not None:
         path = os.path.join(work_dir, filename)
 
-    with codecs.open(path, "w", encoding="utf-8-sig") as file:
+    with codecs.open(path, "w", encoding="utf-8") as file:
         json.dump(
-            dictionary, file, encoding="utf-8-sig",
+            dictionary, file, encoding="utf-8",
             sort_keys=True, indent=4
         )
 

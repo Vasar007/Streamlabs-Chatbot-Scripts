@@ -100,7 +100,7 @@ def Execute(data):
             HandleNoPermission(required_permission, command)
             return
 
-        Parent.BroadcastWsEvent("EVENT_MINE","{'show':false}")
+        Parent.BroadcastWsEvent("EVENT_MINE", "{'show':false}")
         # Send your message to chat.
         Parent.SendStreamMessage(ScriptSettings.Response)
         # Put the command on cooldown.
@@ -148,6 +148,7 @@ def ReloadSettings(jsonData):
         Logger().exception(
             "Failed to save or reload settings to file: " + str(ex)
         )
+
 
 def Unload():
     """

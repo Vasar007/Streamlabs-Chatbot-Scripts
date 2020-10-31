@@ -61,7 +61,7 @@ class Score(object):
             message = (
                 "Failed to update score: invalid player ID " + str(player_id)
             )
-            self._logger.info(message)
+            self._logger.error(message)
 
     def _update_player_score(self, player, new_score):
         player.update(new_score)

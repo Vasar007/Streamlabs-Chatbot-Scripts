@@ -98,8 +98,15 @@ def Execute(data):
 
     # Check if it is invalid command call.
     if parsed_command.is_invalid_command_call():
+        # If user doesn't have permission, write about it at first.
+        if not parsed_command.has_func():
+            HandleNoPermission(
+                parsed_command.required_permission, parsed_command.command
+            )
+            return
+
         message = (
-            ScriptSettings.InvalidCommandCall
+            ScriptSettings.InvalidCommandCallMessage
             .format(parsed_command.command)
         )
         Parent.SendStreamMessage(message)
@@ -184,6 +191,7 @@ def HandleNoPermission(required_permission, command):
     Parent.SendTwitchMessage(message)
 
 
+# TODO: create score manager to reduce logic complexity.
 def TryProcessCommand(command, data):
     func = None
     required_permission = None
@@ -249,13 +257,22 @@ def GetFuncToProcessIfHasPermission(process_command, userid,
 def ProcessGetCommand(score_storage, data):
     try:
         if not score_storage:
-            Parent.SendStreamMessage("No score found.")
+            message = ScriptSettings.NoScoreFoundMessage
+            Logger().debug(message)
+            Parent.SendStreamMessage(message)
         else:
             current_score = score_storage[0]
             if current_score is None:
-                Parent.SendStreamMessage("No score found.")
+                message = ScriptSettings.NoScoreFoundMessage
+                Logger().debug(message)
+                Parent.SendStreamMessage(message)
             else:
-                Parent.SendStreamMessage("Current score " + str(current_score))
+                message = (
+                    ScriptSettings.CurrentScoreMessage
+                    .format(current_score)
+                )
+                Logger().debug(message)
+                Parent.SendStreamMessage(message)
 
         return score_storage
     except Exception as ex:
@@ -272,20 +289,27 @@ def ProcessNewCommand(score_storage, data):
 
         if not score_storage:
             score_storage = {0: new_score}
-            Parent.SendStreamMessage("Created new score: " + str(new_score))
+
+            message = ScriptSettings.CreatedScoreMessage.format(new_score)
+            Logger().info(message)
+            Parent.SendStreamMessage(message)
         else:
             current_score = score_storage[0]
             if current_score is None:
                 score_storage[0] = new_score
-                Parent.SendStreamMessage(
-                    "Created new score: " + str(new_score)
-                )
+
+                message = ScriptSettings.CreatedScoreMessage.format(new_score)
+                Logger().info(message)
+                Parent.SendStreamMessage(message)
             else:
                 score_storage[0] = new_score
-                Parent.SendStreamMessage(
-                    "Score has created already, created the new one: " +
-                    str(new_score)
+
+                message = (
+                    ScriptSettings.RecreatedScoreMessage
+                    .format(new_score)
                 )
+                Logger().info(message)
+                Parent.SendStreamMessage(message)
 
         return score_storage
     except Exception as ex:
@@ -297,32 +321,46 @@ def ProcessUpdateCommand(score_storage, data):
     # Command PlayerId NewValue
     try:
         if not score_storage:
-            Parent.SendStreamMessage("No score found, nothing to update.")
+            message = ScriptSettings.NothingToUpdateMessage
+            Logger().info(message)
+            Parent.SendStreamMessage(message)
         else:
             current_score = score_storage[0]
             if current_score is None:
-                Parent.SendStreamMessage("No score found, nothing to update.")
+                message = ScriptSettings.NothingToUpdateMessage
+                Logger().info(message)
+                Parent.SendStreamMessage(message)
             else:
                 raw_player_id = data.GetParam(1)
                 player_id = helpers.safe_cast(raw_player_id, int)
                 if player_id is None:
-                    Logger().error(
-                        "Failed to update score: invalid player ID " +
-                        str(raw_player_id)
+                    message = (
+                        ScriptSettings.InvalidPlayerIdMessage
+                        .format(raw_player_id)
                     )
+                    Logger().error(message)
+                    Parent.SendStreamMessage(message)
+                    return score_storage
 
                 raw_new_score = data.GetParam(2)
                 new_score = helpers.safe_cast(raw_new_score, int)
                 if new_score is None:
-                    Logger().error(
-                        "Failed to update score: invalid score value " +
-                        str(raw_new_score)
+                    message = (
+                        ScriptSettings.InvalidScoreValueMessage
+                        .format(raw_new_score)
                     )
+                    Logger().error(message)
+                    Parent.SendStreamMessage(message)
+                    return score_storage
 
                 current_score.update_by_string(player_id, new_score)
-                Parent.SendStreamMessage(
-                    "Updated score: " + str(current_score)
+
+                message = (
+                    ScriptSettings.UpdatedScoreMessage
+                    .format(current_score)
                 )
+                Logger().info(message)
+                Parent.SendStreamMessage(message)
 
         return score_storage
     except Exception as ex:
@@ -332,16 +370,23 @@ def ProcessUpdateCommand(score_storage, data):
 def ProcessResetCommand(score_storage, data):
     try:
         if not score_storage:
-            Parent.SendStreamMessage("No score found, nothing to reset.")
+            message = ScriptSettings.NothingToResetMessage
+            Logger().info(message)
+            Parent.SendStreamMessage(message)
         else:
             current_score = score_storage[0]
             if current_score is None:
-                Parent.SendStreamMessage("No score found, nothing to reset.")
+                message = ScriptSettings.NothingToResetMessage
+                Logger().info(message)
+                Parent.SendStreamMessage(message)
             else:
                 current_score.reset()
-                Parent.SendStreamMessage(
-                    "Resetted score: " + str(current_score)
+
+                message = (
+                    ScriptSettings.ResetScoreMessage.format(current_score)
                 )
+                Logger().info(message)
+                Parent.SendStreamMessage(message)
 
         return score_storage
     except Exception as ex:

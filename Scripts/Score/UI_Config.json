@@ -29,6 +29,13 @@
         "tooltip": "The command to reset current score.",
         "group": "Setup"
     },
+    "CommandReloadScore": {
+        "type": "textbox",
+        "value": "!reload_score",
+        "label": "Reload Command (Not implemented)",
+        "tooltip": "The command to reload current score from local file. (Not implemented)",
+        "group": "Setup"
+    },
 
     "PermissionOnGet": {
         "type": "dropdown",
@@ -61,11 +68,81 @@
         "group": "Permission"
     },
 
-    "InvalidCommandCall": {
+    "InvalidCommandCallMessage": {
         "type": "textbox",
         "value": "Invalid {0} command call.",
-        "label": "No Target Message",
+        "label": "Invalid Command Call Message",
         "tooltip": "Chat message will be sent if user calls a command with invalid parameters. 0 — command.",
+        "group": "Chat Messages"
+    },
+    "NoScoreFoundMessage": {
+        "type": "textbox",
+        "value": "No score found.",
+        "label": "No Score Found Message",
+        "tooltip": "Chat message will be sent if user tries to get score which is not created.",
+        "group": "Chat Messages"
+    },
+    "CurrentScoreMessage": {
+        "type": "textbox",
+        "value": "Current score {0}",
+        "label": "Current Score Message",
+        "tooltip": "Chat message will be sent if user calls a Get Score command. 0 — current score.",
+        "group": "Chat Messages"
+    },
+    "CreatedScoreMessage": {
+        "type": "textbox",
+        "value": "Created new score: {0}",
+        "label": "Created Score Message",
+        "tooltip": "Chat message will be sent when new score has been created (using New Score command). 0 — created score.",
+        "group": "Chat Messages"
+    },
+    "RecreatedScoreMessage": {
+        "type": "textbox",
+        "value": "Score has created already, created the new one: {0}",
+        "label": "Recreated Score Message",
+        "tooltip": "Chat message will be sent when existing score has been recreated (using New Score command). 0 — created score.",
+        "group": "Chat Messages"
+    },
+    "NothingToUpdateMessage": {
+        "type": "textbox",
+        "value": "No score found, nothing to update.",
+        "label": "Nothing To Update Message",
+        "tooltip": "Chat message will be sent if user tries to update nonexistent score (using Update Score command).",
+        "group": "Chat Messages"
+    },
+    "InvalidPlayerIdMessage": {
+        "type": "textbox",
+        "value": "Failed to update score: invalid player ID {0}",
+        "label": "Invalid Player ID Message",
+        "tooltip": "Chat message will be sent if user calls an Update Score command with invalid player ID. 0 — invalid player ID.",
+        "group": "Chat Messages"
+    },
+    "InvalidScoreValueMessage": {
+        "type": "textbox",
+        "value": "Failed to update score: invalid score value {0}",
+        "label": "Invalid Score Value Message",
+        "tooltip": "Chat message will be sent if user calls an Update Score command with invalid score value. 0 — invalid score value.",
+        "group": "Chat Messages"
+    },
+    "UpdatedScoreMessage": {
+        "type": "textbox",
+        "value": "Updated score: {0}",
+        "label": "Updated Score Message",
+        "tooltip": "Chat message will be sent when score has been updated (using Update Score command). 0 — updated score.",
+        "group": "Chat Messages"
+    },
+    "NothingToResetMessage": {
+        "type": "textbox",
+        "value": "No score found, nothing to reset.",
+        "label": "Nothing To Reset Message",
+        "tooltip": "Chat message will be sent if user tries to reset nonexistent score (using Reset Score command).",
+        "group": "Chat Messages"
+    },
+    "ResetScoreMessage": {
+        "type": "textbox",
+        "value": "Reset score: {0}",
+        "label": "Reset Score Message",
+        "tooltip": "Chat message will be sent when score has been reset (using Reset Score command). 0 — reset score.",
         "group": "Chat Messages"
     },
 

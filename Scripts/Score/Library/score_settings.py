@@ -21,7 +21,7 @@ class ScoreSettings(object):
         else:
             try:
                 if os.path.isfile(settingsfile):
-                    with codecs.open(settingsfile, encoding="utf-8-sig",
+                    with codecs.open(settingsfile, encoding="utf-8",
                                      mode="r") as f:
                         self.__dict__ = json.load(f, encoding="utf-8")
                 else:
@@ -49,7 +49,7 @@ class ScoreSettings(object):
         helpers.save_json(self.__dict__, settingsfile)
 
         with codecs.open(settingsfile.replace("json", "js"),
-                         encoding="utf-8-sig", mode="w+") as f:
+                         encoding="utf-8", mode="w+") as f:
             content = (
                 "var settings = {0};".format(
                     json.dumps(self.__dict__, encoding="utf-8")
@@ -61,7 +61,7 @@ class ScoreSettings(object):
     def set_reload_callback(cls, reload_callback):
         """
         Allows to set callback on settings reload event.
-        Callback should accept single parameter — current settings class. 
+        Callback should accept single parameter — current settings class.
         """
         cls._reload_callback = reload_callback
 
@@ -80,7 +80,17 @@ class ScoreSettings(object):
         self.PermissionInfo = config.PermissionInfo
 
         # Chat Messages group.
-        self.InvalidCommandCall = config.InvalidCommandCall
+        self.InvalidCommandCallMessage = config.InvalidCommandCallMessage
+        self.NoScoreFoundMessage = config.NoScoreFoundMessage
+        self.CurrentScoreMessage = config.CurrentScoreMessage
+        self.CreatedScoreMessage = config.CreatedScoreMessage
+        self.RecreatedScoreMessage = config.RecreatedScoreMessage
+        self.NothingToUpdateMessage = config.NothingToUpdateMessage
+        self.InvalidPlayerIdMessage = config.InvalidPlayerIdMessage
+        self.InvalidScoreValueMessage = config.InvalidScoreValueMessage
+        self.UpdatedScoreMessage = config.UpdatedScoreMessage
+        self.NothingToResetMessage = config.NothingToResetMessage
+        self.ResetScoreMessage = config.ResetScoreMessage
 
         # Debugging group.
         self.LoggingLevel = config.LoggingLevel

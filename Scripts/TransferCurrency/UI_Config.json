@@ -49,8 +49,8 @@
     "InvalidAmountMessage": {
         "type": "textbox",
         "value": "Sorry {0}, {1} isn't a valid amount.",
-        "label": "Not Enough Funds Message",
-        "tooltip": "Chat message will be sent if user doesn't have enough funds. 0 — user, 1 — amount.",
+        "label": "Invalid Amount Message",
+        "tooltip": "Chat message will be sent if user specify invalid amount to transfer. 0 — user, 1 — amount.",
         "group": "Chat Messages"
     },
     "NoTargetMessage": {
@@ -63,7 +63,7 @@
     "InvalidTargetMessage": {
         "type": "textbox",
         "value": "Sorry {0}, but {1} doesn't exist.",
-        "label": "No Target Message",
+        "label": "Invalid Target Message",
         "tooltip": "Chat message will be sent if user specifies an invalid target. 0 — user, 1 — target.",
         "group": "Chat Messages"
     },

@@ -43,4 +43,14 @@ PermissionDeniedMessage = (
 # This field should only be filled when using the user_specific permission.
 PermissionInfo = ""
 
-InvalidCommandCall = "Invalid {0} command call."
+InvalidCommandCallMessage = "Invalid {0} command call."
+NoScoreFoundMessage = "No score found."
+CurrentScoreMessage = "Current score {0}"
+CreatedScoreMessage = "Created new score: {0}"
+RecreatedScoreMessage = "Score has created already, created the new one: {0}"
+NothingToUpdateMessage = "No score found, nothing to update."
+InvalidPlayerIdMessage = "Failed to update score: invalid player ID {0}"
+InvalidScoreValueMessage = "Failed to update score: invalid score value {0}"
+UpdatedScoreMessage = "Updated score: {0}"
+NothingToResetMessage = "No score found, nothing to reset."
+ResetScoreMessage = "Reset score: {0}"
