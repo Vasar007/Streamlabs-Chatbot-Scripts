@@ -22,6 +22,8 @@ Script has several commands and options to use.
 Some of them you can configure though SL Chatbot UI.
 The other ones you can change directly in script directory config or script file.
 
+**Note:** prefer to reload script manually if you change any settings because SL Chatbot can skip settings reload for script sometimes!
+
 In addition, notice that all errors will be caught and logged.
 So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
 
