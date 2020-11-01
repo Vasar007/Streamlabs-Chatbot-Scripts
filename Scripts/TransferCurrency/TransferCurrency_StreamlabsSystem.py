@@ -3,11 +3,6 @@
 # Import Libraries.
 import os
 import sys
-import json
-import time
-import collections
-from pprint import pprint
-from shutil import copyfile
 
 import clr
 clr.AddReference("IronPython.SQLite.dll")
@@ -30,7 +25,7 @@ import transfer_helpers as helpers  # pylint:disable=import-error
 
 # Import Settings class.
 from transfer_settings import TransferSettings  # pylint:disable=import-error
-from transfer_broker import TransferBroker  # pylint:disable=import-error
+import transfer_broker  # pylint:disable=import-error
 
 sys.path.remove(ScriptDir)
 sys.path.remove(os.path.join(ScriptDir, LibraryDirName))
@@ -170,12 +165,9 @@ def ProcessGiveCommand(data):
     # Input example: !give Vasar 42
     # Command TargetUserNameOrId Amount
     try:
-        userid = data.User
-        targetid = data.GetParam(1)
-        amount = data.GetParam(2)
-        currency_name = Parent.GetCurrencyName()
-
-        broker = TransferBroker(Parent, ScriptSettings, Logger())
-        broker.try_send_transfer(userid, targetid, currency_name, amount)
+        request = transfer_broker.create_request_from(data, Parent)
+        transfer_broker.handle_request(
+            request, Parent, ScriptSettings, Logger()
+        )
     except Exception as ex:
         Logger().exception("Failed to transfer currency: " + str(ex))

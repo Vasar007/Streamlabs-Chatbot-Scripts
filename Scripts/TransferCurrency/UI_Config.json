@@ -67,6 +67,13 @@
         "tooltip": "Chat message will be sent if user specifies an invalid target. 0 — user, 1 — target.",
         "group": "Chat Messages"
     },
+    "TransferToYourselfMessage": {
+        "type": "textbox",
+        "value": "Sorry {0}, but you cannot transfer {1} to yourself.",
+        "label": "Transfer To Yourself Message",
+        "tooltip": "Chat message will be sent if user tries to transfer to yourself. 0 — user, 1 — currency.",
+        "group": "Chat Messages"
+    },
 
     "LoggingLevel": {
         "type": "dropdown",

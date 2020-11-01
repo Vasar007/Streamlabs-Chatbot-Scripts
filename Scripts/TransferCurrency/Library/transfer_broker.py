@@ -1,6 +1,17 @@
 # -*- coding: utf-8 -*-
 
 import transfer_helpers as helpers
+from transfer_searcher import TransferUserSearcher as UserSearcher
+
+
+class TransferRequest(object):
+
+    def __init__(self, user_id, user_name, target, currency_name, amount):
+        self.user_id = user_id
+        self.user_name = user_name
+        self.target = target
+        self.currency_name = currency_name
+        self.amount = amount
 
 
 class TransferBroker(object):
@@ -9,88 +20,127 @@ class TransferBroker(object):
         self.Parent = Parent
         self.settings = settings
         self.logger = logger
+        self.searcher = UserSearcher(Parent, logger)
 
-    def _log(self, message):
-        self.logger.info(message)
-
-    def try_send_transfer(self, userid, targetid, currency_name, amount):
-        if targetid in self.Parent.GetViewerList():
-            amount_int = helpers.safe_cast(amount, int)
-            if amount_int is None or amount_int <= 0:
-                self._handle_invalid_amount(userid, amount)
-            elif amount_int <= self.Parent.GetPoints(userid):
-                self._handle_transfer_currency(
-                    userid, targetid, currency_name, amount_int
+    def try_send_transfer(self, request):
+        target_id_and_name = self.searcher.find_user_id_and_name(
+            request.target
+        )
+        if target_id_and_name is None:
+            if not request.target:
+                self._handle_no_target(
+                    request.user_name, request.currency_name
                 )
             else:
-                self._handle_not_enough_funds(userid, currency_name)
-        else:
-            if not targetid:
-                self._handle_no_target(userid, currency_name)
-            else:
-                self._handle_no_target(userid, targetid)
+                self._handle_invalid_target(request.user_name, request.target)
+            return
 
-    def _handle_invalid_amount(self, userid, amount):
+        target_id, target_name = target_id_and_name
+        if request.user_id == target_id:
+            self._handle_target_is_sender(
+                request.user_name, request.currency_name
+            )
+            return
+
+        amount_int = helpers.safe_cast(request.amount, int)
+        if amount_int is None or amount_int <= 0:
+            self._handle_invalid_amount(request.user_name, request.amount)
+        elif amount_int <= self.Parent.GetPoints(request.user_id):
+            self._handle_transfer_currency(
+                request, target_id, target_name, amount_int
+            )
+        else:
+            self._handle_not_enough_funds(
+                request.user_name, request.currency_name
+            )
+
+    def _handle_invalid_amount(self, user_name, amount):
         message = (
             str(self.settings.InvalidAmountMessage)
-            .format(userid, amount)
+            .format(user_name, amount)
         )
-        self._log(message)
+        self.logger.info(message)
         self.Parent.SendTwitchMessage(message)
 
-    def _handle_transfer_currency(self, userid, targetid, currency_name,
+    def _handle_transfer_currency(self, request, target_id, target_name,
                                   amount_int):
-        current_user_points = self.Parent.GetPoints(userid)
-        current_target_points = self.Parent.GetPoints(targetid)
-        self._log(
+        user_id = request.user_id
+        user_name = request.user_name
+        currency_name = request.currency_name
+
+        current_user_points = self.Parent.GetPoints(request.user_id)
+        current_target_points = self.Parent.GetPoints(target_id)
+        self.logger.debug(
             "User {0} has {1} {2} before transfer"
-            .format(userid, current_user_points, currency_name)
+            .format(user_id, current_user_points, currency_name)
         )
-        self._log(
+        self.logger.debug(
             "User {0} has {1} {2} before transfer"
-            .format(targetid, current_target_points, currency_name)
+            .format(target_id, current_target_points, currency_name)
         )
 
-        self.Parent.RemovePoints(userid, amount_int)
-        self.Parent.AddPoints(targetid, amount_int)
+        self.Parent.RemovePoints(user_id, amount_int)
+        self.Parent.AddPoints(target_id, amount_int)
         message = (
             str(self.settings.SuccessfulTransferMessage)
-            .format(userid, amount_int, currency_name, targetid)
+            .format(user_name, amount_int, currency_name, target_name)
         )
-        self._log(message)
+        self.logger.info(message)
         self.Parent.SendTwitchMessage(message)
 
-        current_user_points = self.Parent.GetPoints(userid)
-        current_target_points = self.Parent.GetPoints(targetid)
-        self._log(
+        current_user_points = self.Parent.GetPoints(user_id)
+        current_target_points = self.Parent.GetPoints(target_id)
+        self.logger.debug(
             "User {0} has {1} {2} after transfer"
-            .format(userid, current_user_points, currency_name)
+            .format(user_id, current_user_points, currency_name)
         )
-        self._log(
+        self.logger.debug(
             "User {0} has {1} {2} after transfer"
-            .format(targetid, current_target_points, currency_name)
+            .format(target_id, current_target_points, currency_name)
         )
 
-    def _handle_not_enough_funds(self, userid, currency_name):
+    def _handle_not_enough_funds(self, user_name, currency_name):
         message = (
             str(self.settings.NotEnoughFundsMessage)
-            .format(userid, currency_name)
+            .format(user_name, currency_name)
         )
-        self._log(message)
+        self.logger.info(message)
         self.Parent.SendTwitchMessage(message)
 
-    def _handle_no_target(self, userid, currency_name):
+    def _handle_no_target(self, user_name, currency_name):
         message = (
             str(self.settings.NoTargetMessage)
-            .format(userid, currency_name)
+            .format(user_name, currency_name)
         )
-        self._log(message)
+        self.logger.info(message)
         self.Parent.SendTwitchMessage(message)
 
-    def _handle_invalid_target(self, userid, targetid):
+    def _handle_invalid_target(self, user_name, target):
         message = (
             str(self.settings.InvalidTargetMessage)
-            .format(userid, targetid)
+            .format(user_name, target)
         )
-        self._log(message)
+        self.logger.info(message)
         self.Parent.SendTwitchMessage(message)
+
+    def _handle_target_is_sender(self, user_name, currency_name):
+        message = (
+            str(self.settings.TransferToYourselfMessage)
+            .format(user_name, currency_name)
+        )
+        self.logger.info(message)
+        self.Parent.SendTwitchMessage(message)
+
+
+def create_request_from(data, Parent):
+    user_id = data.User
+    user_name = data.UserName
+    target = data.GetParam(1)
+    amount = data.GetParam(2)
+    currency_name = Parent.GetCurrencyName()
+    return TransferRequest(user_id, user_name, target, currency_name, amount)
+
+
+def handle_request(request, Parent, settings, logger):
+    broker = TransferBroker(Parent, settings, logger)
+    broker.try_send_transfer(request)

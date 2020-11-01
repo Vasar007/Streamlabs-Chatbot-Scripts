@@ -80,6 +80,7 @@ class TransferSettings(object):
         self.InvalidAmountMessage = config.InvalidAmountMessage
         self.NoTargetMessage = config.NoTargetMessage
         self.InvalidTargetMessage = config.InvalidTargetMessage
+        self.TransferToYourselfMessage = config.TransferToYourselfMessage
 
         # Debugging group.
         self.LoggingLevel = config.LoggingLevel

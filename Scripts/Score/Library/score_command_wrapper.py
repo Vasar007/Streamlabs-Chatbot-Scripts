@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import score_helpers as helpers
-
 
 class ScoreCommandWrapper(object):
 

@@ -3,11 +3,6 @@
 # Import Libraries.
 import os
 import sys
-import json
-import time
-import collections
-from pprint import pprint
-from shutil import copyfile
 
 import clr
 clr.AddReference("IronPython.SQLite.dll")
@@ -29,7 +24,6 @@ import score_config as config
 import score_helpers as helpers  # pylint:disable=import-error
 
 import score  # pylint:disable=import-error
-from score import Score  # pylint:disable=import-error
 # pylint:disable=import-error
 from score_command_wrapper import ScoreCommandWrapper
 
