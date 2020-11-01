@@ -8,6 +8,8 @@ Basic boilerplate script to play with.
 
 ## How to install script
 
+[Download script](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/Template.zip).
+
 See common instruction [here](../../README.md#how-to-install-any-script).
 
 ## How to use

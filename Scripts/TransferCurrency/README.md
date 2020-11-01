@@ -8,6 +8,8 @@ Transfer script allows viewers to transfer Streamlabs currency between eachother
 
 ## How to install script
 
+[Download script](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/TransferCurrency.zip).
+
 See common instruction [here](../../README.md#how-to-install-any-script).
 
 ## How to use

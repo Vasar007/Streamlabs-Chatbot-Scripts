@@ -12,6 +12,8 @@ Score script adds score counter between two opponents.
 
 ## How to install script
 
+[Download script](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/Score.zip).
+
 See common instruction [here](../../README.md#how-to-install-any-script).
 
 ## How to use
@@ -53,7 +55,7 @@ So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
 - Permissions: Moderator or higher
 - Arguments:
   - PlayerId: integer — the player ID (1 for the first player or 2 for the second player)
-  - NewValue: integer — new value to set for target player
+  - NewValue: integer — new value to set for target player (positive number)
 - Samples:
   - `!update_score 1 1`
   - `!update_score 2 5`
