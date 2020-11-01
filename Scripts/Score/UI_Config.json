@@ -70,9 +70,9 @@
 
     "InvalidCommandCallMessage": {
         "type": "textbox",
-        "value": "Invalid {0} command call.",
+        "value": "Invalid {0} command call. Usage: {1}",
         "label": "Invalid Command Call Message",
-        "tooltip": "Chat message will be sent if user calls a command with invalid parameters. 0 — command.",
+        "tooltip": "Chat message will be sent if user calls a command with invalid parameters. 0 — command, 1 — command usage example.",
         "group": "Chat Messages"
     },
     "NoScoreFoundMessage": {
@@ -112,16 +112,16 @@
     },
     "InvalidPlayerIdMessage": {
         "type": "textbox",
-        "value": "Failed to update score: invalid player ID {0}",
+        "value": "Failed to update score: invalid player ID {0}. Try value in range: {1}",
         "label": "Invalid Player ID Message",
-        "tooltip": "Chat message will be sent if user calls an Update Score command with invalid player ID. 0 — invalid player ID.",
+        "tooltip": "Chat message will be sent if user calls an Update Score command with invalid player ID. 0 — invalid player ID, 1 — valid value range.",
         "group": "Chat Messages"
     },
     "InvalidScoreValueMessage": {
         "type": "textbox",
-        "value": "Failed to update score: invalid score value {0}",
+        "value": "Failed to update score: invalid score value {0}. Try value in range: {1}",
         "label": "Invalid Score Value Message",
-        "tooltip": "Chat message will be sent if user calls an Update Score command with invalid score value. 0 — invalid score value.",
+        "tooltip": "Chat message will be sent if user calls an Update Score command with invalid score value. 0 — invalid score value, 1 — valid value range.",
         "group": "Chat Messages"
     },
     "UpdatedScoreMessage": {

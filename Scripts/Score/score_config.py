@@ -14,8 +14,13 @@ LogLevels = {
 
 LogFormat = "[%(asctime)s] %(levelname)s    %(message)s"
 LogDateFormat = "%d/%m/%Y %H:%M:%S"
-DefaultLoggingLevel = logging.INFO
 LoggingLevel = "Info"
+
+CommandNewScoreUsage = "{0} {1} {2}"
+CommandUpdateScoreUsage = "{0} {1} {2}"
+ExamplePlayerName = "[PlayerName]"
+ExamplePlayerId = "[1-2]"
+ExampleScoreValue = "[1-∞]"
 
 # [Required] Script Information.
 ScriptName = "Score Script"
@@ -43,14 +48,14 @@ PermissionDeniedMessage = (
 # This field should only be filled when using the user_specific permission.
 PermissionInfo = ""
 
-InvalidCommandCallMessage = "Invalid {0} command call."
+InvalidCommandCallMessage = "Invalid {0} command call. Usage: {1}"
 NoScoreFoundMessage = "No score found."
 CurrentScoreMessage = "Current score {0}"
 CreatedScoreMessage = "Created new score: {0}"
 RecreatedScoreMessage = "Score has created already, created the new one: {0}"
 NothingToUpdateMessage = "No score found, nothing to update."
-InvalidPlayerIdMessage = "Failed to update score: invalid player ID {0}"
-InvalidScoreValueMessage = "Failed to update score: invalid score value {0}"
+InvalidPlayerIdMessage = "Failed to update score: invalid player ID {0}. Try value in range: {1}"
+InvalidScoreValueMessage = "Failed to update score: invalid score value {0}. Try value in range: {1}"
 UpdatedScoreMessage = "Updated score: {0}"
 NothingToResetMessage = "No score found, nothing to reset."
 ResetScoreMessage = "Reset score: {0}"

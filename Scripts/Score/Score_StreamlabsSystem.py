@@ -101,7 +101,7 @@ def Execute(data):
 
         message = (
             ScriptSettings.InvalidCommandCallMessage
-            .format(parsed_command.command)
+            .format(parsed_command.command, parsed_command.usage_example)
         )
         Parent.SendStreamMessage(message)
         return
@@ -190,6 +190,7 @@ def TryProcessCommand(command, data):
     func = None
     required_permission = None
     is_valid_call = None
+    usage_example = None
 
     param_count = data.GetParamCount()
 
@@ -200,6 +201,7 @@ def TryProcessCommand(command, data):
             ProcessGetCommand, data.User, required_permission
         )
         is_valid_call = True  # Get command call will always be valid.
+        usage_example = ScriptSettings.CommandGetScore
 
     # !new_score
     elif command == ScriptSettings.CommandNewScore:
@@ -208,6 +210,14 @@ def TryProcessCommand(command, data):
             ProcessNewCommand, data.User, required_permission
         )
         is_valid_call = param_count == 3
+        usage_example = (
+            config.CommandNewScoreUsage
+            .format(
+                ScriptSettings.CommandNewScore,
+                config.ExamplePlayerName,
+                config.ExamplePlayerName
+            )
+        )
 
     # !update_score
     elif command == ScriptSettings.CommandUpdateScore:
@@ -216,6 +226,14 @@ def TryProcessCommand(command, data):
             ProcessUpdateCommand, data.User, required_permission
         )
         is_valid_call = param_count == 3
+        usage_example = (
+            config.CommandUpdateScoreUsage
+            .format(
+                ScriptSettings.CommandUpdateScore,
+                config.ExamplePlayerId,
+                config.ExampleScoreValue
+            )
+        )
 
     # !reset_score
     elif command == ScriptSettings.CommandResetScore:
@@ -224,6 +242,7 @@ def TryProcessCommand(command, data):
             ProcessResetCommand, data.User, required_permission
         )
         is_valid_call = param_count == 1
+        usage_example = ScriptSettings.CommandResetScore
 
     # !reload_score
     elif command == ScriptSettings.CommandReloadScore:
@@ -232,9 +251,10 @@ def TryProcessCommand(command, data):
             ProcessReloadCommand, data.User, required_permission
         )
         is_valid_call = param_count == 1
+        usage_example = ScriptSettings.CommandReloadScore
 
     return ScoreCommandWrapper(
-        command, func, required_permission, is_valid_call
+        command, func, required_permission, is_valid_call, usage_example
     )
 
 
@@ -327,10 +347,10 @@ def ProcessUpdateCommand(score_storage, data):
             else:
                 raw_player_id = data.GetParam(1)
                 player_id = helpers.safe_cast(raw_player_id, int)
-                if player_id is None:
+                if player_id is None or not (1 <= player_id <= 2):
                     message = (
                         ScriptSettings.InvalidPlayerIdMessage
-                        .format(raw_player_id)
+                        .format(raw_player_id, config.ExamplePlayerId)
                     )
                     Logger().error(message)
                     Parent.SendStreamMessage(message)
@@ -338,10 +358,10 @@ def ProcessUpdateCommand(score_storage, data):
 
                 raw_new_score = data.GetParam(2)
                 new_score = helpers.safe_cast(raw_new_score, int)
-                if new_score is None:
+                if new_score is None or new_score <= 0:
                     message = (
                         ScriptSettings.InvalidScoreValueMessage
-                        .format(raw_new_score)
+                        .format(raw_new_score, config.ExampleScoreValue)
                     )
                     Logger().error(message)
                     Parent.SendStreamMessage(message)

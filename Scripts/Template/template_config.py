@@ -14,7 +14,6 @@ LogLevels = {
 
 LogFormat = "[%(asctime)s] %(levelname)s    %(message)s"
 LogDateFormat = "%d/%m/%Y %H:%M:%S"
-DefaultLoggingLevel = logging.INFO
 LoggingLevel = "Info"
 
 # [Required] Script Information.

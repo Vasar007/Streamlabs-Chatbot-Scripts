@@ -3,11 +3,13 @@
 
 class ScoreCommandWrapper(object):
 
-    def __init__(self, command, func, required_permission, is_valid_call):
+    def __init__(self, command, func, required_permission, is_valid_call,
+                 usage_example):
         self.command = str(command)
         self.func = func
         self.required_permission = required_permission
         self.is_valid_call = is_valid_call
+        self.usage_example = usage_example
 
     def has_func(self):
         return self.func is not None

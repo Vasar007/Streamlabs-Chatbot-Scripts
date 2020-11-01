@@ -53,13 +53,6 @@ class TemplateLogWrapper(object):
         self.logger = None
 
     def init_logging(self):
-        # Using log level to avoid conflicts with another scripts.
-        logging.basicConfig(
-            format=config.LogFormat,
-            level=config.DefaultLoggingLevel,
-            datefmt=config.LogDateFormat
-        )
-
         log_level = config.LogLevels[self.settings.LoggingLevel]
         self.logger = logging.getLogger(config.ScriptName)
         self.logger.setLevel(log_level)
