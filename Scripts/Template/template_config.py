@@ -25,9 +25,8 @@ Version = "1.0.0.0"
 
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).
-Command = "!ping"
+CommandPing = "!ping"
 Cooldown = 4
-Response = "Pong!"
 
 # Values: everyone, moderator, subscriber, user_specific, editor.
 Permission = "everyone"
@@ -38,3 +37,6 @@ PermissionDeniedMessage = (
 
 # This field should only be filled when using the user_specific permission.
 PermissionInfo = ""
+
+InvalidCommandCallMessage = "Invalid {0} command call. Usage: {1}"
+ResponseMessage = "Pong!"

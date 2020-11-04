@@ -32,6 +32,13 @@
         "group": "Permission"
     },
 
+    "InvalidCommandCallMessage": {
+        "type": "textbox",
+        "value": "Invalid {0} command call. Usage: {1}",
+        "label": "Invalid Command Call Message",
+        "tooltip": "Chat message will be sent if user calls a command with invalid parameters. 0 — command, 1 — command usage example.",
+        "group": "Chat Messages"
+    },
     "SuccessfulTransferMessage": {
         "type": "textbox",
         "value": "{0} has successfully transferred {1} {2} to {3}.",

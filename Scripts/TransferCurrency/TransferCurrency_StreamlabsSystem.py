@@ -25,6 +25,9 @@ import transfer_helpers as helpers  # pylint:disable=import-error
 # pylint:disable=import-error
 from transfer_parent_wrapper import TransferParentWrapper as ParentWrapper
 
+# pylint:disable=import-error
+from transfer_command_wrapper import TransferCommandWrapper as CommandWrapper
+
 # Import Settings class.
 from transfer_settings import TransferSettings  # pylint:disable=import-error
 import transfer_broker  # pylint:disable=import-error
@@ -78,24 +81,47 @@ def Execute(data):
     """
     [Required] Execute Data/Process messages.
     """
-    if not data.IsChatMessage():
-        return
+    try:
+        if not data.IsChatMessage():
+            return
 
-    # Check if the propper command is used, the command is not on cooldown and
-    # the user has permission to use the command.
-    command = data.GetParam(0).lower()
+        # Check if the propper command is used, the command is not on cooldown
+        # and the user has permission to use the command.
+        command = data.GetParam(0).lower()
+        parsed_command = TryProcessCommand(command, data)
 
-    # !give
-    if command == ScriptSettings.CommandGive:
-        required_permission = ScriptSettings.Permission
-        has_permission = ParentHandler.has_permission(
-            data.User, required_permission, ScriptSettings.PermissionInfo
-        )
+        # Check if it is unknown command.
+        if parsed_command.is_unknown_command():
+            return
 
-        if has_permission:
-            ProcessGiveCommand(data)
+        # Check if it is invalid command call.
+        if parsed_command.is_invalid_command_call():
+            # If user doesn't have permission, write about it at first.
+            if not parsed_command.has_func():
+                HandleNoPermission(
+                    parsed_command.required_permission, parsed_command.command
+                )
+                return
+
+            message = (
+                ScriptSettings.InvalidCommandCallMessage
+                .format(parsed_command.command, parsed_command.usage_example)
+            )
+            Logger().debug(message)
+            ParentHandler.send_stream_message(message)
+            return
+
+        # If user doesn't have permission, "func" will be equal to "None".
+        if parsed_command.has_func():
+            parsed_command.func(data)
         else:
-            HandleNoPermission(required_permission, command)
+            HandleNoPermission(
+                parsed_command.required_permission, parsed_command.command
+            )
+    except Exception as ex:
+        Logger().exception(
+            "Failed to process message: " + str(ex)
+        )
 
 
 def Tick():
@@ -168,9 +194,48 @@ def HandleNoPermission(required_permission, command):
     ParentHandler.send_stream_message(message)
 
 
+def GetFuncToProcessIfHasPermission(process_command, user_id,
+                                    required_permission):
+    has_permission = ParentHandler.has_permission(
+        user_id,
+        required_permission,
+        ScriptSettings.PermissionInfo
+    )
+    return process_command if has_permission else None
+
+
+def TryProcessCommand(command, data):
+    func = None
+    required_permission = None
+    is_valid_call = None
+    usage_example = None
+
+    param_count = data.GetParamCount()
+
+    # !give
+    if command == ScriptSettings.CommandGive:
+        required_permission = ScriptSettings.Permission
+        func = GetFuncToProcessIfHasPermission(
+            ProcessGiveCommand, data.User, required_permission
+        )
+        is_valid_call = param_count == 3
+        usage_example = (
+            config.CommandGiveUsage
+            .format(
+                ScriptSettings.CommandGive,
+                config.ExampleUserIdOrName,
+                config.ExampleAmount
+            )
+        )
+
+    return CommandWrapper(
+        command, func, required_permission, is_valid_call, usage_example
+    )
+
+
 def ProcessGiveCommand(data):
     # Input example: !give Vasar 42
-    # Command TargetUserNameOrId Amount
+    # Command <@>TargetUserNameOrId Amount
     try:
         request = transfer_broker.create_request_from(data, ParentHandler)
         transfer_broker.handle_request(

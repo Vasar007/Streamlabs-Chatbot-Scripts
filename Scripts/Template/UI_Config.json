@@ -1,10 +1,10 @@
 {
     "output_file": "Settings/settings.json",
 
-    "Command": {
+    "CommandPing": {
         "type": "textbox",
         "value": "!ping",
-        "label": "Command",
+        "label": "Ping Command",
         "tooltip": "The command that will be responded to.",
         "group": "Setup"
     },
@@ -16,13 +16,6 @@
         "ticks": 1,
         "label": "Cooldown (seconds)",
         "tooltip": "How long the command should go on cooldown for.",
-        "group": "Setup"
-    },
-    "Response": {
-        "type": "textbox",
-        "value": "Pong!",
-        "label": "Command",
-        "tooltip": "The message that will be sent to chat when using the command.",
         "group": "Setup"
     },
 
@@ -47,6 +40,21 @@
         "label": "Info",
         "tooltip": "This field should only be filled when using the user_specific permission.",
         "group": "Permission"
+    },
+
+    "ResponseMessage": {
+        "type": "textbox",
+        "value": "Pong!",
+        "label": "Command",
+        "tooltip": "The message that will be sent to chat when using the command.",
+        "group": "Chat Messages"
+    },
+    "InvalidCommandCallMessage": {
+        "type": "textbox",
+        "value": "Invalid {0} command call. Usage: {1}",
+        "label": "Invalid Command Call Message",
+        "tooltip": "Chat message will be sent if user calls a command with invalid parameters. 0 — command, 1 — command usage example.",
+        "group": "Chat Messages"
     },
 
     "LoggingLevel": {

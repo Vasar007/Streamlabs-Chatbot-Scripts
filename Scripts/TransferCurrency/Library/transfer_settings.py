@@ -75,6 +75,7 @@ class TransferSettings(object):
         self.PermissionInfo = config.PermissionInfo
 
         # Chat Messages group.
+        self.InvalidCommandCallMessage = config.InvalidCommandCallMessage
         self.SuccessfulTransferMessage = config.SuccessfulTransferMessage
         self.NotEnoughFundsMessage = config.NotEnoughFundsMessage
         self.InvalidAmountMessage = config.InvalidAmountMessage

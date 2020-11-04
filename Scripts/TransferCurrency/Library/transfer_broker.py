@@ -135,9 +135,11 @@ class TransferBroker(object):
 def create_request_from(data, parent_wrapper):
     user_id = data.User
     user_name = data.UserName
-    target = data.GetParam(1)
+    raw_target = data.GetParam(1)
+    target = helpers.strip_at_symbol_for_name(raw_target)
     amount = data.GetParam(2)
     currency_name = parent_wrapper.get_currency_name()
+
     return TransferRequest(user_id, user_name, target, currency_name, amount)
 
 

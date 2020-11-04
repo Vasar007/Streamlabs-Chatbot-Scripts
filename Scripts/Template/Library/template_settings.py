@@ -67,14 +67,17 @@ class TemplateSettings(object):
 
     def _set_default(self):
         # Setup group.
-        self.Command = config.Command
+        self.CommandPing = config.CommandPing
         self.Cooldown = config.Cooldown
-        self.Response = config.Response
 
         # Permission group.
         self.Permission = config.Permission
         self.PermissionDeniedMessage = config.PermissionDeniedMessage
         self.PermissionInfo = config.PermissionInfo
+
+        # Chat Messages group.
+        self.InvalidCommandCallMessage = config.InvalidCommandCallMessage
+        self.ResponseMessage = config.ResponseMessage
 
         # Debugging group.
         self.LoggingLevel = config.LoggingLevel

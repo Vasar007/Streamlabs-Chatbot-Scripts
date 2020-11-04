@@ -191,3 +191,16 @@ def safe_cast(val, to_type, default=None):
         return to_type(val)
     except (ValueError, TypeError):
         return default
+
+
+def strip_at_symbol_for_name(user_name):
+    """
+    Retrieves user name without @ symbol at the beginning.
+    """
+    if not user_name:
+        return user_name
+
+    if user_name.startswith("@"):
+        return user_name[1:]
+
+    return user_name

@@ -16,6 +16,10 @@ LogFormat = "[%(asctime)s] %(levelname)s    %(message)s"
 LogDateFormat = "%d/%m/%Y %H:%M:%S"
 LoggingLevel = "Info"
 
+CommandGiveUsage = "{0} {1} {2}"
+ExampleUserIdOrName = "[UserIdOrName]"
+ExampleAmount = "[1-∞]"
+
 # [Required] Script Information.
 ScriptName = "Transfer Currency Script"
 Website = "https://github.com/Vasar007/Streamlabs-Chatbot-Scripts"
@@ -39,6 +43,7 @@ PermissionDeniedMessage = (
 # This field should only be filled when using the user_specific permission.
 PermissionInfo = ""
 
+InvalidCommandCallMessage = "Invalid {0} command call. Usage: {1}"
 SuccessfulTransferMessage = "{0} has successfully transferred {1} {2} to {3}."
 NotEnoughFundsMessage = "Sorry {0}, you don't have enough {1}."
 InvalidAmountMessage = "Sorry {0}, {1} isn't a valid amount."

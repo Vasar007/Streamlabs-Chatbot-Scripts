@@ -32,9 +32,11 @@ So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
 - Usage: !give TargetUserNameOrId Amount
 - Permissions: Everyone
 - Arguments:
-  - TargetUserNameOrId: string — the target user name or ID to transfer currency (if name will be specified, script sends additional request to find target user name)
+  - TargetUserNameOrId: string — the target user name or ID to transfer currency (if name will be specified, script sends additional request to find target user name), `@` symbol at the beginning is allowed
   - Amount: integer — currency amount to transfer (should be greater than 0)
 - Samples:
   - `!give Vasar 42`
-  - `!give Maman 999`
-  - `!give Demon 666`
+  - `!give vasar 42`
+  - `!give @Vasar 42`
+  - `!give Mark 123`
+  - `!give John 456`

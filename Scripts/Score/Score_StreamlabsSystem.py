@@ -27,7 +27,7 @@ from score_parent_wrapper import ScoreParentWrapper as ParentWrapper
 
 import score  # pylint:disable=import-error
 # pylint:disable=import-error
-from score_command_wrapper import ScoreCommandWrapper
+from score_command_wrapper import ScoreCommandWrapper as CommandWrapper
 from score_manager import ScoreManager  # pylint:disable=import-error
 
 # Import Settings class.
@@ -87,40 +87,46 @@ def Execute(data):
     """
     [Required] Execute Data/Process messages.
     """
-    if not data.IsChatMessage():
-        return
+    try:
+        if not data.IsChatMessage():
+            return
 
-    # Check if the propper command is used, the command is not on cooldown and
-    # the user has permission to use the command.
-    command = data.GetParam(0).lower()
-    parsed_command = TryProcessCommand(command, data)
+        # Check if the propper command is used, the command is not on cooldown
+        # and the user has permission to use the command.
+        command = data.GetParam(0).lower()
+        parsed_command = TryProcessCommand(command, data)
 
-    # Check if it is unknown command.
-    if parsed_command.is_unknown_command():
-        return
+        # Check if it is unknown command.
+        if parsed_command.is_unknown_command():
+            return
 
-    # Check if it is invalid command call.
-    if parsed_command.is_invalid_command_call():
-        # If user doesn't have permission, write about it at first.
-        if not parsed_command.has_func():
+        # Check if it is invalid command call.
+        if parsed_command.is_invalid_command_call():
+            # If user doesn't have permission, write about it at first.
+            if not parsed_command.has_func():
+                HandleNoPermission(
+                    parsed_command.required_permission, parsed_command.command
+                )
+                return
+
+            message = (
+                ScriptSettings.InvalidCommandCallMessage
+                .format(parsed_command.command, parsed_command.usage_example)
+            )
+            Logger().debug(message)
+            ParentHandler.send_stream_message(message)
+            return
+
+        # If user doesn't have permission, "func" will be equal to "None".
+        if parsed_command.has_func():
+            parsed_command.func(Manager, data)
+        else:
             HandleNoPermission(
                 parsed_command.required_permission, parsed_command.command
             )
-            return
-
-        message = (
-            ScriptSettings.InvalidCommandCallMessage
-            .format(parsed_command.command, parsed_command.usage_example)
-        )
-        ParentHandler.send_stream_message(message)
-        return
-
-    # If user doesn't have permission, "func" will be equal to "None".
-    if parsed_command.has_func():
-        parsed_command.func(Manager, data)
-    else:
-        HandleNoPermission(
-            parsed_command.required_permission, parsed_command.command
+    except Exception as ex:
+        Logger().exception(
+            "Failed to process message: " + str(ex)
         )
 
 
@@ -194,6 +200,16 @@ def HandleNoPermission(required_permission, command):
     ParentHandler.send_stream_message(message)
 
 
+def GetFuncToProcessIfHasPermission(process_command, user_id,
+                                    required_permission):
+    has_permission = ParentHandler.has_permission(
+        user_id,
+        required_permission,
+        ScriptSettings.PermissionInfo
+    )
+    return process_command if has_permission else None
+
+
 def TryProcessCommand(command, data):
     func = None
     required_permission = None
@@ -261,19 +277,9 @@ def TryProcessCommand(command, data):
         is_valid_call = param_count == 1
         usage_example = ScriptSettings.CommandDeleteScore
 
-    return ScoreCommandWrapper(
+    return CommandWrapper(
         command, func, required_permission, is_valid_call, usage_example
     )
-
-
-def GetFuncToProcessIfHasPermission(process_command, user_id,
-                                    required_permission):
-    has_permission = ParentHandler.has_permission(
-        user_id,
-        required_permission,
-        ScriptSettings.PermissionInfo
-    )
-    return process_command if has_permission else None
 
 
 def HandleResult(score_handler, to_debug=False):
@@ -290,10 +296,10 @@ def HandleResult(score_handler, to_debug=False):
 
 def ProcessGetCommand(manager, data):
     # Input example: !score
-    # Command
+    # Command <Anything>
     try:
         score_handler = manager.get_score()
-        HandleResult(score_handler)
+        HandleResult(score_handler, to_debug=True)
     except Exception as ex:
         Logger().exception("Failed to get score: " + str(ex))
 

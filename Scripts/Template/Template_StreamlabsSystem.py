@@ -26,6 +26,9 @@ import template_helpers as helpers  # pylint:disable=import-error
 # pylint:disable=import-error
 from template_parent_wrapper import TemplateParentWrapper as ParentWrapper
 
+# pylint:disable=import-error
+from template_command_wrapper import TemplateCommandWrapper as CommandWrapper
+
 # Import your Settings class.
 from template_settings import TemplateSettings  # pylint:disable=import-error
 
@@ -79,42 +82,46 @@ def Execute(data):
     """
     [Required] Execute Data/Process messages.
     """
-    command = data.GetParam(0).lower()
-    if not data.IsChatMessage():
-        return
-
-    if command != ScriptSettings.Command:
-        return
-
-    is_on_user_cooldown = ParentHandler.is_on_user_cooldown(
-        ScriptName, ScriptSettings.Command, data.User
-    )
-
-    # Check if the propper command is used, the command is not on cooldown
-    # and the user has permission to use the command.
-    if is_on_user_cooldown:
-        cooldown = ParentHandler.get_user_cooldown_duration(
-            ScriptName, ScriptSettings.Command, data.User
-        )
-        ParentHandler.send_stream_message("Time Remaining " + str(cooldown))
-    else:
-        required_permission = ScriptSettings.Permission
-        has_permission = ParentHandler.has_permission(
-            data.User, required_permission, ScriptSettings.PermissionInfo
-        )
-        if not has_permission:
-            HandleNoPermission(required_permission, command)
+    try:
+        if not data.IsChatMessage():
             return
 
-        ParentHandler.broadcast_ws_event("EVENT_MINE", "{'show':false}")
-        # Send your message to chat.
-        ParentHandler.send_stream_message(ScriptSettings.Response)
-        # Put the command on cooldown.
-        ParentHandler.add_user_cooldown(
-            ScriptName,
-            ScriptSettings.Command,
-            data.User,
-            ScriptSettings.Cooldown
+        # Check if the propper command is used, the command is not on cooldown
+        # and the user has permission to use the command.
+        command = data.GetParam(0).lower()
+        parsed_command = TryProcessCommand(command, data)
+
+        # Check if it is unknown command.
+        if parsed_command.is_unknown_command():
+            return
+
+        # Check if it is invalid command call.
+        if parsed_command.is_invalid_command_call():
+            # If user doesn't have permission, write about it at first.
+            if not parsed_command.has_func():
+                HandleNoPermission(
+                    parsed_command.required_permission, parsed_command.command
+                )
+                return
+
+            message = (
+                ScriptSettings.InvalidCommandCallMessage
+                .format(parsed_command.command, parsed_command.usage_example)
+            )
+            Logger().debug(message)
+            ParentHandler.send_stream_message(message)
+            return
+
+        # If user doesn't have permission, "func" will be equal to "None".
+        if parsed_command.has_func():
+            parsed_command.func(data)
+        else:
+            HandleNoPermission(
+                parsed_command.required_permission, parsed_command.command
+            )
+    except Exception as ex:
+        Logger().exception(
+            "Failed to process message: " + str(ex)
         )
 
 
@@ -188,3 +195,58 @@ def HandleNoPermission(required_permission, command):
     )
     Logger().info(message)
     ParentHandler.send_stream_message(message)
+
+
+def GetFuncToProcessIfHasPermission(process_command, user_id,
+                                    required_permission):
+    has_permission = ParentHandler.has_permission(
+        user_id,
+        required_permission,
+        ScriptSettings.PermissionInfo
+    )
+    return process_command if has_permission else None
+
+
+def TryProcessCommand(command, data):
+    func = None
+    required_permission = None
+    is_valid_call = None
+    usage_example = None
+
+    # !ping
+    if command == ScriptSettings.CommandPing:
+        required_permission = ScriptSettings.Permission
+        func = GetFuncToProcessIfHasPermission(
+            ProcessPingCommand, data.User, required_permission
+        )
+        is_valid_call = True  # Ping command call will always be valid.
+        usage_example = ScriptSettings.CommandPing
+
+    return CommandWrapper(
+        command, func, required_permission, is_valid_call, usage_example
+    )
+
+
+def ProcessPingCommand(data):
+    # Input example: !ping
+    # Command <Anything>
+    is_on_user_cooldown = ParentHandler.is_on_user_cooldown(
+        ScriptName, ScriptSettings.CommandPing, data.User
+    )
+
+    if is_on_user_cooldown:
+        cooldown = ParentHandler.get_user_cooldown_duration(
+            ScriptName, ScriptSettings.CommandPing, data.User
+        )
+        ParentHandler.send_stream_message("Time Remaining " + str(cooldown))
+    else:
+        ParentHandler.broadcast_ws_event("EVENT_MINE", "{'show':false}")
+        # Send your message to chat.
+        ParentHandler.send_stream_message(ScriptSettings.Response)
+        # Put the command on cooldown.
+        ParentHandler.add_user_cooldown(
+            ScriptName,
+            ScriptSettings.CommandPing,
+            data.User,
+            ScriptSettings.Cooldown
+        )
