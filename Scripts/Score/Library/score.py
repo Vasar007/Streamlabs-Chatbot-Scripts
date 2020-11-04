@@ -8,32 +8,38 @@ default_player_name = "Player"
 
 class PlayerScore(object):
 
-    def __init__(self, name, initial_score=0):
+    def __init__(self, name, initial_value=0):
         self.name = str(name) if name else default_player_name
-        self.score = initial_score if initial_score >= 0 else 0
+        self.value = initial_value if initial_value >= 0 else 0
 
     def reset(self, initial_value=0):
         self.update(initial_value)
 
     def increment(self, value=1):
-        self.update(self.score + value)
+        self.update(self.value + value)
 
     def decrement(self, value=1):
-        self.update(self.score - value)
+        self.update(self.value - value)
 
     def update(self, value):
         if value < 0:
             raise ValueError("Invalid score value: " + str(value))
 
-        self.score = value
+        self.value = value
 
-    def to_forward_string(self, space_number=1):
+    def to_forward_string(self, space_number=1, include_value=True):
         spaces = " " * space_number
-        return self.name + spaces + str(self.score)
+        if include_value:
+            return self.name + spaces + str(self.value)
 
-    def to_reversed_string(self, space_number=1):
+        return self.name + spaces
+
+    def to_reversed_string(self, space_number=1, include_value=True):
         spaces = " " * space_number
-        return str(self.score) + spaces + self.name
+        if include_value:
+            return str(self.value) + spaces + self.name
+
+        return spaces + self.name
 
     def __str__(self):
         return self.to_forward_string()
@@ -70,6 +76,15 @@ class Score(object):
             ", new score " + str(new_score)
         )
         self._logger.info(message)
+
+    def to_display_string(self, space_number=1, separator_text="vs."):
+        player1_string = self.player1.to_forward_string(
+            self.space_number, space_number, include_value=False
+        )
+        player2_string = self.player2.to_reversed_string(
+            self.space_number, space_number, include_value=False
+        )
+        return player1_string + separator_text + player2_string
 
     def __str__(self):
         return (

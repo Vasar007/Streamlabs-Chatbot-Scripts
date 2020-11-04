@@ -35,7 +35,7 @@ CommandGetScore = "!score"
 CommandNewScore = "!new_score"
 CommandUpdateScore = "!update_score"
 CommandResetScore = "!reset_score"
-CommandReloadScore = "!reload_score"
+CommandDeleteScore = "!delete_score"
 
 # Values: everyone, moderator, subscriber, user_specific, editor.
 PermissionOnGet = "everyone"
@@ -59,3 +59,5 @@ InvalidScoreValueMessage = "Failed to update score: invalid score value {0}. Try
 UpdatedScoreMessage = "Updated score: {0}"
 NothingToResetMessage = "No score found, nothing to reset."
 ResetScoreMessage = "Reset score: {0}"
+NothingToDeleteMessage = "No score found, nothing to delete."
+DeletedScoreMessage = "Deleted score: {0}"

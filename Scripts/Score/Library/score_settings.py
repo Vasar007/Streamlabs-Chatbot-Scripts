@@ -71,7 +71,7 @@ class ScoreSettings(object):
         self.CommandNewScore = config.CommandNewScore
         self.CommandUpdateScore = config.CommandUpdateScore
         self.CommandResetScore = config.CommandResetScore
-        self.CommandReloadScore = config.CommandReloadScore
+        self.CommandDeleteScore = config.CommandDeleteScore
 
         # Permission group.
         self.PermissionOnGet = config.PermissionOnGet
@@ -91,6 +91,8 @@ class ScoreSettings(object):
         self.UpdatedScoreMessage = config.UpdatedScoreMessage
         self.NothingToResetMessage = config.NothingToResetMessage
         self.ResetScoreMessage = config.ResetScoreMessage
+        self.NothingToDeleteMessage = config.NothingToDeleteMessage
+        self.DeletedScoreMessage = config.DeletedScoreMessage
 
         # Debugging group.
         self.LoggingLevel = config.LoggingLevel

@@ -26,6 +26,7 @@ import score_helpers as helpers  # pylint:disable=import-error
 import score  # pylint:disable=import-error
 # pylint:disable=import-error
 from score_command_wrapper import ScoreCommandWrapper
+from score_manager import ScoreManager  # pylint:disable=import-error
 
 # Import Settings class.
 from score_settings import ScoreSettings  # pylint:disable=import-error
@@ -40,7 +41,6 @@ if False:  # pylint: disable=using-constant-test
 # pylint: enable=invalid-name
 
 # [Required] Script Information (must be existing in this main file).
-# TODO: Some stuff from here should be moved to a GUI settings file later.
 ScriptName = config.ScriptName
 Website = config.Website
 Description = config.Description
@@ -50,7 +50,7 @@ Version = config.Version
 # Define Global Variables.
 SettingsFile = ""
 ScriptSettings = ScoreSettings()
-ScoreStorage = {0: None}  # Player1 1:0 Player2
+Manager = None  # Score manager instance.
 
 
 def Init():
@@ -68,6 +68,10 @@ def Init():
     SettingsFile = os.path.join(ScriptDir, SettingsDirName, SettingsFileName)
     ScriptSettings = ScoreSettings(Parent, SettingsFile)
 
+    # Initialize global variables.
+    global Manager
+    Manager = ScoreManager(ScriptSettings)
+
     helpers.init_logging(Parent, ScriptSettings)
     Logger().info("Script successfully initialized.")
 
@@ -78,8 +82,6 @@ def Execute(data):
     """
     if not data.IsChatMessage():
         return
-
-    global ScoreStorage
 
     # Check if the propper command is used, the command is not on cooldown and
     # the user has permission to use the command.
@@ -108,7 +110,7 @@ def Execute(data):
 
     # If user doesn't have permission, "func" will be equal to "None".
     if parsed_command.has_func():
-        ScoreStorage = parsed_command.func(ScoreStorage, data)
+        parsed_command.func(Manager, data)
     else:
         HandleNoPermission(
             parsed_command.required_permission, parsed_command.command
@@ -185,7 +187,6 @@ def HandleNoPermission(required_permission, command):
     Parent.SendTwitchMessage(message)
 
 
-# TODO: create score manager to reduce logic complexity.
 def TryProcessCommand(command, data):
     func = None
     required_permission = None
@@ -244,14 +245,14 @@ def TryProcessCommand(command, data):
         is_valid_call = param_count == 1
         usage_example = ScriptSettings.CommandResetScore
 
-    # !reload_score
-    elif command == ScriptSettings.CommandReloadScore:
+    # !delete_score
+    elif command == ScriptSettings.CommandDeleteScore:
         required_permission = ScriptSettings.PermissionOnEdit
         func = GetFuncToProcessIfHasPermission(
             ProcessReloadCommand, data.User, required_permission
         )
         is_valid_call = param_count == 1
-        usage_example = ScriptSettings.CommandReloadScore
+        usage_example = ScriptSettings.CommandDeleteScore
 
     return ScoreCommandWrapper(
         command, func, required_permission, is_valid_call, usage_example
@@ -268,150 +269,69 @@ def GetFuncToProcessIfHasPermission(process_command, userid,
     return process_command if has_permissions else None
 
 
-def ProcessGetCommand(score_storage, data):
-    try:
-        if not score_storage:
-            message = ScriptSettings.NoScoreFoundMessage
-            Logger().debug(message)
-            Parent.SendStreamMessage(message)
+def HandleResult(score_handler, to_debug=False):
+    if score_handler.is_valid:
+        if to_debug:
+            Logger().debug(score_handler.message)
         else:
-            current_score = score_storage[0]
-            if current_score is None:
-                message = ScriptSettings.NoScoreFoundMessage
-                Logger().debug(message)
-                Parent.SendStreamMessage(message)
-            else:
-                message = (
-                    ScriptSettings.CurrentScoreMessage
-                    .format(current_score)
-                )
-                Logger().debug(message)
-                Parent.SendStreamMessage(message)
+            Logger().info(score_handler.message)
+    else:
+        Logger().error(score_handler.message)
 
-        return score_storage
+    Parent.SendStreamMessage(score_handler.message)
+
+
+def ProcessGetCommand(manager, data):
+    # Input example: !score
+    # Command
+    try:
+        score_handler = manager.get_score()
+        HandleResult(score_handler)
     except Exception as ex:
         Logger().exception("Failed to get score: " + str(ex))
 
 
-def ProcessNewCommand(score_storage, data):
+def ProcessNewCommand(manager, data):
     # Input example: !new_score Player1 Player2
     # Command Player1Name Player2Name
     try:
-        new_score = score.create_score_from_string(
-            data.GetParam(1), data.GetParam(2)
-        )
+        player1_name = data.GetParam(1)
+        player2_name = data.GetParam(2)
 
-        if not score_storage:
-            score_storage = {0: new_score}
-
-            message = ScriptSettings.CreatedScoreMessage.format(new_score)
-            Logger().info(message)
-            Parent.SendStreamMessage(message)
-        else:
-            current_score = score_storage[0]
-            if current_score is None:
-                score_storage[0] = new_score
-
-                message = ScriptSettings.CreatedScoreMessage.format(new_score)
-                Logger().info(message)
-                Parent.SendStreamMessage(message)
-            else:
-                score_storage[0] = new_score
-
-                message = (
-                    ScriptSettings.RecreatedScoreMessage
-                    .format(new_score)
-                )
-                Logger().info(message)
-                Parent.SendStreamMessage(message)
-
-        return score_storage
+        score_handler = manager.create_score(player1_name, player2_name)
+        HandleResult(score_handler)
     except Exception as ex:
         Logger().exception("Failed to create score: " + str(ex))
 
 
-def ProcessUpdateCommand(score_storage, data):
+def ProcessUpdateCommand(manager, data):
     # Input example: !update_score 1 1
     # Command PlayerId NewValue
     try:
-        if not score_storage:
-            message = ScriptSettings.NothingToUpdateMessage
-            Logger().info(message)
-            Parent.SendStreamMessage(message)
-        else:
-            current_score = score_storage[0]
-            if current_score is None:
-                message = ScriptSettings.NothingToUpdateMessage
-                Logger().info(message)
-                Parent.SendStreamMessage(message)
-            else:
-                raw_player_id = data.GetParam(1)
-                player_id = helpers.safe_cast(raw_player_id, int)
-                if player_id is None or not (1 <= player_id <= 2):
-                    message = (
-                        ScriptSettings.InvalidPlayerIdMessage
-                        .format(raw_player_id, config.ExamplePlayerId)
-                    )
-                    Logger().error(message)
-                    Parent.SendStreamMessage(message)
-                    return score_storage
+        raw_player_id = data.GetParam(1)
+        raw_new_score = data.GetParam(2)
 
-                raw_new_score = data.GetParam(2)
-                new_score = helpers.safe_cast(raw_new_score, int)
-                if new_score is None or new_score <= 0:
-                    message = (
-                        ScriptSettings.InvalidScoreValueMessage
-                        .format(raw_new_score, config.ExampleScoreValue)
-                    )
-                    Logger().error(message)
-                    Parent.SendStreamMessage(message)
-                    return score_storage
-
-                current_score.update_by_string(player_id, new_score)
-
-                message = (
-                    ScriptSettings.UpdatedScoreMessage
-                    .format(current_score)
-                )
-                Logger().info(message)
-                Parent.SendStreamMessage(message)
-
-        return score_storage
+        score_handler = manager.update_score(raw_player_id, raw_new_score)
+        HandleResult(score_handler)
     except Exception as ex:
         Logger().excpetion("Failed to update score: " + str(ex))
 
 
-def ProcessResetCommand(score_storage, data):
+def ProcessResetCommand(manager, data):
+    # Input example: !reset_score
+    # Command
     try:
-        if not score_storage:
-            message = ScriptSettings.NothingToResetMessage
-            Logger().info(message)
-            Parent.SendStreamMessage(message)
-        else:
-            current_score = score_storage[0]
-            if current_score is None:
-                message = ScriptSettings.NothingToResetMessage
-                Logger().info(message)
-                Parent.SendStreamMessage(message)
-            else:
-                current_score.reset()
-
-                message = (
-                    ScriptSettings.ResetScoreMessage.format(current_score)
-                )
-                Logger().info(message)
-                Parent.SendStreamMessage(message)
-
-        return score_storage
+        score_handler = manager.reset_score()
+        HandleResult(score_handler)
     except Exception as ex:
         Logger().exception("Failed to reset score: " + str(ex))
 
 
-def ProcessReloadCommand(score_storage, data):
+def ProcessReloadCommand(manager, data):
+    # Input example: !delete_score
+    # Command
     try:
-        # TODO: implement reload command.
-        Logger().error("Reload score command is not implemented.")
-
-        return score_storage
+        score_handler = manager.delete_score()
+        HandleResult(score_handler)
     except Exception as ex:
-        Logger().exception("Failed to reload score: " + str(ex))
+        Logger().exception("Failed to delete score: " + str(ex))
