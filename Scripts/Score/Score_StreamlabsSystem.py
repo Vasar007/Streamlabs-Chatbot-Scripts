@@ -22,6 +22,8 @@ sys.path.append(os.path.join(ScriptDir, LibraryDirName))
 
 import score_config as config
 import score_helpers as helpers  # pylint:disable=import-error
+# pylint:disable=import-error
+from score_parent_wrapper import ScoreParentWrapper as ParentWrapper
 
 import score  # pylint:disable=import-error
 # pylint:disable=import-error
@@ -48,6 +50,7 @@ Creator = config.Creator
 Version = config.Version
 
 # Define Global Variables.
+ParentHandler = None  # Parent wrapper instance.
 SettingsFile = ""
 ScriptSettings = ScoreSettings()
 Manager = None  # Score manager instance.
@@ -62,17 +65,21 @@ def Init():
     if not os.path.exists(directory):
         os.makedirs(directory)
 
+    # Initialize Parent object wrapper.
+    global ParentHandler
+    ParentHandler = ParentWrapper(Parent)
+
     # Load settings.
     global SettingsFile
     global ScriptSettings
     SettingsFile = os.path.join(ScriptDir, SettingsDirName, SettingsFileName)
-    ScriptSettings = ScoreSettings(Parent, SettingsFile)
+    ScriptSettings = ScoreSettings(SettingsFile)
 
     # Initialize global variables.
     global Manager
     Manager = ScoreManager(ScriptSettings)
 
-    helpers.init_logging(Parent, ScriptSettings)
+    helpers.init_logging(ParentHandler, ScriptSettings)
     Logger().info("Script successfully initialized.")
 
 
@@ -105,7 +112,7 @@ def Execute(data):
             ScriptSettings.InvalidCommandCallMessage
             .format(parsed_command.command, parsed_command.usage_example)
         )
-        Parent.SendStreamMessage(message)
+        ParentHandler.send_stream_message(message)
         return
 
     # If user doesn't have permission, "func" will be equal to "None".
@@ -184,7 +191,7 @@ def HandleNoPermission(required_permission, command):
         .format(required_permission, command)
     )
     Logger().info(message)
-    Parent.SendTwitchMessage(message)
+    ParentHandler.send_stream_message(message)
 
 
 def TryProcessCommand(command, data):
@@ -259,14 +266,14 @@ def TryProcessCommand(command, data):
     )
 
 
-def GetFuncToProcessIfHasPermission(process_command, userid,
+def GetFuncToProcessIfHasPermission(process_command, user_id,
                                     required_permission):
-    has_permissions = Parent.HasPermission(
-        userid,
+    has_permission = ParentHandler.has_permission(
+        user_id,
         required_permission,
         ScriptSettings.PermissionInfo
     )
-    return process_command if has_permissions else None
+    return process_command if has_permission else None
 
 
 def HandleResult(score_handler, to_debug=False):
@@ -278,7 +285,7 @@ def HandleResult(score_handler, to_debug=False):
     else:
         Logger().error(score_handler.message)
 
-    Parent.SendStreamMessage(score_handler.message)
+    ParentHandler.send_stream_message(score_handler.message)
 
 
 def ProcessGetCommand(manager, data):

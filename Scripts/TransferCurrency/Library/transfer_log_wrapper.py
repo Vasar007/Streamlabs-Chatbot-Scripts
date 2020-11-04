@@ -7,10 +7,10 @@ import transfer_config as config  # pylint:disable=import-error
 
 class TransferScriptLogHandler(logging.Handler):
 
-    def __init__(self, Parent, settings):
+    def __init__(self, parent_wrapper, settings):
         super(TransferScriptLogHandler, self).__init__()
 
-        self.Parent = Parent
+        self.parent_wrapper = parent_wrapper
         self.settings = settings
         # Setup handler for logging.
         # Should be called only at the end of ctor.
@@ -18,7 +18,7 @@ class TransferScriptLogHandler(logging.Handler):
 
     def emit(self, record):
         log_entry = self.format(record)
-        self.Parent.Log(config.ScriptName, str(log_entry))
+        self.parent_wrapper.log(config.ScriptName, str(log_entry))
 
     def _setup_logging(self):
         reload_callback = lambda settings: self._on_settings_reload(settings)
@@ -47,8 +47,8 @@ class TransferLogWrapper(object):
     "Parent.Log" function if you want to log something inside of a module.
     """
 
-    def __init__(self, Parent, settings):
-        self.Parent = Parent
+    def __init__(self, parent_wrapper, settings):
+        self.parent_wrapper = parent_wrapper
         self.settings = settings
         self.logger = None
 
@@ -56,7 +56,7 @@ class TransferLogWrapper(object):
         log_level = config.LogLevels[self.settings.LoggingLevel]
         self.logger = logging.getLogger(config.ScriptName)
         self.logger.setLevel(log_level)
-        handler = TransferScriptLogHandler(self.Parent, self.settings)
+        handler = TransferScriptLogHandler(self.parent_wrapper, self.settings)
         self.logger.addHandler(handler)
 
 
@@ -65,11 +65,11 @@ class TransferLoggerFactory(object):
     Initialized = False
 
     @classmethod
-    def init_logging(cls, Parent, settings):
+    def init_logging(cls, parent_wrapper, settings):
         """
         Initializes logging.
         """
-        wrapper = TransferLogWrapper(Parent, settings)
+        wrapper = TransferLogWrapper(parent_wrapper, settings)
         wrapper.init_logging()
         cls.Initialized = True
 

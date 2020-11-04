@@ -23,7 +23,7 @@ Description = (
     "Allows viewers to transfer Streamlabs currency between eachother."
 )
 Creator = "Vasar007"
-Version = "0.0.3.0"
+Version = "0.1.0.0"
 
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).

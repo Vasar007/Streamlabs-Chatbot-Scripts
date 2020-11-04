@@ -23,6 +23,8 @@ sys.path.append(os.path.join(ScriptDir, LibraryDirName))
 
 import template_config as config
 import template_helpers as helpers  # pylint:disable=import-error
+# pylint:disable=import-error
+from template_parent_wrapper import TemplateParentWrapper as ParentWrapper
 
 # Import your Settings class.
 from template_settings import TemplateSettings  # pylint:disable=import-error
@@ -44,6 +46,7 @@ Creator = config.Creator
 Version = config.Version
 
 # Define Global Variables.
+ParentHandler = None  # Parent wrapper instance.
 SettingsFile = ""
 ScriptSettings = TemplateSettings()
 
@@ -57,14 +60,18 @@ def Init():
     if not os.path.exists(directory):
         os.makedirs(directory)
 
+    # Initialize Parent object wrapper.
+    global ParentHandler
+    ParentHandler = ParentWrapper(Parent)
+
     # Load settings.
     global SettingsFile
     global ScriptSettings
     SettingsFile = os.path.join(ScriptDir, SettingsDirName, SettingsFileName)
-    ScriptSettings = TemplateSettings(Parent, SettingsFile)
+    ScriptSettings = TemplateSettings(SettingsFile)
     ScriptSettings.Response = "Overwritten pong! ^_^"
 
-    helpers.init_logging(Parent, ScriptSettings)
+    helpers.init_logging(ParentHandler, ScriptSettings)
     Logger().info("Script successfully initialized.")
 
 
@@ -79,31 +86,31 @@ def Execute(data):
     if command != ScriptSettings.Command:
         return
 
-    is_on_user_cooldown = Parent.IsOnUserCooldown(
+    is_on_user_cooldown = ParentHandler.is_on_user_cooldown(
         ScriptName, ScriptSettings.Command, data.User
     )
 
     # Check if the propper command is used, the command is not on cooldown
     # and the user has permission to use the command.
     if is_on_user_cooldown:
-        cooldown = Parent.GetUserCooldownDuration(
+        cooldown = ParentHandler.get_user_cooldown_duration(
             ScriptName, ScriptSettings.Command, data.User
         )
-        Parent.SendStreamMessage("Time Remaining " + str(cooldown))
+        ParentHandler.send_stream_message("Time Remaining " + str(cooldown))
     else:
         required_permission = ScriptSettings.Permission
-        has_permission = Parent.HasPermission(
+        has_permission = ParentHandler.has_permission(
             data.User, required_permission, ScriptSettings.PermissionInfo
         )
         if not has_permission:
             HandleNoPermission(required_permission, command)
             return
 
-        Parent.BroadcastWsEvent("EVENT_MINE", "{'show':false}")
+        ParentHandler.broadcast_ws_event("EVENT_MINE", "{'show':false}")
         # Send your message to chat.
-        Parent.SendStreamMessage(ScriptSettings.Response)
+        ParentHandler.send_stream_message(ScriptSettings.Response)
         # Put the command on cooldown.
-        Parent.AddUserCooldown(
+        ParentHandler.add_user_cooldown(
             ScriptName,
             ScriptSettings.Command,
             data.User,
@@ -180,4 +187,4 @@ def HandleNoPermission(required_permission, command):
         .format(required_permission, command)
     )
     Logger().info(message)
-    Parent.SendTwitchMessage(message)
+    ParentHandler.send_stream_message(message)

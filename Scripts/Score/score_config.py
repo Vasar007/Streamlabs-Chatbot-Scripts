@@ -27,7 +27,7 @@ ScriptName = "Score Script"
 Website = "https://github.com/Vasar007/Streamlabs-Chatbot-Scripts"
 Description = "Adds an opportunity to create and update score"
 Creator = "Vasar007"
-Version = "0.1.0.0"
+Version = "0.6.0.0"
 
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).

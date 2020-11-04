@@ -3,8 +3,8 @@
 
 class TransferUserSearcher(object):
 
-    def __init__(self, Parent, logger):
-        self.Parent = Parent
+    def __init__(self, parent_wrapper, logger):
+        self.parent_wrapper = parent_wrapper
         self.logger = logger
 
     def find_user_id_and_name(self, user_id_or_name):
@@ -19,8 +19,10 @@ class TransferUserSearcher(object):
         )
 
         # Retrive viewers data.
-        viewer_list = self.Parent.GetViewerList()  # list.
-        viewer_names = self.Parent.GetDisplayNames(viewer_list)  # dict.
+        # List<string userid>
+        viewer_list = self.parent_wrapper.get_viewer_list()
+        # PythonDictionary<string userid, string username>.
+        viewer_names = self.parent_wrapper.get_display_names(viewer_list)
 
         # Try to find target user by original parameter.
         supposed_name = viewer_names.get(user_id_or_name)

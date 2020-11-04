@@ -16,11 +16,11 @@ class TransferRequest(object):
 
 class TransferBroker(object):
 
-    def __init__(self, Parent, settings, logger):
-        self.Parent = Parent
+    def __init__(self, parent_wrapper, settings, logger):
+        self.parent_wrapper = parent_wrapper
         self.settings = settings
         self.logger = logger
-        self.searcher = UserSearcher(Parent, logger)
+        self.searcher = UserSearcher(parent_wrapper, logger)
 
     def try_send_transfer(self, request):
         target_id_and_name = self.searcher.find_user_id_and_name(
@@ -45,7 +45,7 @@ class TransferBroker(object):
         amount_int = helpers.safe_cast(request.amount, int)
         if amount_int is None or amount_int <= 0:
             self._handle_invalid_amount(request.user_name, request.amount)
-        elif amount_int <= self.Parent.GetPoints(request.user_id):
+        elif amount_int <= self.parent_wrapper.get_points(request.user_id):
             self._handle_transfer_currency(
                 request, target_id, target_name, amount_int
             )
@@ -60,7 +60,7 @@ class TransferBroker(object):
             .format(user_name, amount)
         )
         self.logger.info(message)
-        self.Parent.SendTwitchMessage(message)
+        self.parent_wrapper.send_stream_message(message)
 
     def _handle_transfer_currency(self, request, target_id, target_name,
                                   amount_int):
@@ -68,8 +68,8 @@ class TransferBroker(object):
         user_name = request.user_name
         currency_name = request.currency_name
 
-        current_user_points = self.Parent.GetPoints(request.user_id)
-        current_target_points = self.Parent.GetPoints(target_id)
+        current_user_points = self.parent_wrapper.get_points(request.user_id)
+        current_target_points = self.parent_wrapper.get_points(target_id)
         self.logger.debug(
             "User {0} has {1} {2} before transfer"
             .format(user_id, current_user_points, currency_name)
@@ -79,17 +79,17 @@ class TransferBroker(object):
             .format(target_id, current_target_points, currency_name)
         )
 
-        self.Parent.RemovePoints(user_id, amount_int)
-        self.Parent.AddPoints(target_id, amount_int)
+        self.parent_wrapper.remove_points(user_id, amount_int)
+        self.parent_wrapper.add_points(target_id, amount_int)
         message = (
             str(self.settings.SuccessfulTransferMessage)
             .format(user_name, amount_int, currency_name, target_name)
         )
         self.logger.info(message)
-        self.Parent.SendTwitchMessage(message)
+        self.parent_wrapper.send_stream_message(message)
 
-        current_user_points = self.Parent.GetPoints(user_id)
-        current_target_points = self.Parent.GetPoints(target_id)
+        current_user_points = self.parent_wrapper.get_points(user_id)
+        current_target_points = self.parent_wrapper.get_points(target_id)
         self.logger.debug(
             "User {0} has {1} {2} after transfer"
             .format(user_id, current_user_points, currency_name)
@@ -105,7 +105,7 @@ class TransferBroker(object):
             .format(user_name, currency_name)
         )
         self.logger.info(message)
-        self.Parent.SendTwitchMessage(message)
+        self.parent_wrapper.send_stream_message(message)
 
     def _handle_no_target(self, user_name, currency_name):
         message = (
@@ -113,7 +113,7 @@ class TransferBroker(object):
             .format(user_name, currency_name)
         )
         self.logger.info(message)
-        self.Parent.SendTwitchMessage(message)
+        self.parent_wrapper.send_stream_message(message)
 
     def _handle_invalid_target(self, user_name, target):
         message = (
@@ -121,7 +121,7 @@ class TransferBroker(object):
             .format(user_name, target)
         )
         self.logger.info(message)
-        self.Parent.SendTwitchMessage(message)
+        self.parent_wrapper.send_stream_message(message)
 
     def _handle_target_is_sender(self, user_name, currency_name):
         message = (
@@ -129,18 +129,18 @@ class TransferBroker(object):
             .format(user_name, currency_name)
         )
         self.logger.info(message)
-        self.Parent.SendTwitchMessage(message)
+        self.parent_wrapper.send_stream_message(message)
 
 
-def create_request_from(data, Parent):
+def create_request_from(data, parent_wrapper):
     user_id = data.User
     user_name = data.UserName
     target = data.GetParam(1)
     amount = data.GetParam(2)
-    currency_name = Parent.GetCurrencyName()
+    currency_name = parent_wrapper.get_currency_name()
     return TransferRequest(user_id, user_name, target, currency_name, amount)
 
 
-def handle_request(request, Parent, settings, logger):
-    broker = TransferBroker(Parent, settings, logger)
+def handle_request(request, parent_wrapper, settings, logger):
+    broker = TransferBroker(parent_wrapper, settings, logger)
     broker.try_send_transfer(request)

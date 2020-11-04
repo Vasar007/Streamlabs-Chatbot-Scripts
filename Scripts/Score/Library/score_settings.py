@@ -12,7 +12,7 @@ class ScoreSettings(object):
 
     _reload_callback = None
 
-    def __init__(self, Parent=None, settingsfile=None):
+    def __init__(self, settingsfile=None):
         """
         Load in saved settings file if available or else set default values.
         """

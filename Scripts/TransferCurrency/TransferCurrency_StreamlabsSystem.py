@@ -22,6 +22,8 @@ sys.path.append(os.path.join(ScriptDir, LibraryDirName))
 
 import transfer_config as config
 import transfer_helpers as helpers  # pylint:disable=import-error
+# pylint:disable=import-error
+from transfer_parent_wrapper import TransferParentWrapper as ParentWrapper
 
 # Import Settings class.
 from transfer_settings import TransferSettings  # pylint:disable=import-error
@@ -44,6 +46,7 @@ Creator = config.Creator
 Version = config.Version
 
 # Define Global Variables.
+ParentHandler = None  # Parent wrapper instance.
 SettingsFile = ""
 ScriptSettings = TransferSettings()
 
@@ -57,13 +60,17 @@ def Init():
     if not os.path.exists(directory):
         os.makedirs(directory)
 
+    # Initialize Parent object wrapper.
+    global ParentHandler
+    ParentHandler = ParentWrapper(Parent)
+
     # Load settings.
     global SettingsFile
     global ScriptSettings
     SettingsFile = os.path.join(ScriptDir, SettingsDirName, SettingsFileName)
-    ScriptSettings = TransferSettings(Parent, SettingsFile)
+    ScriptSettings = TransferSettings(SettingsFile)
 
-    helpers.init_logging(Parent, ScriptSettings)
+    helpers.init_logging(ParentHandler, ScriptSettings)
     Logger().info("Script successfully initialized.")
 
 
@@ -81,11 +88,11 @@ def Execute(data):
     # !give
     if command == ScriptSettings.CommandGive:
         required_permission = ScriptSettings.Permission
-        has_permissions = Parent.HasPermission(
+        has_permission = ParentHandler.has_permission(
             data.User, required_permission, ScriptSettings.PermissionInfo
         )
 
-        if has_permissions:
+        if has_permission:
             ProcessGiveCommand(data)
         else:
             HandleNoPermission(required_permission, command)
@@ -158,16 +165,16 @@ def HandleNoPermission(required_permission, command):
         .format(required_permission, command)
     )
     Logger().info(message)
-    Parent.SendTwitchMessage(message)
+    ParentHandler.send_stream_message(message)
 
 
 def ProcessGiveCommand(data):
     # Input example: !give Vasar 42
     # Command TargetUserNameOrId Amount
     try:
-        request = transfer_broker.create_request_from(data, Parent)
+        request = transfer_broker.create_request_from(data, ParentHandler)
         transfer_broker.handle_request(
-            request, Parent, ScriptSettings, Logger()
+            request, ParentHandler, ScriptSettings, Logger()
         )
     except Exception as ex:
         Logger().exception("Failed to transfer currency: " + str(ex))

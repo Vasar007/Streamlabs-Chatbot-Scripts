@@ -22,15 +22,15 @@ def get_current_day_formatted_date():
     return datetime.fromtimestamp(current_timestamp).strftime('%Y-%m-%d')
 
 
-def get_twitch_api_response(Parent, url):
+def get_twitch_api_response(parent_wrapper, url):
     """
     Returns the response from api request.
     """
     headers = {"Accept": "application/vnd.twitchtv.v5+json"}
-    return Parent.GetRequest(url, headers)
+    return parent_wrapper.get_request(url, headers)
 
 
-def log_all_variables_of_video_object(Parent, video_object):
+def log_all_variables_of_video_object(parent_wrapper, video_object):
     """
     Helper class to log all variables of last stream object (debugging).
     """
@@ -39,28 +39,28 @@ def log_all_variables_of_video_object(Parent, video_object):
         logger.debug(attributes)
 
 
-def get_attribute_by_video_list_id(Parent, attribute, list_id,
+def get_attribute_by_video_list_id(parent_wrapper, attribute, list_id,
                                    api_url_last_stream, api_video_limit):
     """
     Gets stream id of given stream by list id (offset to the current stream).
     """
     last_videos_object_storage = get_twitch_api_response(
-        Parent, api_url_last_stream
+        parent_wrapper, api_url_last_stream
     )
 
     last_video_object = get_video_of_video_object_storage_by_list_id(
-        Parent, last_videos_object_storage, list_id, api_video_limit
+        parent_wrapper, last_videos_object_storage, list_id, api_video_limit
     )
 
     return last_video_object.get(str(attribute))
 
 
-def get_current_stream_id(Parent, api, api_url_current_stream):
+def get_current_stream_id(parent_wrapper, api, api_url_current_stream):
     """
     Gets stream id of current stream for channel.
     """
     current_stream_object_storage = get_twitch_api_response(
-        Parent, api_url_current_stream
+        parent_wrapper, api_url_current_stream
     )
 
     current_stream_object = get_stream_object_by_object_storage(
@@ -70,7 +70,8 @@ def get_current_stream_id(Parent, api, api_url_current_stream):
     return current_stream_object.get("_id")
 
 
-def get_video_of_video_object_storage_by_list_id(Parent, video_object_storage,
+def get_video_of_video_object_storage_by_list_id(parent_wrapper,
+                                                 video_object_storage,
                                                  list_id, api_video_limit):
     """
     hint: listId 0 = current stream.
@@ -95,7 +96,7 @@ def get_video_of_video_object_storage_by_list_id(Parent, video_object_storage,
                 "Failed to find valid stream object in list of " +
                 "defined last videos of channel."
             )
-            log(Parent, message)
+            log.debug(message)
             break
 
         list_id += 1
@@ -114,11 +115,11 @@ def get_stream_object_by_object_storage(stream_object_torage):
     return parsed_data_response.get("stream")
 
 
-def init_logging(Parent, settings):
+def init_logging(parent_wrapper, settings):
     """
     Initializes logging for script.
     """
-    LoggerFactory.init_logging(Parent, settings)
+    LoggerFactory.init_logging(parent_wrapper, settings)
 
 
 def get_logger():
