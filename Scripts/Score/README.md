@@ -8,7 +8,7 @@ Score script adds score counter between two opponents.
 - Update score with value.
 - Reset score.
 - Retrieve current score.
-- **(Not implemented)** Backup and reload score from local data.
+- Delete current score.
 
 ## How to install script
 
@@ -69,11 +69,9 @@ So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
 - Usage: !reset_score
 - Permissions: Moderator or higher
 
-### !reload_score
+### !delete_score
 
-**This command is not implemented now.**
-
-- Label: None (not presented in UI config)
-- Description: The command to reload current score
-- Usage: !reload_score
+- Label: Delete Command
+- Description: The command to delete current score
+- Usage: !delete_score
 - Permissions: Moderator or higher

@@ -11,6 +11,10 @@ This repository contains some useful Streamlabs Chatbot (SL Chatbot) scripts.
 ## How to install any script
 
 1. Download and install [Python 2.7.13 x86](https://www.python.org/ftp/python/2.7.13/python-2.7.13.msi) (x86 recommend by SL Chatbot team). Then go to "Scripts" -> "Settings" and specify Python directory.
+
+   **Note:** you should specify not Python installation directory itself but `Lib` folder into it:
+
+   ![Script Settings Tab](Media/Images/Script_Settings_Tab.png "Script Settings Tab")
 2. Download repository. You can download target script from [Releases](Releases) or with download links. In that case, go to the step 4.
 3. Go to the target script directory (starting from the root where SCRIPT_StreamlabsSystem is located).
    Example: `Streamlabs-Chatbot-Scripts/Scripts/Score`

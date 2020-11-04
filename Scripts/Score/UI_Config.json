@@ -32,7 +32,7 @@
     "CommandDeleteScore": {
         "type": "textbox",
         "value": "!delete_score",
-        "label": "Remove Command",
+        "label": "Delete Command",
         "tooltip": "The command to delete current score.",
         "group": "Setup"
     },
@@ -93,21 +93,21 @@
         "type": "textbox",
         "value": "Created new score: {0}",
         "label": "Created Score Message",
-        "tooltip": "Chat message will be sent when new score has been created (using New Score command). 0 — created score.",
+        "tooltip": "Chat message will be sent when new score has been created (using New Command). 0 — created score.",
         "group": "Chat Messages"
     },
     "RecreatedScoreMessage": {
         "type": "textbox",
         "value": "Score has created already, created the new one: {0}",
         "label": "Recreated Score Message",
-        "tooltip": "Chat message will be sent when existing score has been recreated (using New Score command). 0 — created score.",
+        "tooltip": "Chat message will be sent when existing score has been recreated (using New Command). 0 — created score.",
         "group": "Chat Messages"
     },
     "NothingToUpdateMessage": {
         "type": "textbox",
         "value": "No score found, nothing to update.",
         "label": "Nothing To Update Message",
-        "tooltip": "Chat message will be sent if user tries to update nonexistent score (using Update Score command).",
+        "tooltip": "Chat message will be sent if user tries to update nonexistent score (using Update Command).",
         "group": "Chat Messages"
     },
     "InvalidPlayerIdMessage": {
@@ -128,35 +128,35 @@
         "type": "textbox",
         "value": "Updated score: {0}",
         "label": "Updated Score Message",
-        "tooltip": "Chat message will be sent when score has been updated (using Update Score command). 0 — updated score.",
+        "tooltip": "Chat message will be sent when score has been updated (using Update Command). 0 — updated score.",
         "group": "Chat Messages"
     },
     "NothingToResetMessage": {
         "type": "textbox",
         "value": "No score found, nothing to reset.",
         "label": "Nothing To Reset Message",
-        "tooltip": "Chat message will be sent if user tries to reset nonexistent score (using Reset Score command).",
+        "tooltip": "Chat message will be sent if user tries to reset nonexistent score (using Reset Command).",
         "group": "Chat Messages"
     },
     "ResetScoreMessage": {
         "type": "textbox",
         "value": "Reset score: {0}",
         "label": "Reset Score Message",
-        "tooltip": "Chat message will be sent when score has been reset (using Reset Score command). 0 — reset score.",
+        "tooltip": "Chat message will be sent when score has been reset (using Reset Command). 0 — reset score.",
         "group": "Chat Messages"
     },
     "NothingToDeleteMessage": {
         "type": "textbox",
         "value": "No score found, nothing to delete.",
         "label": "Nothing To Delete Message",
-        "tooltip": "Chat message will be sent when score has been reset (using Reset Score command). 0 — reset score.",
+        "tooltip": "Chat message will be sent if user tries to delete nonexistent score (using Delete Command).",
         "group": "Chat Messages"
     },
     "DeletedScoreMessage": {
         "type": "textbox",
         "value": "Deleted score: {0}",
         "label": "Deleted Score Message",
-        "tooltip": "Chat message will be sent when score has been deleted (using Delete Score command). 0 — deleted score.",
+        "tooltip": "Chat message will be sent when score has been deleted (using Delete Command). 0 — deleted score.",
         "group": "Chat Messages"
     },
 
