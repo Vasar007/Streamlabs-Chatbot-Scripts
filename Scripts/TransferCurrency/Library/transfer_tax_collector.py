@@ -23,6 +23,8 @@ class TransferTaxCollector(object):
     def _calculate_percent(self, user_id):
         percent = self.settings.GiveTaxPercent
         if percent > 100:
+            self.logger.debug("Tax percent is too large, set it to 100.")
             percent = 100
+
         self.logger.debug("Calculated tax percent: {0}".format(percent))
         return percent / 100.0
