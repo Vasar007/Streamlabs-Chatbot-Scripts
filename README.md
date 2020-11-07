@@ -44,7 +44,7 @@ However, in that case you lose script settings.
 You can manually merge settings after update for example.
 If you ensure that update process will not break script configuration, you can skip `step 1` and `step 2` in the instruction below.
 
-1. Open SL Chatbot, go to the "Script" tab, click right mouse button and select "Open Script Directory".
+1. Open SL Chatbot, go to the "Script" tab, click right mouse button and select "Open Script Folder".
 
    ![Script Open Folder](Media/Images/Script_Open_Folder.png "Script Open Folder")
 2. Remove folder for script that you want to update.
