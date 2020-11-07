@@ -22,10 +22,17 @@
         "tooltip": "Command that (typically) moderators will use when they want to remove currency.",
         "group": "Setup"
     },
-    "CommandGetTaxPercent": {
+    "CommandSet": {
+        "type": "textbox",
+        "value": "!set",
+        "label": "Set Command",
+        "tooltip": "Command that (typically) moderators will use when they want to set currency value to certain amount.",
+        "group": "Setup"
+    },
+    "CommandGetTax": {
         "type": "textbox",
         "value": "!get_tax",
-        "label": "Get Tax Percent Command",
+        "label": "Get Tax Command",
         "tooltip": "Command that users will use when they want to to retrieve current tax percent.",
         "group": "Setup"
     },
@@ -69,12 +76,12 @@
         "tooltip": "Who is able to use the commands to give currency and get tax percent.",
         "group": "Permission"
     },
-    "PermissionOnAddRemove": {
+    "PermissionOnAddRemoveSet": {
         "type": "dropdown",
         "value": "moderator",
         "items": ["everyone", "moderator", "subscriber", "user_specific", "editor"],
         "label": "Permission",
-        "tooltip": "Who is able to use the commands to add or remove currency.",
+        "tooltip": "Who is able to use the commands to add, remove or set currency.",
         "group": "Permission"
     },
     "PermissionDeniedMessage": {
@@ -117,7 +124,14 @@
         "type": "textbox",
         "value": "{0} has successfully removed {1} {2} from {3}.",
         "label": "Removing Currency Success Message",
-        "tooltip": "Chat message will be sent on successful removed of currency. 0 — user, 1 — amount, 2 — currency name, 3 — target.",
+        "tooltip": "Chat message will be sent on successful removing of currency. 0 — user, 1 — amount, 2 — currency name, 3 — target.",
+        "group": "Chat Messages"
+    },
+    "SuccessfulSettingMessage": {
+        "type": "textbox",
+        "value": "{0} has successfully set {1} {2} for {3}.",
+        "label": "Setting Currency Success Message",
+        "tooltip": "Chat message will be sent on successful setting of currency. 0 — user, 1 — amount, 2 — currency name, 3 — target.",
         "group": "Chat Messages"
     },
     "NotEnoughFundsToTransferMessage": {
@@ -136,9 +150,9 @@
     },
     "InvalidAmountMessage": {
         "type": "textbox",
-        "value": "Sorry {0}, {1} isn't a valid amount. Please, choose integral amount in range [{2}–{3}]",
+        "value": "Sorry {0}, {1} isn't a valid amount. Please, choose integral amount in range: [{2}]",
         "label": "Invalid Amount Message",
-        "tooltip": "Chat message will be sent if user specify invalid amount to transfer. 0 — user, 1 — specified amount, 2 — min possible amount, 3 — max possible amount.",
+        "tooltip": "Chat message will be sent if user specify invalid amount to transfer. 0 — user, 1 — specified amount, 2 — valid amount range.",
         "group": "Chat Messages"
     },
     "NoTargetMessage": {

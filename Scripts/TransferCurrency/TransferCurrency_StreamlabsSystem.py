@@ -224,7 +224,7 @@ def TryProcessCommand(command, data):
             ScriptSettings.MinGiveAmount, ScriptSettings.MaxGiveAmount
         )
         usage_example = (
-            config.CommandGiveUsage
+            config.CommandTransferUsage
             .format(
                 ScriptSettings.CommandGive,
                 config.ExampleUserIdOrName,
@@ -232,48 +232,65 @@ def TryProcessCommand(command, data):
             )
         )
 
-    # !add_currency
+    # !add
     elif command == ScriptSettings.CommandAdd:
-        required_permission = ScriptSettings.PermissionOnAddRemove
+        required_permission = ScriptSettings.PermissionOnAddRemoveSet
         func = GetFuncToProcessIfHasPermission(
             ProcessAnyTransferCurrencyCommand, data.User, required_permission
         )
         is_valid_call = param_count == 3
 
         usage_example = (
-            config.CommandAddUsage
+            config.CommandTransferUsage
             .format(
-                ScriptSettings.CommandGive,
+                ScriptSettings.CommandAdd,
                 config.ExampleUserIdOrName,
                 config.ExampleAmountValidRange
             )
         )
 
-    # !remove_currency
+    # !remove
     elif command == ScriptSettings.CommandRemove:
-        required_permission = ScriptSettings.PermissionOnAddRemove
+        required_permission = ScriptSettings.PermissionOnAddRemoveSet
         func = GetFuncToProcessIfHasPermission(
             ProcessAnyTransferCurrencyCommand, data.User, required_permission
         )
         is_valid_call = param_count == 3
 
         usage_example = (
-            config.CommandRemoveUsage
+            config.CommandTransferUsage
             .format(
-                ScriptSettings.CommandGive,
+                ScriptSettings.CommandRemove,
                 config.ExampleUserIdOrName,
                 config.ExampleAmountValidRange
+            )
+        )
+
+    # !set
+    elif command == ScriptSettings.CommandSet:
+        required_permission = ScriptSettings.PermissionOnAddRemoveSet
+        func = GetFuncToProcessIfHasPermission(
+            ProcessAnyTransferCurrencyCommand, data.User, required_permission
+        )
+        is_valid_call = param_count == 3
+
+        usage_example = (
+            config.CommandTransferUsage
+            .format(
+                ScriptSettings.CommandSet,
+                config.ExampleUserIdOrName,
+                config.ExampleAmountSetRange
             )
         )
 
     # !get_tax
-    elif command == ScriptSettings.CommandGetTaxPercent:
+    elif command == ScriptSettings.CommandGetTax:
         required_permission = ScriptSettings.PermissionOnGiveGetTax
         func = GetFuncToProcessIfHasPermission(
-            ProcessGetTaxPercentCommand, data.User, required_permission
+            ProcessGetTaxCommand, data.User, required_permission
         )
         is_valid_call = True  # Get tax command call will always be valid.
-        usage_example = ScriptSettings.CommandGetTaxPercent
+        usage_example = ScriptSettings.CommandGetTax
 
     return CommandWrapper(
         command, func, required_permission, is_valid_call, usage_example
@@ -282,8 +299,9 @@ def TryProcessCommand(command, data):
 
 def ProcessAnyTransferCurrencyCommand(data, command):
     # Input example: !give Vasar 42
-    # Input example: !add_currency Vasar 42
-    # Input example: !remove_currency Vasar 42
+    # Input example: !add Vasar 42
+    # Input example: !remove Vasar 42
+    # Input example: !set Vasar 42
     # Command <@>TargetUserNameOrId Amount
     try:
         request = transfer_broker.create_request_from(
@@ -296,7 +314,7 @@ def ProcessAnyTransferCurrencyCommand(data, command):
         Logger().exception("Failed to handle transfer request: " + str(ex))
 
 
-def ProcessGetTaxPercentCommand(data, command):
+def ProcessGetTaxCommand(data, command):
     # Input example: !get_tax
     # Command <Anything>
     try:

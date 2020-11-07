@@ -40,7 +40,7 @@ class TransferBroker(object):
             not strategy.check_amount_value(amount_int)
         )
         if is_amount_invalid:
-            self._handle_invalid_amount(
+            strategy.handle_invalid_amount(
                 request.user_data.name, request.raw_amount
             )
             return False
@@ -103,25 +103,18 @@ class TransferBroker(object):
                 self.parent_wrapper, self.settings, self.logger
             )
 
+        # Set transfer case.
+        elif transfer_type == TransferType.SetTransfer:
+            return strategies.SetTransferStrategy(
+                self.parent_wrapper, self.settings, self.logger
+            )
+
         # Default case.
         else:
             raise ValueError(
                 "Unexpected transfer request type to handle: " +
                 str(transfer_type)
             )
-
-    def _handle_invalid_amount(self, user_name, amount):
-        min_amount = self.settings.MinGiveAmount
-        max_amount = self.settings.MaxGiveAmount
-
-        message = (
-            str(self.settings.InvalidAmountMessage)
-            .format(
-                user_name, amount, min_amount, max_amount
-            )
-        )
-        self.logger.info(message)
-        self.parent_wrapper.send_stream_message(message)
 
     def _handle_no_target(self, user_name, currency_name):
         message = (
@@ -155,9 +148,11 @@ def get_transfer_type(command, settings):
         return TransferType.AddTransfer
     elif command == settings.CommandRemove:
         return TransferType.RemoveTransfer
+    elif command == settings.CommandSet:
+        return TransferType.SetTransfer
     else:
         raise ValueError(
-            "Unexpected command to create transfer strategy: " + str(command)
+            "Unexpected command to get transfer type: " + str(command)
         )
 
 

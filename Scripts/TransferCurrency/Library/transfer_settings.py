@@ -71,7 +71,8 @@ class TransferSettings(object):
         self.CommandGive = config.CommandGive
         self.CommandAdd = config.CommandAdd
         self.CommandRemove = config.CommandRemove
-        self.CommandGetTaxPercent = config.CommandGetTaxPercent
+        self.CommandSet = config.CommandSet
+        self.CommandGetTax = config.CommandGetTax
         self.ParameterAll = config.ParameterAll
         self.GiveTaxPercent = config.GiveTaxPercent
         self.MinGiveAmount = config.MinGiveAmount
@@ -79,7 +80,7 @@ class TransferSettings(object):
 
         # Permission group.
         self.PermissionOnGiveGetTax = config.PermissionOnGiveGetTax
-        self.PermissionOnAddRemove = config.PermissionOnAddRemove
+        self.PermissionOnAddRemoveSet = config.PermissionOnAddRemoveSet
         self.PermissionDeniedMessage = config.PermissionDeniedMessage
         self.PermissionInfo = config.PermissionInfo
 
@@ -88,6 +89,7 @@ class TransferSettings(object):
         self.SuccessfulTransferMessage = config.SuccessfulTransferMessage
         self.SuccessfulAddingMessage = config.SuccessfulAddingMessage
         self.SuccessfulRemovingMessage = config.SuccessfulRemovingMessage
+        self.SuccessfulSettingMessage = config.SuccessfulSettingMessage
         self.NotEnoughFundsToTransferMessage = config.NotEnoughFundsToTransferMessage
         self.NotEnoughFundsToRemoveMessage = config.NotEnoughFundsToRemoveMessage
         self.InvalidAmountMessage = config.InvalidAmountMessage

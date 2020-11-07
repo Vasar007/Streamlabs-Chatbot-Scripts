@@ -7,6 +7,7 @@ Transfer script allows viewers to transfer Streamlabs currency between eachother
 - Transfer Streamlabs currency between two users.
 - Add Streamlabs currency freely for user (Streamlabs allow to do it only for editor by default).
 - Remove Streamlabs currency freely from user (Streamlabs allow to do it only for editor by default).
+- Set Streamlabs currency freely for user (any valid amount).
 - Setup taxes on transfer.
 
 ## How to install script
@@ -58,9 +59,6 @@ So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
 - Arguments:
   - TargetUserNameOrId: string — the target user name or ID to transfer currency (if name will be specified, script sends additional request to find target user name), `@` symbol at the beginning is allowed
   - Amount: integer — currency amount to transfer (should be greater than 0)
-- Special values (case will be ignored):
-  - For Amount:
-    - `all` — will be replaced by caller current amount of currency.
 - Samples:
   - `!add Vasar 42`
   - `!add vasar 42`
@@ -87,6 +85,23 @@ So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
   - `!remove @Vasar 42`
   - `!remove Mark 123`
   - `!remove John all`
+
+### !set
+
+- Label: Set Command
+- Description: "Command that (typically) moderators will use when they want to set currency value to certain amount
+- Usage: !set TargetUserNameOrId Amount
+- Permissions: Moderator
+- Can have optional text: No
+- Arguments:
+  - TargetUserNameOrId: string — the target user name or ID to transfer currency (if name will be specified, script sends additional request to find target user name), `@` symbol at the beginning is allowed
+  - Amount: integer — currency amount to transfer (should be greater than 0)
+- Samples:
+  - `!set Vasar 42`
+  - `!set vasar 42`
+  - `!set @Vasar 42`
+  - `!set Mark 123`
+  - `!set John all`
 
 ### !get_tax
 

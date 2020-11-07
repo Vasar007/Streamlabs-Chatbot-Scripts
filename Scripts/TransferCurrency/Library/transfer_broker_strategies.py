@@ -24,6 +24,10 @@ class BaseTransferStrategy(object):
         raise NotImplementedError()
 
     @abstractmethod
+    def handle_invalid_amount(self, user_name, raw_amount):
+        raise NotImplementedError()
+
+    @abstractmethod
     def calculate_final_amount(self, user_id, amount):
         raise NotImplementedError()
 
@@ -117,6 +121,20 @@ class NormalTransferStrategy(BaseTransferStrategy):
 
         return min_amount <= amount <= max_amount
 
+    def handle_invalid_amount(self, user_name, raw_amount):
+        amount_example = config.ExampleAmountMinMaxRange.format(
+            self.settings.MinGiveAmount, self.settings.MaxGiveAmount
+        )
+
+        message = (
+            str(self.settings.InvalidAmountMessage)
+            .format(
+                user_name, raw_amount, amount_example
+            )
+        )
+        self.logger.info(message)
+        self.parent_wrapper.send_stream_message(message)
+
     def calculate_final_amount(self, user_id, amount):
         return self.tax_collector.apply_fee(user_id, amount)
 
@@ -168,14 +186,20 @@ class AddTransferStrategy(BaseTransferStrategy):
         )
 
     def try_get_amount_value(self, user_id, target_id, raw_amount):
-        # Decide to replace target value with caller amount.
-        if raw_amount == self.settings.ParameterAll:
-            return self.parent_wrapper.get_points(user_id)
-
         return helpers.safe_cast(raw_amount, int)
 
     def check_amount_value(self, amount):
         return amount > 0
+
+    def handle_invalid_amount(self, user_name, raw_amount):
+        message = (
+            str(self.settings.InvalidAmountMessage)
+            .format(
+                user_name, raw_amount, config.ExampleAmountValidRange
+            )
+        )
+        self.logger.info(message)
+        self.parent_wrapper.send_stream_message(message)
 
     def calculate_final_amount(self, user_id, amount):
         return amount
@@ -211,6 +235,16 @@ class RemoveTransferStrategy(BaseTransferStrategy):
     def check_amount_value(self, amount):
         return amount > 0
 
+    def handle_invalid_amount(self, user_name, raw_amount):
+        message = (
+            str(self.settings.InvalidAmountMessage)
+            .format(
+                user_name, raw_amount, config.ExampleAmountValidRange
+            )
+        )
+        self.logger.info(message)
+        self.parent_wrapper.send_stream_message(message)
+
     def calculate_final_amount(self, user_id, amount):
         return amount
 
@@ -232,3 +266,62 @@ class RemoveTransferStrategy(BaseTransferStrategy):
             final_amount=final_amount
         )
         self._handle_remove_tranfer(remove_parameters, send_message=True)
+
+
+class SetTransferStrategy(BaseTransferStrategy):
+
+    def __init__(self, parent_wrapper, settings, logger):
+        super(SetTransferStrategy, self).__init__(
+            parent_wrapper, settings, logger
+        )
+
+    def try_get_amount_value(self, user_id, target_id, raw_amount):
+        return helpers.safe_cast(raw_amount, int)
+
+    def check_amount_value(self, amount):
+        return amount >= 0
+
+    def handle_invalid_amount(self, user_name, raw_amount):
+        message = (
+            str(self.settings.InvalidAmountMessage)
+            .format(
+                user_name, raw_amount, config.ExampleAmountSetRange
+            )
+        )
+        self.logger.info(message)
+        self.parent_wrapper.send_stream_message(message)
+
+    def calculate_final_amount(self, user_id, amount):
+        return amount
+
+    def has_user_enough_funds(self, user_id, target_id, final_amount):
+        return True
+
+    def handle_not_enough_funds(self, user_name, target_name, currency_name):
+        # Nothing to do. This method should never be called for this class.
+        raise NotImplementedError()
+
+    def handle_transfer_request(self, request, target_data, final_amount):
+        current_amount = self.parent_wrapper.get_points(target_data.id)
+        remove_parameters = request.to_paramters(
+            target_data=target_data,
+            final_amount=current_amount
+        )
+        self._handle_remove_tranfer(remove_parameters, send_message=False)
+
+        add_parameters = request.to_paramters(
+            target_data=target_data,
+            final_amount=final_amount
+        )
+        self._handle_add_tranfer(add_parameters, send_message=False)
+
+        message = (
+            str(self.settings.SuccessfulSettingMessage)
+            .format(
+                request.user_data.name,
+                final_amount,
+                request.currency_name,
+                target_data.name
+            )
+        )
+        self.parent_wrapper.send_stream_message(message)

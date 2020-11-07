@@ -5,6 +5,7 @@ class TransferType:
     NormalTransfer = 1
     AddTransfer = 2
     RemoveTransfer = 3
+    SetTransfer = 4
 
 
 class TransferRequest(object):
