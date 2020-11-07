@@ -6,11 +6,12 @@ import json
 
 import template_config as config  # pylint:disable=import-error
 import template_helpers as helpers
+from template_event_emitter import TemplateEventEmitter as EventEmitter 
 
 
 class TemplateSettings(object):
 
-    _reload_callback = None
+    _reload_event = EventEmitter()
 
     def __init__(self, settingsfile=None):
         """
@@ -38,9 +39,9 @@ class TemplateSettings(object):
         """
         self.__dict__ = json.loads(jsondata, encoding="utf-8")
 
-        if TemplateSettings._reload_callback is not None:
-            # pylint:disable=not-callable
-            TemplateSettings._reload_callback(self)
+        TemplateSettings._reload_event.emit(
+            config.SettingsReloadEventName, self
+        )
 
     def save(self, settingsfile):
         """
@@ -58,12 +59,12 @@ class TemplateSettings(object):
             f.write(content)
 
     @classmethod
-    def set_reload_callback(cls, reload_callback):
+    def subscribe_on_reload(cls, reload_callback):
         """
-        Allows to set callback on settings reload event.
+        Allows to add callback on settings reload event.
         Callback should accept single parameter — current settings class.
         """
-        cls._reload_callback = reload_callback
+        cls._reload_event.on(config.SettingsReloadEventName, reload_callback)
 
     def _set_default(self):
         # Setup group.
@@ -81,3 +82,4 @@ class TemplateSettings(object):
 
         # Debugging group.
         self.LoggingLevel = config.LoggingLevel
+        self.AllowLoggingToFile = config.AllowLoggingToFile

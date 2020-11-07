@@ -89,5 +89,12 @@
         "label": "Logging Level",
         "tooltip": "Specifies Logging Level for script.",
         "group": "Debugging"
+    },
+    "AllowLoggingToFile": {
+        "type": "checkbox",
+        "value": false,
+        "label": "Allow Logging To File",
+        "tooltip": "Allow script to log to file in script folder.",
+        "group": "Debugging"
     }
 }

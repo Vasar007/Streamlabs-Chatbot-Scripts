@@ -204,3 +204,11 @@ def strip_at_symbol_for_name(user_name):
         return user_name[1:]
 
     return user_name
+
+
+def get_valid_filename(raw_filename):
+    """
+    Filters invalid characters for filename.
+    """
+    raw_filename = str(raw_filename).strip().replace(" ", "_")
+    return re.sub(r"(?u)[^-\w.]", "", raw_filename)

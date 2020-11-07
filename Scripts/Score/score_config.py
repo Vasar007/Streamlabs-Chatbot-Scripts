@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 import logging
 
 
@@ -14,7 +15,15 @@ LogLevels = {
 
 LogFormat = "[%(asctime)s] %(levelname)s    %(message)s"
 LogDateFormat = "%d/%m/%Y %H:%M:%S"
+LogFileRelativePath = os.path.join("Services", "Scripts", "Score")
+LogFileNameFormat = "{0}.log"
+LogFileMaxBytes = 10 * 1024 * 1024  # 10 MB
+LogFileBackupCount = 10  # Keep last 10 files alive.
+
 LoggingLevel = "Info"
+AllowLoggingToFile = False
+
+SettingsReloadEventName = "settings_reload"
 
 CommandNewScoreUsage = "{0} {1} {2}"
 CommandUpdateScoreUsage = "{0} {1} {2}"

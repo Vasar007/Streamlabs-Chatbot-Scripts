@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 import logging
 
 
@@ -14,7 +15,15 @@ LogLevels = {
 
 LogFormat = "[%(asctime)s] %(levelname)s    %(message)s"
 LogDateFormat = "%d/%m/%Y %H:%M:%S"
+LogFileRelativePath = os.path.join("Services", "Scripts", "TransferCurrency")
+LogFileNameFormat = "{0}.log"
+LogFileMaxBytes = 10 * 1024 * 1024  # 10 MB
+LogFileBackupCount = 10  # Keep last 10 files alive.
+
 LoggingLevel = "Info"
+AllowLoggingToFile = False
+
+SettingsReloadEventName = "settings_reload"
 
 CommandGiveUsage = "{0} {1} {2}"
 ExampleUserIdOrName = "[UserIdOrName]"
@@ -27,7 +36,7 @@ Description = (
     "Allows viewers to transfer Streamlabs currency between eachother."
 )
 Creator = "Vasar007"
-Version = "0.1.0.0"
+Version = "0.5.1.0"
 
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).

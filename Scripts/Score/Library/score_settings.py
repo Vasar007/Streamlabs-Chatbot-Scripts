@@ -6,11 +6,12 @@ import json
 
 import score_config as config  # pylint:disable=import-error
 import score_helpers as helpers
+from score_event_emitter import ScoreEventEmitter as EventEmitter 
 
 
 class ScoreSettings(object):
 
-    _reload_callback = None
+    _reload_event = EventEmitter()
 
     def __init__(self, settingsfile=None):
         """
@@ -38,9 +39,9 @@ class ScoreSettings(object):
         """
         self.__dict__ = json.loads(jsondata, encoding="utf-8")
 
-        if ScoreSettings._reload_callback is not None:
-            # pylint:disable=not-callable
-            ScoreSettings._reload_callback(self)
+        ScoreSettings._reload_event.emit(
+            config.SettingsReloadEventName, self
+        )
 
     def save(self, settingsfile):
         """
@@ -58,12 +59,12 @@ class ScoreSettings(object):
             f.write(content)
 
     @classmethod
-    def set_reload_callback(cls, reload_callback):
+    def subscribe_on_reload(cls, reload_callback):
         """
-        Allows to set callback on settings reload event.
+        Allows to add callback on settings reload event.
         Callback should accept single parameter — current settings class.
         """
-        cls._reload_callback = reload_callback
+        cls._reload_event.on(config.SettingsReloadEventName, reload_callback)
 
     def _set_default(self):
         # Setup group.
@@ -96,3 +97,4 @@ class ScoreSettings(object):
 
         # Debugging group.
         self.LoggingLevel = config.LoggingLevel
+        self.AllowLoggingToFile = config.AllowLoggingToFile
