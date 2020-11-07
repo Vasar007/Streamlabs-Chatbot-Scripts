@@ -8,9 +8,37 @@
         "tooltip": "Command that users will use when they want to transfer currency.",
         "group": "Setup"
     },
+    "CommandAdd": {
+        "type": "textbox",
+        "value": "!add",
+        "label": "Add Command",
+        "tooltip": "Command that (typically) moderators will use when they want to add currency.",
+        "group": "Setup"
+    },
+    "CommandRemove": {
+        "type": "textbox",
+        "value": "!remove",
+        "label": "Remove Command",
+        "tooltip": "Command that (typically) moderators will use when they want to remove currency.",
+        "group": "Setup"
+    },
+    "CommandGetTaxPercent": {
+        "type": "textbox",
+        "value": "!get_tax",
+        "label": "Command Get Tax Percent",
+        "tooltip": "Command that users will use when they want to to retrieve current tax percent.",
+        "group": "Setup"
+    },
+    "ParameterAll": {
+        "type": "textbox",
+        "value": "all",
+        "label": "Parameter All",
+        "tooltip": "Command parameter that allow to use all currency amount to transfer.",
+        "group": "Setup"
+    },
     "GiveTaxPercent": {
         "type": "slider",
-        "value": 10,
+        "value": 10.0,
         "min": 0,
         "max": 100,
         "ticks": 0.2,
@@ -33,12 +61,20 @@
         "group": "Setup"
     },
 
-    "Permission": {
+    "PermissionOnGiveGetTax": {
         "type": "dropdown",
         "value": "everyone",
         "items": ["everyone", "moderator", "subscriber", "user_specific", "editor"],
         "label": "Permission",
-        "tooltip": "Who is able to use the script commands.",
+        "tooltip": "Who is able to use the commands to give currency and get tax percent.",
+        "group": "Permission"
+    },
+    "PermissionOnAddRemove": {
+        "type": "dropdown",
+        "value": "moderator",
+        "items": ["everyone", "moderator", "subscriber", "user_specific", "editor"],
+        "label": "Permission",
+        "tooltip": "Who is able to use the commands to add or remove currency.",
         "group": "Permission"
     },
     "PermissionDeniedMessage": {
@@ -70,11 +106,32 @@
         "tooltip": "Chat message will be sent on successful transfer of currency. 0 — user, 1 — amount, 2 — currency name, 3 — target.",
         "group": "Chat Messages"
     },
-    "NotEnoughFundsMessage": {
+    "SuccessfulAddingMessage": {
+        "type": "textbox",
+        "value": "{0} has successfully added {1} {2} to {3}.",
+        "label": "Adding Currency Success Message",
+        "tooltip": "Chat message will be sent on successful adding of currency. 0 — user, 1 — amount, 2 — currency name, 3 — target.",
+        "group": "Chat Messages"
+    },
+    "SuccessfulRemovingMessage": {
+        "type": "textbox",
+        "value": "{0} has successfully removed {1} {2} from {3}.",
+        "label": "Removing Currency Success Message",
+        "tooltip": "Chat message will be sent on successful removed of currency. 0 — user, 1 — amount, 2 — currency name, 3 — target.",
+        "group": "Chat Messages"
+    },
+    "NotEnoughFundsToTransferMessage": {
         "type": "textbox",
         "value": "Sorry {0}, you don't have enough {1}.",
-        "label": "Not Enough Funds Message",
-        "tooltip": "Chat message will be sent if user doesn't have enough funds. 0 — user, 1 — currency name.",
+        "label": "Not Enough Funds To Transfer Message",
+        "tooltip": "Chat message will be sent if user doesn't have enough funds to transfer. 0 — user, 1 — currency name.",
+        "group": "Chat Messages"
+    },
+    "NotEnoughFundsToRemoveMessage": {
+        "type": "textbox",
+        "value": "Sorry {0}, {1} doesn't have enough {2}.",
+        "label": "Not Enough Funds To Remove Message",
+        "tooltip": "Chat message will be sent if user doesn't have enough funds to remove. 0 — user, 1 — target, 2 — currency name.",
         "group": "Chat Messages"
     },
     "InvalidAmountMessage": {
@@ -103,6 +160,13 @@
         "value": "Sorry {0}, but you cannot transfer {1} to yourself.",
         "label": "Transfer To Yourself Message",
         "tooltip": "Chat message will be sent if user tries to transfer to yourself. 0 — user, 1 — currency name.",
+        "group": "Chat Messages"
+    },
+    "CurrentTaxPercentMessage": {
+        "type": "textbox",
+        "value": "Current tax: {0}%",
+        "label": "Current Tax Percent Message",
+        "tooltip": "Chat message will be sent if user retrieves current tax percent. 0 — current tax percent.",
         "group": "Chat Messages"
     },
 

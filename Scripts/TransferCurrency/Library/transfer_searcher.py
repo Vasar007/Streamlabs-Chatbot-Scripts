@@ -2,6 +2,8 @@
 
 import logging
 
+from transfer_user_data import TransferUserData as UserData
+
 
 class TransferUserSearcher(object):
 
@@ -9,12 +11,12 @@ class TransferUserSearcher(object):
         self.parent_wrapper = parent_wrapper
         self.logger = logger
 
-    def find_user_id_and_name(self, user_id_or_name):
+    def find_user_data(self, user_id_or_name):
         if not user_id_or_name:
             self.logger.debug(
                 "Invalid argument to find user ID: " + user_id_or_name
             )
-            return None
+            return UserData.empty()
 
         self.logger.debug(
             "Trying to find user ID for value: " + user_id_or_name
@@ -32,7 +34,9 @@ class TransferUserSearcher(object):
         if result is not None:
             return result
 
-        self.logger.debug("WARNING! Using extended search to find user.")
+        self.logger.debug(
+            "WARNING! Using dangerous extended search to find user."
+        )
 
         # Retrive extended viewers data.
         # PythonDictionary<string userid, string username>.
@@ -52,27 +56,27 @@ class TransferUserSearcher(object):
             supposed_name = self.parent_wrapper.get_display_name(
                 supposed_user_id
             )
-            result = (supposed_user_id, supposed_name)
+            result = UserData(supposed_user_id, supposed_name)
             self.logger.debug("Found user data (#1): " + str(result))
             return result
 
-        return None
+        return UserData.empty()
 
     def _find_among_all_users(self, user_id_or_name, viewers):
         user_id_or_name_low = user_id_or_name.lower()
 
         for user_id, user_name in viewers.iteritems():
             if user_id_or_name == user_name:
-                result = (user_id, user_name)
+                result = UserData(user_id, user_name)
                 self.logger.debug("Found user data (#2): " + str(result))
                 return result
             if user_id_or_name_low == user_name:
-                result = (user_id, user_name)
+                result = UserData(user_id, user_name)
                 self.logger.debug("Found user data (#3): " + str(result))
                 return result
 
         self.logger.debug("Cannot find user ID for value: " + user_id_or_name)
-        return None
+        return UserData.empty()
 
     def _log_viewers(self, viewers):
         if not self.logger.isEnabledFor(logging.DEBUG):

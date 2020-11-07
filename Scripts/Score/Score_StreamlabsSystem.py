@@ -193,7 +193,7 @@ def Logger():
 
 def HandleNoPermission(required_permission, command):
     message = (
-        str(ScriptSettings.PermissionDeniedMessage)
+        ScriptSettings.PermissionDeniedMessage
         .format(required_permission, command)
     )
     Logger().info(message)

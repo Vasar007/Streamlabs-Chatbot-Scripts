@@ -69,23 +69,32 @@ class TransferSettings(object):
     def _set_default(self):
         # Setup group.
         self.CommandGive = config.CommandGive
+        self.CommandAdd = config.CommandAdd
+        self.CommandRemove = config.CommandRemove
+        self.CommandGetTaxPercent = config.CommandGetTaxPercent
+        self.ParameterAll = config.ParameterAll
         self.GiveTaxPercent = config.GiveTaxPercent
         self.MinGiveAmount = config.MinGiveAmount
         self.MaxGiveAmount = config.MaxGiveAmount
 
         # Permission group.
-        self.Permission = config.Permission
+        self.PermissionOnGiveGetTax = config.PermissionOnGiveGetTax
+        self.PermissionOnAddRemove = config.PermissionOnAddRemove
         self.PermissionDeniedMessage = config.PermissionDeniedMessage
         self.PermissionInfo = config.PermissionInfo
 
         # Chat Messages group.
         self.InvalidCommandCallMessage = config.InvalidCommandCallMessage
         self.SuccessfulTransferMessage = config.SuccessfulTransferMessage
-        self.NotEnoughFundsMessage = config.NotEnoughFundsMessage
+        self.SuccessfulAddingMessage = config.SuccessfulAddingMessage
+        self.SuccessfulRemovingMessage = config.SuccessfulRemovingMessage
+        self.NotEnoughFundsToTransferMessage = config.NotEnoughFundsToTransferMessage
+        self.NotEnoughFundsToRemoveMessage = config.NotEnoughFundsToRemoveMessage
         self.InvalidAmountMessage = config.InvalidAmountMessage
         self.NoTargetMessage = config.NoTargetMessage
         self.InvalidTargetMessage = config.InvalidTargetMessage
         self.TransferToYourselfMessage = config.TransferToYourselfMessage
+        self.CurrentTaxPercentMessage = config.CurrentTaxPercentMessage
 
         # Debugging group.
         self.LoggingLevel = config.LoggingLevel

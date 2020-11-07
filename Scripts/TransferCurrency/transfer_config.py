@@ -26,8 +26,11 @@ AllowLoggingToFile = False
 SettingsReloadEventName = "settings_reload"
 
 CommandGiveUsage = "{0} {1} {2}"
+CommandAddUsage = "{0} {1} {2}"
+CommandRemoveUsage = "{0} {1} {2}"
 ExampleUserIdOrName = "[UserIdOrName]"
-ExampleAmount = "[1–∞]"
+ExampleAmountMinMaxRange = "[{0}–{1}]"
+ExampleAmountValidRange = "[1–∞]"
 
 # [Required] Script Information.
 ScriptName = "Transfer Currency Script"
@@ -36,18 +39,24 @@ Description = (
     "Allows viewers to transfer Streamlabs currency between eachother."
 )
 Creator = "Vasar007"
-Version = "0.5.1.0"
+Version = "0.8.0.0"
 
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).
 CommandGive = "!give"
+CommandAdd = "!add"
+CommandRemove = "!remove"
+CommandGetTaxPercent = "!get_tax"
+
+ParameterAll = "all"
 
 GiveTaxPercent = 10
 MinGiveAmount = 10
 MaxGiveAmount = 100000
 
 # Values: everyone, moderator, subscriber, user_specific, editor.
-Permission = "everyone"
+PermissionOnGiveGetTax = "everyone"
+PermissionOnAddRemove = "moderator"
 
 PermissionDeniedMessage = (
     "Permission denied: You have to be a {0} to use {1} command!"
@@ -58,8 +67,12 @@ PermissionInfo = ""
 
 InvalidCommandCallMessage = "Invalid {0} command call. Usage: {1}"
 SuccessfulTransferMessage = "{0} has successfully transferred {1} {2} to {3}."
-NotEnoughFundsMessage = "Sorry {0}, you don't have enough {1}."
+SuccessfulAddingMessage = "{0} has successfully added {1} {2} to {3}."
+SuccessfulRemovingMessage = "{0} has successfully removed {1} {2} from {3}."
+NotEnoughFundsToTransferMessage = "Sorry {0}, you don't have enough {1}."
+NotEnoughFundsToRemoveMessage = "Sorry {0}, {1} doesn't have enough {2}."
 InvalidAmountMessage = "Sorry {0}, {1} isn't a valid amount. Please, choose integral amount in range: [{2}–{3}]."
 NoTargetMessage = "Sorry {0}, but you didn't say who to send the {1} to."
 InvalidTargetMessage = "Sorry {0}, but {1} doesn't exist."
 TransferToYourselfMessage = "Sorry {0}, but you cannot transfer {1} to yourself."
+CurrentTaxPercentMessage = "Current tax: {0}%"

@@ -2,18 +2,16 @@
 
 import transfer_config as config  # pylint:disable=import-error
 import transfer_helpers as helpers
+
 from transfer_searcher import TransferUserSearcher as UserSearcher
 from transfer_tax_collector import TransferTaxCollector as TaxCollector
+from transfer_user_data import TransferUserData as UserData
 
+from transfer_broker_models import TransferType
+from transfer_broker_models import TransferParameters
+from transfer_broker_models import TransferRequest
 
-class TransferRequest(object):
-
-    def __init__(self, user_id, user_name, target, currency_name, amount):
-        self.user_id = user_id
-        self.user_name = user_name
-        self.target = target
-        self.currency_name = currency_name
-        self.amount = amount
+import transfer_broker_strategies as strategies
 
 
 class TransferBroker(object):
@@ -27,67 +25,90 @@ class TransferBroker(object):
         self.tax_collector = TaxCollector(parent_wrapper, settings, logger)
 
     def try_send_transfer(self, request):
-        target_id_and_name = self._prepare_transfer(request)
-        if target_id_and_name is None:
+        target_data = self._prepare_transfer(request)
+        if target_data.is_empty():
             self.logger.debug("Target is invalid, interupt tranfer.")
             return False
 
-        amount_int = helpers.safe_cast(request.amount, int)
-        if amount_int is None or not self._check_amount_value(amount_int):
-            self._handle_invalid_amount(request.user_name, request.amount)
-            return False
+        strategy = self._create_transfer_strategy(request.transfer_type)
 
-        final_amount = self.tax_collector.apply_fee(
-            request.user_id, amount_int
+        amount_int = strategy.try_get_amount_value(
+            request.user_data.id, target_data.id, request.raw_amount
         )
-        if final_amount > self.parent_wrapper.get_points(request.user_id):
-            self._handle_not_enough_funds(
-                request.user_name, request.currency_name
+        is_amount_invalid = (
+            amount_int is None or
+            not strategy.check_amount_value(amount_int)
+        )
+        if is_amount_invalid:
+            self._handle_invalid_amount(
+                request.user_data.name, request.raw_amount
             )
             return False
 
-        target_id, target_name = target_id_and_name
-        self._handle_transfer_currency(
-            request, target_id, target_name, final_amount
+        final_amount = strategy.calculate_final_amount(
+            request.user_data.id, amount_int
         )
+        has_user_enough_funds = strategy.has_user_enough_funds(
+            request.user_data.id, target_data.id, final_amount
+        )
+        if not has_user_enough_funds:
+            strategy.handle_not_enough_funds(
+                request.user_data.name, target_data.name, request.currency_name
+            )
+            return False
+
+        strategy.handle_transfer_request(request, target_data, final_amount)
         return True
 
     def _prepare_transfer(self, request):
-        target_id_and_name = self.searcher.find_user_id_and_name(
-            request.target
+        target_data = self.searcher.find_user_data(
+            request.target_id_or_name
         )
-        if target_id_and_name is None:
+        if target_data.is_empty():
             if not request.target:
                 self._handle_no_target(
-                    request.user_name, request.currency_name
+                    request.user_data.name, request.currency_name
                 )
             else:
-                self._handle_invalid_target(request.user_name, request.target)
-            return None
+                self._handle_invalid_target(
+                    request.user_data.name, request.target
+                )
+            return target_data
 
-        target_id, _ = target_id_and_name
-        if request.user_id == target_id:
+        if request.user_data.id == target_data.id:
             self._handle_target_is_sender(
-                request.user_name, request.currency_name
+                request.user_data.name, request.currency_name
             )
-            return None
+            return target_data
 
-        return target_id_and_name
+        return target_data
 
-    def _check_amount_value(self, amount):
-        min_amount = self.settings.MinGiveAmount
-        max_amount = self.settings.MaxGiveAmount
-
-        if max_amount < min_amount:
-            min_amount = config.MinGiveAmount
-            max_amount = config.MaxGiveAmount
-            self.logger.error(
-                "Encountered invalid amount settings. " +
-                "Using default value for min ({0}) and max ({1}) amount."
-                .format(min_amount, max_amount)
+    def _create_transfer_strategy(self, transfer_type):
+        # Normal transfer case.
+        if transfer_type == TransferType.NormalTransfer:
+            return strategies.NormalTransferStrategy(
+                self.parent_wrapper, self.settings, self.logger,
+                self.tax_collector
             )
 
-        return min_amount <= amount <= max_amount
+        # Add transfer case.
+        elif transfer_type == TransferType.AddTransfer:
+            return strategies.AddTransferStrategy(
+                self.parent_wrapper, self.settings, self.logger
+            )
+
+        # Remove transfer case.
+        elif transfer_type == TransferType.RemoveTransfer:
+            return strategies.RemoveTransferStrategy(
+                self.parent_wrapper, self.settings, self.logger
+            )
+
+        # Default case.
+        else:
+            raise ValueError(
+                "Unexpected transfer request type to handle: " +
+                str(transfer_type)
+            )
 
     def _handle_invalid_amount(self, user_name, amount):
         min_amount = self.settings.MinGiveAmount
@@ -98,51 +119,6 @@ class TransferBroker(object):
             .format(
                 user_name, amount, min_amount, max_amount
             )
-        )
-        self.logger.info(message)
-        self.parent_wrapper.send_stream_message(message)
-
-    def _handle_transfer_currency(self, request, target_id, target_name,
-                                  amount_int):
-        user_id = request.user_id
-        user_name = request.user_name
-        currency_name = request.currency_name
-
-        current_user_points = self.parent_wrapper.get_points(request.user_id)
-        current_target_points = self.parent_wrapper.get_points(target_id)
-        self.logger.debug(
-            "User {0} has {1} {2} before transfer"
-            .format(user_id, current_user_points, currency_name)
-        )
-        self.logger.debug(
-            "User {0} has {1} {2} before transfer"
-            .format(target_id, current_target_points, currency_name)
-        )
-
-        self.parent_wrapper.remove_points(user_id, amount_int)
-        self.parent_wrapper.add_points(target_id, amount_int)
-        message = (
-            str(self.settings.SuccessfulTransferMessage)
-            .format(user_name, amount_int, currency_name, target_name)
-        )
-        self.logger.info(message)
-        self.parent_wrapper.send_stream_message(message)
-
-        current_user_points = self.parent_wrapper.get_points(user_id)
-        current_target_points = self.parent_wrapper.get_points(target_id)
-        self.logger.debug(
-            "User {0} has {1} {2} after transfer"
-            .format(user_id, current_user_points, currency_name)
-        )
-        self.logger.debug(
-            "User {0} has {1} {2} after transfer"
-            .format(target_id, current_target_points, currency_name)
-        )
-
-    def _handle_not_enough_funds(self, user_name, currency_name):
-        message = (
-            str(self.settings.NotEnoughFundsMessage)
-            .format(user_name, currency_name)
         )
         self.logger.info(message)
         self.parent_wrapper.send_stream_message(message)
@@ -172,15 +148,32 @@ class TransferBroker(object):
         self.parent_wrapper.send_stream_message(message)
 
 
-def create_request_from(data, parent_wrapper):
-    user_id = data.User
-    user_name = data.UserName
-    raw_target = data.GetParam(1)
-    target = helpers.strip_at_symbol_for_name(raw_target)
-    amount = data.GetParam(2)
-    currency_name = parent_wrapper.get_currency_name()
+def get_transfer_type(command, settings):
+    if command == settings.CommandGive:
+        return TransferType.NormalTransfer
+    elif command == settings.CommandAdd:
+        return TransferType.AddTransfer
+    elif command == settings.CommandRemove:
+        return TransferType.RemoveTransfer
+    else:
+        raise ValueError(
+            "Unexpected command to create transfer strategy: " + str(command)
+        )
 
-    return TransferRequest(user_id, user_name, target, currency_name, amount)
+
+def create_request_from(data, command, parent_wrapper, settings):
+    user_data = UserData(data.User, data.UserName)
+
+    raw_target_id_or_name = data.GetParam(1)
+    target_id_or_name = helpers.strip_at_symbol_for_name(raw_target_id_or_name)
+
+    raw_amount = data.GetParam(2).lower()
+    currency_name = parent_wrapper.get_currency_name()
+    transfer_type = get_transfer_type(command, settings)
+
+    return TransferRequest(
+        user_data, target_id_or_name, currency_name, raw_amount, transfer_type
+    )
 
 
 def handle_request(request, parent_wrapper, settings, logger):

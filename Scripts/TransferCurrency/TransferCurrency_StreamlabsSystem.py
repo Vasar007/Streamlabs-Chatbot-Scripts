@@ -113,7 +113,7 @@ def Execute(data):
 
         # If user doesn't have permission, "func" will be equal to "None".
         if parsed_command.has_func():
-            parsed_command.func(data)
+            parsed_command.func(data, parsed_command.command)
         else:
             HandleNoPermission(
                 parsed_command.required_permission, parsed_command.command
@@ -187,7 +187,7 @@ def Logger():
 
 def HandleNoPermission(required_permission, command):
     message = (
-        str(ScriptSettings.PermissionDeniedMessage)
+        ScriptSettings.PermissionDeniedMessage
         .format(required_permission, command)
     )
     Logger().info(message)
@@ -214,32 +214,97 @@ def TryProcessCommand(command, data):
 
     # !give
     if command == ScriptSettings.CommandGive:
-        required_permission = ScriptSettings.Permission
+        required_permission = ScriptSettings.PermissionOnGiveGetTax
         func = GetFuncToProcessIfHasPermission(
-            ProcessGiveCommand, data.User, required_permission
+            ProcessAnyTransferCurrencyCommand, data.User, required_permission
         )
         is_valid_call = param_count == 3
+
+        amount_example = config.ExampleAmountMinMaxRange.format(
+            ScriptSettings.MinGiveAmount, ScriptSettings.MaxGiveAmount
+        )
         usage_example = (
             config.CommandGiveUsage
             .format(
                 ScriptSettings.CommandGive,
                 config.ExampleUserIdOrName,
-                config.ExampleAmount
+                amount_example
             )
         )
+
+    # !add_currency
+    elif command == ScriptSettings.CommandAdd:
+        required_permission = ScriptSettings.PermissionOnAddRemove
+        func = GetFuncToProcessIfHasPermission(
+            ProcessAnyTransferCurrencyCommand, data.User, required_permission
+        )
+        is_valid_call = param_count == 3
+
+        usage_example = (
+            config.CommandAddUsage
+            .format(
+                ScriptSettings.CommandGive,
+                config.ExampleUserIdOrName,
+                config.ExampleAmountValidRange
+            )
+        )
+
+    # !remove_currency
+    elif command == ScriptSettings.CommandRemove:
+        required_permission = ScriptSettings.PermissionOnAddRemove
+        func = GetFuncToProcessIfHasPermission(
+            ProcessAnyTransferCurrencyCommand, data.User, required_permission
+        )
+        is_valid_call = param_count == 3
+
+        usage_example = (
+            config.CommandRemoveUsage
+            .format(
+                ScriptSettings.CommandGive,
+                config.ExampleUserIdOrName,
+                config.ExampleAmountValidRange
+            )
+        )
+
+    # !get_tax
+    elif command == ScriptSettings.CommandGetTaxPercent:
+        required_permission = ScriptSettings.PermissionOnGiveGetTax
+        func = GetFuncToProcessIfHasPermission(
+            ProcessGetTaxPercentCommand, data.User, required_permission
+        )
+        is_valid_call = True  # Get tax command call will always be valid.
+        usage_example = ScriptSettings.CommandGetTaxPercent
 
     return CommandWrapper(
         command, func, required_permission, is_valid_call, usage_example
     )
 
 
-def ProcessGiveCommand(data):
+def ProcessAnyTransferCurrencyCommand(data, command):
     # Input example: !give Vasar 42
+    # Input example: !add_currency Vasar 42
+    # Input example: !remove_currency Vasar 42
     # Command <@>TargetUserNameOrId Amount
     try:
-        request = transfer_broker.create_request_from(data, ParentHandler)
+        request = transfer_broker.create_request_from(
+            data, command, ParentHandler, ScriptSettings
+        )
         transfer_broker.handle_request(
             request, ParentHandler, ScriptSettings, Logger()
         )
     except Exception as ex:
-        Logger().exception("Failed to transfer currency: " + str(ex))
+        Logger().exception("Failed to handle transfer request: " + str(ex))
+
+
+def ProcessGetTaxPercentCommand(data, command):
+    # Input example: !get_tax
+    # Command <Anything>
+    try:
+        message = (
+            ScriptSettings.CurrentTaxPercentMessage
+            .format(ScriptSettings.GiveTaxPercent)
+        )
+        Logger().debug(message)
+        ParentHandler.send_stream_message(message)
+    except Exception as ex:
+        Logger().exception("Failed to retrive tax percent: " + str(ex))
