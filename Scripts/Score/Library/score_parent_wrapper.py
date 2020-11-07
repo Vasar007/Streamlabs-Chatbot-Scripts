@@ -170,7 +170,7 @@ class ScoreParentWrapper(object):
         r"""
         Retrieves single user's rank.
 
-        long GetRank(string userid)
+        string GetRank(string userid)
         """
         return self.Parent.GetRank(user_id)
 

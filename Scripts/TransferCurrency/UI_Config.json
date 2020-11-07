@@ -4,8 +4,32 @@
     "CommandGive": {
         "type": "textbox",
         "value": "!give",
-        "label": "Chat Command",
+        "label": "Give Command",
         "tooltip": "Command that users will use when they want to transfer currency.",
+        "group": "Setup"
+    },
+    "GiveTaxPercent": {
+        "type": "slider",
+        "value": 10,
+        "min": 0,
+        "max": 100,
+        "ticks": 0.2,
+        "label": "Tax Percent For Give Command",
+        "tooltip": "Tax percent that will use take into account when users transfer currency.",
+        "group": "Setup"
+    },
+    "MinGiveAmount": {
+        "type": "numberbox",
+        "value": 10,
+        "label": "Minimum Give Command Amount",
+        "tooltip": "Minimum amount of currency to transfer.",
+        "group": "Setup"
+    },
+    "MaxGiveAmount": {
+        "type": "numberbox",
+        "value": 100000,
+        "label": "Maximum Give Command Amount",
+        "tooltip": "Maximum amount of currency to transfer.",
         "group": "Setup"
     },
 
@@ -43,28 +67,28 @@
         "type": "textbox",
         "value": "{0} has successfully transferred {1} {2} to {3}.",
         "label": "Transfer Success Message",
-        "tooltip": "Chat message will be sent on successful transfer of currency. 0 — user, 1 — amount, 2 — currency, 3 — target.",
+        "tooltip": "Chat message will be sent on successful transfer of currency. 0 — user, 1 — amount, 2 — currency name, 3 — target.",
         "group": "Chat Messages"
     },
     "NotEnoughFundsMessage": {
         "type": "textbox",
         "value": "Sorry {0}, you don't have enough {1}.",
         "label": "Not Enough Funds Message",
-        "tooltip": "Chat message will be sent if user doesn't have enough funds. 0 — user, 1 — currency.",
+        "tooltip": "Chat message will be sent if user doesn't have enough funds. 0 — user, 1 — currency name.",
         "group": "Chat Messages"
     },
     "InvalidAmountMessage": {
         "type": "textbox",
-        "value": "Sorry {0}, {1} isn't a valid amount.",
+        "value": "Sorry {0}, {1} isn't a valid amount. Please, choose integral amount in range [{2}–{3}]",
         "label": "Invalid Amount Message",
-        "tooltip": "Chat message will be sent if user specify invalid amount to transfer. 0 — user, 1 — amount.",
+        "tooltip": "Chat message will be sent if user specify invalid amount to transfer. 0 — user, 1 — specified amount, 2 — min possible amount, 3 — max possible amount.",
         "group": "Chat Messages"
     },
     "NoTargetMessage": {
         "type": "textbox",
         "value": "Sorry {0}, but you didn't say who to send the {1} to.",
         "label": "No Target Message",
-        "tooltip": "Chat message will be sent if user doesn't specify a target. 0 — user, 1 — currency.",
+        "tooltip": "Chat message will be sent if user doesn't specify a target. 0 — user, 1 — currency name.",
         "group": "Chat Messages"
     },
     "InvalidTargetMessage": {
@@ -78,7 +102,7 @@
         "type": "textbox",
         "value": "Sorry {0}, but you cannot transfer {1} to yourself.",
         "label": "Transfer To Yourself Message",
-        "tooltip": "Chat message will be sent if user tries to transfer to yourself. 0 — user, 1 — currency.",
+        "tooltip": "Chat message will be sent if user tries to transfer to yourself. 0 — user, 1 — currency name.",
         "group": "Chat Messages"
     },
 

@@ -27,7 +27,7 @@ SettingsReloadEventName = "settings_reload"
 
 CommandGiveUsage = "{0} {1} {2}"
 ExampleUserIdOrName = "[UserIdOrName]"
-ExampleAmount = "[1-∞]"
+ExampleAmount = "[1–∞]"
 
 # [Required] Script Information.
 ScriptName = "Transfer Currency Script"
@@ -42,6 +42,10 @@ Version = "0.5.1.0"
 # overwritten later/not refactored yet).
 CommandGive = "!give"
 
+GiveTaxPercent = 10
+MinGiveAmount = 10
+MaxGiveAmount = 100000
+
 # Values: everyone, moderator, subscriber, user_specific, editor.
 Permission = "everyone"
 
@@ -55,7 +59,7 @@ PermissionInfo = ""
 InvalidCommandCallMessage = "Invalid {0} command call. Usage: {1}"
 SuccessfulTransferMessage = "{0} has successfully transferred {1} {2} to {3}."
 NotEnoughFundsMessage = "Sorry {0}, you don't have enough {1}."
-InvalidAmountMessage = "Sorry {0}, {1} isn't a valid amount."
+InvalidAmountMessage = "Sorry {0}, {1} isn't a valid amount. Please, choose integral amount in range: [{2}–{3}]."
 NoTargetMessage = "Sorry {0}, but you didn't say who to send the {1} to."
 InvalidTargetMessage = "Sorry {0}, but {1} doesn't exist."
 TransferToYourselfMessage = "Sorry {0}, but you cannot transfer {1} to yourself."

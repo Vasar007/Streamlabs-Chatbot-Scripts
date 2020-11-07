@@ -69,6 +69,9 @@ class TransferSettings(object):
     def _set_default(self):
         # Setup group.
         self.CommandGive = config.CommandGive
+        self.GiveTaxPercent = config.GiveTaxPercent
+        self.MinGiveAmount = config.MinGiveAmount
+        self.MaxGiveAmount = config.MaxGiveAmount
 
         # Permission group.
         self.Permission = config.Permission

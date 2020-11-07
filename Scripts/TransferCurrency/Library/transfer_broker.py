@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import transfer_config as config  # pylint:disable=import-error
 import transfer_helpers as helpers
 from transfer_searcher import TransferUserSearcher as UserSearcher
+from transfer_tax_collector import TransferTaxCollector as TaxCollector
 
 
 class TransferRequest(object):
@@ -20,9 +22,37 @@ class TransferBroker(object):
         self.parent_wrapper = parent_wrapper
         self.settings = settings
         self.logger = logger
+
         self.searcher = UserSearcher(parent_wrapper, logger)
+        self.tax_collector = TaxCollector(parent_wrapper, settings, logger)
 
     def try_send_transfer(self, request):
+        target_id_and_name = self._prepare_transfer(request)
+        if target_id_and_name is None:
+            self.logger.debug("Target is invalid, interupt tranfer.")
+            return False
+
+        amount_int = helpers.safe_cast(request.amount, int)
+        if amount_int is None or not self._check_amount_value(amount_int):
+            self._handle_invalid_amount(request.user_name, request.amount)
+            return False
+
+        final_amount = self.tax_collector.apply_fee(
+            request.user_id, amount_int
+        )
+        if final_amount > self.parent_wrapper.get_points(request.user_id):
+            self._handle_not_enough_funds(
+                request.user_name, request.currency_name
+            )
+            return False
+
+        target_id, target_name = target_id_and_name
+        self._handle_transfer_currency(
+            request, target_id, target_name, final_amount
+        )
+        return True
+
+    def _prepare_transfer(self, request):
         target_id_and_name = self.searcher.find_user_id_and_name(
             request.target
         )
@@ -33,31 +63,41 @@ class TransferBroker(object):
                 )
             else:
                 self._handle_invalid_target(request.user_name, request.target)
-            return
+            return None
 
-        target_id, target_name = target_id_and_name
+        target_id, _ = target_id_and_name
         if request.user_id == target_id:
             self._handle_target_is_sender(
                 request.user_name, request.currency_name
             )
-            return
+            return None
 
-        amount_int = helpers.safe_cast(request.amount, int)
-        if amount_int is None or amount_int <= 0:
-            self._handle_invalid_amount(request.user_name, request.amount)
-        elif amount_int <= self.parent_wrapper.get_points(request.user_id):
-            self._handle_transfer_currency(
-                request, target_id, target_name, amount_int
+        return target_id_and_name
+
+    def _check_amount_value(self, amount):
+        min_amount = self.settings.MinGiveAmount
+        max_amount = self.settings.MaxGiveAmount
+
+        if max_amount < min_amount:
+            min_amount = config.MinGiveAmount
+            max_amount = config.MaxGiveAmount
+            self.logger.error(
+                "Encountered invalid amount settings. " +
+                "Using default value for min ({0}) and max ({1}) amount."
+                .format(min_amount, max_amount)
             )
-        else:
-            self._handle_not_enough_funds(
-                request.user_name, request.currency_name
-            )
+
+        return min_amount <= amount <= max_amount
 
     def _handle_invalid_amount(self, user_name, amount):
+        min_amount = self.settings.MinGiveAmount
+        max_amount = self.settings.MaxGiveAmount
+
         message = (
             str(self.settings.InvalidAmountMessage)
-            .format(user_name, amount)
+            .format(
+                user_name, amount, min_amount, max_amount
+            )
         )
         self.logger.info(message)
         self.parent_wrapper.send_stream_message(message)
