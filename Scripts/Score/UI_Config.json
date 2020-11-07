@@ -110,13 +110,6 @@
         "tooltip": "Chat message will be sent if user tries to update nonexistent score (using Update Command).",
         "group": "Chat Messages"
     },
-    "InvalidPlayerIdMessage": {
-        "type": "textbox",
-        "value": "Failed to update score: invalid player ID {0}. Try value in range: {1}.",
-        "label": "Invalid Player ID Message",
-        "tooltip": "Chat message will be sent if user calls an Update Score command with invalid player ID. 0 — invalid player ID, 1 — valid value range.",
-        "group": "Chat Messages"
-    },
     "InvalidScoreValueMessage": {
         "type": "textbox",
         "value": "Failed to update score: invalid score value {0}. Try value in range: {1}.",

@@ -53,14 +53,15 @@ So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
 
 - Label: Update Command
 - Description: The command to update current score
-- Usage: !update_score PlayerId NewValue
+- Usage: !update_score Player1Score Player2Score
 - Permissions: Moderator or higher
 - Arguments:
-  - PlayerId: integer — the player ID (1 for the first player or 2 for the second player)
-  - NewValue: integer — new value to set for target player (positive number)
+  - Player1Score: integer — new value to set for player 1 (positive number)
+  - Player2Score: integer — new value to set for player 2 (positive number)
 - Samples:
   - `!update_score 1 1`
   - `!update_score 2 5`
+  - `!update_score 2 0`
 
 ### !reset_score
 

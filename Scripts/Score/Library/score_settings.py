@@ -87,7 +87,6 @@ class ScoreSettings(object):
         self.CreatedScoreMessage = config.CreatedScoreMessage
         self.RecreatedScoreMessage = config.RecreatedScoreMessage
         self.NothingToUpdateMessage = config.NothingToUpdateMessage
-        self.InvalidPlayerIdMessage = config.InvalidPlayerIdMessage
         self.InvalidScoreValueMessage = config.InvalidScoreValueMessage
         self.UpdatedScoreMessage = config.UpdatedScoreMessage
         self.NothingToResetMessage = config.NothingToResetMessage

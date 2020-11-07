@@ -48,27 +48,19 @@ class ScoreManager(object):
 
         return ScoreValueHandler(True, self.active_score, message)
 
-    def update_score(self, raw_player_id, raw_new_score):
+    def update_score(self, raw_player1_score, raw_player2_score):
         if self.active_score is None:
             message = self.settings.NothingToUpdateMessage
         else:
-            player_id = helpers.safe_cast(raw_player_id, int)
-            if player_id is None or not self._is_valid_player_id(player_id):
-                message = (
-                    self.settings.InvalidPlayerIdMessage
-                    .format(raw_player_id, config.ExamplePlayerId)
-                )
+            (player1_score, message) = self._try_get_score(raw_player1_score)
+            if player1_score is None:
                 return ScoreValueHandler(False, self.active_score, message)
 
-            new_score = helpers.safe_cast(raw_new_score, int)
-            if new_score is None or not self._is_valid_score_value(new_score):
-                message = (
-                    self.settings.InvalidScoreValueMessage
-                    .format(raw_new_score, config.ExampleScoreValue)
-                )
+            (player2_score, message) = self._try_get_score(raw_player2_score)
+            if player2_score is None:
                 return ScoreValueHandler(False, self.active_score, message)
 
-            self.active_score.update_by_string(player_id, new_score)
+            self.active_score.update(player1_score, player2_score)
 
             message = (
                 self.settings.UpdatedScoreMessage
@@ -102,8 +94,20 @@ class ScoreManager(object):
 
         return ScoreValueHandler(True, deleted_score, message)
 
-    def _is_valid_player_id(self, player_id):
-        return 1 <= player_id <= 2
+    def _try_get_score(self, raw_player_score):
+        player_score = helpers.safe_cast(raw_player_score, int)
+        is_player_score_invalid = (
+            player_score is None or
+            not self._is_valid_score_value(player_score)
+        )
+        if is_player_score_invalid:
+            message = (
+                self.settings.InvalidScoreValueMessage
+                .format(raw_player_score, config.ExampleScoreValue)
+            )
+            return (None, message)
+
+        return (player_score, None)
 
     def _is_valid_score_value(self, score_value):
-        return score_value > 0
+        return score_value >= 0

@@ -254,7 +254,7 @@ def TryProcessCommand(command, data):
             config.CommandUpdateScoreUsage
             .format(
                 ScriptSettings.CommandUpdateScore,
-                config.ExamplePlayerId,
+                config.ExampleScoreValue,
                 config.ExampleScoreValue
             )
         )
@@ -319,12 +319,14 @@ def ProcessNewCommand(manager, data):
 
 def ProcessUpdateCommand(manager, data):
     # Input example: !update_score 1 1
-    # Command PlayerId NewValue
+    # Command Player1Score Player2Score
     try:
-        raw_player_id = data.GetParam(1)
-        raw_new_score = data.GetParam(2)
+        raw_player1_score = data.GetParam(1)
+        raw_player2_score = data.GetParam(2)
 
-        score_handler = manager.update_score(raw_player_id, raw_new_score)
+        score_handler = manager.update_score(
+            raw_player1_score, raw_player2_score
+        )
         HandleResult(score_handler)
     except Exception as ex:
         Logger().excpetion("Failed to update score: " + str(ex))

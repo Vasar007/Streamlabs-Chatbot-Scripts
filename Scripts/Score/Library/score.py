@@ -58,16 +58,9 @@ class Score(object):
         self.player2.reset()
         self._logger.info("Resetted score for both players.")
 
-    def update_by_string(self, player_id, new_score):
-        if player_id == 1:
-            self._update_player_score(self.player1, new_score)
-        elif player_id == 2:
-            self._update_player_score(self.player2, new_score)
-        else:
-            message = (
-                "Failed to update score: invalid player ID " + str(player_id)
-            )
-            self._logger.error(message)
+    def update(self, player1_score, player2_score):
+        self._update_player_score(self.player1, player1_score)
+        self._update_player_score(self.player2, player2_score)
 
     def _update_player_score(self, player, new_score):
         player.update(new_score)

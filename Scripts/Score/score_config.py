@@ -28,15 +28,14 @@ SettingsReloadEventName = "settings_reload"
 CommandNewScoreUsage = "{0} {1} {2}"
 CommandUpdateScoreUsage = "{0} {1} {2}"
 ExamplePlayerName = "[PlayerName]"
-ExamplePlayerId = "[1–2]"
-ExampleScoreValue = "[1–∞]"
+ExampleScoreValue = "[0–∞]"
 
 # [Required] Script Information.
 ScriptName = "Score Script"
 Website = "https://github.com/Vasar007/Streamlabs-Chatbot-Scripts"
 Description = "Adds an opportunity to create and update score"
 Creator = "Vasar007"
-Version = "0.6.0.0"
+Version = "1.0.0.0"
 
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).
@@ -63,7 +62,6 @@ CurrentScoreMessage = "Current score {0}"
 CreatedScoreMessage = "Created new score: {0}"
 RecreatedScoreMessage = "Score has created already, created the new one: {0}"
 NothingToUpdateMessage = "No score found, nothing to update."
-InvalidPlayerIdMessage = "Failed to update score: invalid player ID {0}. Try value in range: {1}."
 InvalidScoreValueMessage = "Failed to update score: invalid score value {0}. Try value in range: {1}."
 UpdatedScoreMessage = "Updated score: {0}"
 NothingToResetMessage = "No score found, nothing to reset."
