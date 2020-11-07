@@ -25,7 +25,7 @@
     "CommandGetTaxPercent": {
         "type": "textbox",
         "value": "!get_tax",
-        "label": "Command Get Tax Percent",
+        "label": "Get Tax Percent Command",
         "tooltip": "Command that users will use when they want to to retrieve current tax percent.",
         "group": "Setup"
     },

@@ -31,3 +31,4 @@ So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
 - Description: The command that will be responded to
 - Usage: !ping
 - Permissions: Everyone
+- Can have optional text: Yes

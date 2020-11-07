@@ -35,6 +35,7 @@ So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
 - Description: The command to show current score
 - Usage: !score
 - Permissions: Everyone
+- Can have optional text: Yes
 
 ### !new_score
 
@@ -42,6 +43,7 @@ So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
 - Description: The command to create new score
 - Usage: !new_score Player1 Player2
 - Permissions: Moderator or higher
+- Can have optional text: No
 - Arguments:
   - Player1: string — the first player name
   - Player1: string — the second player name
@@ -55,6 +57,7 @@ So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
 - Description: The command to update current score
 - Usage: !update_score Player1Score Player2Score
 - Permissions: Moderator or higher
+- Can have optional text: No
 - Arguments:
   - Player1Score: integer — new value to set for player 1 (positive number)
   - Player2Score: integer — new value to set for player 2 (positive number)
@@ -69,6 +72,7 @@ So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
 - Description: The command to reset current score
 - Usage: !reset_score
 - Permissions: Moderator or higher
+- Can have optional text: No
 
 ### !delete_score
 
@@ -76,3 +80,4 @@ So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
 - Description: The command to delete current score
 - Usage: !delete_score
 - Permissions: Moderator or higher
+- Can have optional text: nNoo
