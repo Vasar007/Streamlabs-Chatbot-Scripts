@@ -108,9 +108,9 @@
     },
     "SuccessfulTransferMessage": {
         "type": "textbox",
-        "value": "{0} has successfully transferred {1} {2} to {3}.",
+        "value": "{0} has successfully transferred {1} {2} to {3} (tax: {4}).",
         "label": "Transfer Success Message",
-        "tooltip": "Chat message will be sent on successful transfer of currency. 0 — user, 1 — amount, 2 — currency name, 3 — target.",
+        "tooltip": "Chat message will be sent on successful transfer of currency. 0 — user, 1 — amount, 2 — currency name, 3 — target, 4 — tax amount.",
         "group": "Chat Messages"
     },
     "SuccessfulAddingMessage": {
@@ -136,21 +136,21 @@
     },
     "NotEnoughFundsToTransferMessage": {
         "type": "textbox",
-        "value": "Sorry {0}, you don't have enough {1}.",
+        "value": "Sorry {0}, you don't have enough {1} (you have: {2}, required: {3}).",
         "label": "Not Enough Funds To Transfer Message",
         "tooltip": "Chat message will be sent if user doesn't have enough funds to transfer. 0 — user, 1 — currency name.",
         "group": "Chat Messages"
     },
     "NotEnoughFundsToRemoveMessage": {
         "type": "textbox",
-        "value": "Sorry {0}, {1} doesn't have enough {2}.",
+        "value": "Sorry {0}, {1} doesn't have enough {2} ({1} has: {3}, required: {4}).",
         "label": "Not Enough Funds To Remove Message",
         "tooltip": "Chat message will be sent if user doesn't have enough funds to remove. 0 — user, 1 — target, 2 — currency name.",
         "group": "Chat Messages"
     },
     "InvalidAmountMessage": {
         "type": "textbox",
-        "value": "Sorry {0}, {1} isn't a valid amount. Please, choose integral amount in range: [{2}]",
+        "value": "Sorry {0}, {1} isn't a valid amount. Please, choose integral amount in range: {2}",
         "label": "Invalid Amount Message",
         "tooltip": "Chat message will be sent if user specify invalid amount to transfer. 0 — user, 1 — specified amount, 2 — valid amount range.",
         "group": "Chat Messages"

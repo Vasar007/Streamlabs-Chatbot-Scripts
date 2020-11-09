@@ -5,6 +5,8 @@ from abc import ABCMeta, abstractmethod
 import transfer_config as config  # pylint:disable=import-error
 import transfer_helpers as helpers
 
+from transfer_broker_models import TransferAmount 
+
 
 class BaseTransferStrategy(object):
 
@@ -32,15 +34,16 @@ class BaseTransferStrategy(object):
         raise NotImplementedError()
 
     @abstractmethod
-    def has_user_enough_funds(self, user_id, target_id, final_amount):
+    def has_user_enough_funds(self, user_id, target_id, transfer_amount):
         raise NotImplementedError()
 
     @abstractmethod
-    def handle_not_enough_funds(self, user_name, target_name, currency_name):
+    def handle_not_enough_funds(self, user_data, target_data, currency_name,
+                                transfer_amount):
         raise NotImplementedError()
 
     @abstractmethod
-    def handle_transfer_request(self, request, target_data, final_amount):
+    def handle_transfer_request(self, request, target_data, transfer_amount):
         raise NotImplementedError()
 
     def _handle_add_tranfer(self, parameters, send_message):
@@ -128,41 +131,49 @@ class NormalTransferStrategy(BaseTransferStrategy):
 
         message = (
             str(self.settings.InvalidAmountMessage)
-            .format(
-                user_name, raw_amount, amount_example
-            )
+            .format(user_name, raw_amount, amount_example)
         )
         self.logger.info(message)
         self.parent_wrapper.send_stream_message(message)
 
     def calculate_final_amount(self, user_id, amount):
-        return self.tax_collector.apply_fee(user_id, amount)
+        (final_amount, fee) = self.tax_collector.apply_fee(
+            user_id, amount, return_fee=True
+        )
+        return TransferAmount(amount, final_amount, fee)
 
-    def has_user_enough_funds(self, user_id, target_id, final_amount):
+    def has_user_enough_funds(self, user_id, target_id, transfer_amount):
         current_amount = self.parent_wrapper.get_points(user_id)
-        return final_amount <= current_amount
+        return transfer_amount.initial_amount <= current_amount
 
-    def handle_not_enough_funds(self, user_name, target_name, currency_name):
+    def handle_not_enough_funds(self, user_data, target_data, currency_name,
+                                transfer_amount):
+        current_amount = self.parent_wrapper.get_points(user_data.id)
         message = (
             str(self.settings.NotEnoughFundsToTransferMessage)
-            .format(user_name, currency_name)
+            .format(
+                user_data.name,
+                currency_name,
+                current_amount,
+                transfer_amount.initial_amount
+            )
         )
         self.logger.info(message)
         self.parent_wrapper.send_stream_message(message)
 
-    def handle_transfer_request(self, request, target_data, final_amount):
-        self._handle_normal_transfer(request, target_data, final_amount)
+    def handle_transfer_request(self, request, target_data, transfer_amount):
+        self._handle_normal_transfer(request, target_data, transfer_amount)
 
-    def _handle_normal_transfer(self, request, target_data, final_amount):
+    def _handle_normal_transfer(self, request, target_data, transfer_amount):
         remove_parameters = request.to_paramters(
             target_data=request.user_data,
-            final_amount=final_amount
+            final_amount=transfer_amount.initial_amount
         )
         self._handle_remove_tranfer(remove_parameters, send_message=False)
 
         add_parameters = request.to_paramters(
             target_data=target_data,
-            final_amount=final_amount
+            final_amount=transfer_amount.final_amount
         )
         self._handle_add_tranfer(add_parameters, send_message=False)
 
@@ -170,9 +181,10 @@ class NormalTransferStrategy(BaseTransferStrategy):
             str(self.settings.SuccessfulTransferMessage)
             .format(
                 request.user_data.name,
-                final_amount,
+                transfer_amount.final_amount,
                 request.currency_name,
-                target_data.name
+                target_data.name,
+                transfer_amount.fee
             )
         )
         self.parent_wrapper.send_stream_message(message)
@@ -194,27 +206,26 @@ class AddTransferStrategy(BaseTransferStrategy):
     def handle_invalid_amount(self, user_name, raw_amount):
         message = (
             str(self.settings.InvalidAmountMessage)
-            .format(
-                user_name, raw_amount, config.ExampleAmountValidRange
-            )
+            .format(user_name, raw_amount, config.ExampleAmountValidRange)
         )
         self.logger.info(message)
         self.parent_wrapper.send_stream_message(message)
 
     def calculate_final_amount(self, user_id, amount):
-        return amount
+        return TransferAmount(amount, amount)
 
-    def has_user_enough_funds(self, user_id, target_id, final_amount):
+    def has_user_enough_funds(self, user_id, target_id, transfer_amount):
         return True
 
-    def handle_not_enough_funds(self, user_name, target_name, currency_name):
+    def handle_not_enough_funds(self, user_data, target_data, currency_name,
+                                transfer_amount):
         # Nothing to do. This method should never be called for this class.
         raise NotImplementedError()
 
-    def handle_transfer_request(self, request, target_data, final_amount):
+    def handle_transfer_request(self, request, target_data, transfer_amount):
         add_parameters = request.to_paramters(
             target_data=target_data,
-            final_amount=final_amount
+            final_amount=transfer_amount.final_amount
         )
         self._handle_add_tranfer(add_parameters, send_message=True)
 
@@ -238,32 +249,38 @@ class RemoveTransferStrategy(BaseTransferStrategy):
     def handle_invalid_amount(self, user_name, raw_amount):
         message = (
             str(self.settings.InvalidAmountMessage)
-            .format(
-                user_name, raw_amount, config.ExampleAmountValidRange
-            )
+            .format(user_name, raw_amount, config.ExampleAmountValidRange)
         )
         self.logger.info(message)
         self.parent_wrapper.send_stream_message(message)
 
     def calculate_final_amount(self, user_id, amount):
-        return amount
+        return TransferAmount(amount, amount)
 
-    def has_user_enough_funds(self, user_id, target_id, final_amount):
+    def has_user_enough_funds(self, user_id, target_id, transfer_amount):
         current_amount = self.parent_wrapper.get_points(target_id)
-        return final_amount <= current_amount
+        return transfer_amount.final_amount <= current_amount
 
-    def handle_not_enough_funds(self, user_name, target_name, currency_name):
+    def handle_not_enough_funds(self, user_data, target_data, currency_name,
+                                transfer_amount):
+        current_amount = self.parent_wrapper.get_points(target_data.id)
         message = (
             str(self.settings.NotEnoughFundsToRemoveMessage)
-            .format(user_name, target_name, currency_name)
+            .format(
+                user_data.name,
+                target_data.name,
+                currency_name,
+                current_amount,
+                transfer_amount.final_amount
+            )
         )
         self.logger.info(message)
         self.parent_wrapper.send_stream_message(message)
 
-    def handle_transfer_request(self, request, target_data, final_amount):
+    def handle_transfer_request(self, request, target_data, transfer_amount):
         remove_parameters = request.to_paramters(
             target_data=target_data,
-            final_amount=final_amount
+            final_amount=transfer_amount.final_amount
         )
         self._handle_remove_tranfer(remove_parameters, send_message=True)
 
@@ -284,24 +301,23 @@ class SetTransferStrategy(BaseTransferStrategy):
     def handle_invalid_amount(self, user_name, raw_amount):
         message = (
             str(self.settings.InvalidAmountMessage)
-            .format(
-                user_name, raw_amount, config.ExampleAmountSetRange
-            )
+            .format(user_name, raw_amount, config.ExampleAmountSetRange)
         )
         self.logger.info(message)
         self.parent_wrapper.send_stream_message(message)
 
     def calculate_final_amount(self, user_id, amount):
-        return amount
+        return TransferAmount(amount, amount)
 
-    def has_user_enough_funds(self, user_id, target_id, final_amount):
+    def has_user_enough_funds(self, user_id, target_id, transfer_amount):
         return True
 
-    def handle_not_enough_funds(self, user_name, target_name, currency_name):
+    def handle_not_enough_funds(self, user_data, target_data, currency_name,
+                                transfer_amount):
         # Nothing to do. This method should never be called for this class.
         raise NotImplementedError()
 
-    def handle_transfer_request(self, request, target_data, final_amount):
+    def handle_transfer_request(self, request, target_data, transfer_amount):
         current_amount = self.parent_wrapper.get_points(target_data.id)
         remove_parameters = request.to_paramters(
             target_data=target_data,
@@ -311,7 +327,7 @@ class SetTransferStrategy(BaseTransferStrategy):
 
         add_parameters = request.to_paramters(
             target_data=target_data,
-            final_amount=final_amount
+            final_amount=transfer_amount.final_amount
         )
         self._handle_add_tranfer(add_parameters, send_message=False)
 
@@ -319,7 +335,7 @@ class SetTransferStrategy(BaseTransferStrategy):
             str(self.settings.SuccessfulSettingMessage)
             .format(
                 request.user_data.name,
-                final_amount,
+                transfer_amount.final_amount,
                 request.currency_name,
                 target_data.name
             )

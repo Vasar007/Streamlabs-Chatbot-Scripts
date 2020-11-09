@@ -45,6 +45,7 @@ class TransferBroker(object):
             )
             return False
 
+        self.logger.info("Initial amount to transfer: " + str(amount_int))
         final_amount = strategy.calculate_final_amount(
             request.user_data.id, amount_int
         )
@@ -53,7 +54,10 @@ class TransferBroker(object):
         )
         if not has_user_enough_funds:
             strategy.handle_not_enough_funds(
-                request.user_data.name, target_data.name, request.currency_name
+                request.user_data,
+                target_data,
+                request.currency_name,
+                final_amount
             )
             return False
 

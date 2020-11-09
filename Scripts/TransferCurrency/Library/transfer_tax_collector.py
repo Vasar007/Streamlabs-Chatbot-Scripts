@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import math
+
 
 class TransferTaxCollector(object):
 
@@ -10,14 +12,20 @@ class TransferTaxCollector(object):
 
     def calculate_fee(self, user_id, amount):
         percent = self._calculate_percent(user_id)
-        fee = int(amount * percent)
+        # Round to the smallest integer >= raw fee.
+        # Cast to int to remove points in formatting.
+        fee = int(math.ceil(amount * percent))
         self.logger.info("Calculated fee: {0}".format(fee))
         return fee
 
-    def apply_fee(self, user_id, amount):
+    def apply_fee(self, user_id, amount, return_fee=False):
         fee = self.calculate_fee(user_id, amount)
-        final_amount = amount - fee
+        # Cast to int to remove points in formatting.
+        final_amount = int(amount - fee)
         self.logger.info("Calculated final amount: {0}".format(final_amount))
+        if return_fee:
+            return (final_amount, fee)
+
         return final_amount
 
     def _calculate_percent(self, user_id):

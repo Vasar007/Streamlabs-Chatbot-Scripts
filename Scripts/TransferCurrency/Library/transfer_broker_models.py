@@ -31,3 +31,11 @@ class TransferParameters(object):
         self.target_data = target_data
         self.currency_name = currency_name
         self.final_amount = final_amount
+
+
+class TransferAmount(object):
+
+    def __init__(self, initial_amount, final_amount, fee=0):
+        self.initial_amount = initial_amount
+        self.final_amount = final_amount
+        self.fee = fee
