@@ -24,6 +24,8 @@ import score_config as config
 import score_helpers as helpers  # pylint:disable=import-error
 # pylint:disable=import-error
 from score_parent_wrapper import ScoreParentWrapper as ParentWrapper
+# pylint:disable=import-error
+from score_data_wrapper import ScoreDataWrapper as DataWrapper
 
 import score  # pylint:disable=import-error
 # pylint:disable=import-error
@@ -88,13 +90,14 @@ def Execute(data):
     [Required] Execute Data/Process messages.
     """
     try:
-        if not data.IsChatMessage():
+        data_wrapper = DataWrapper(data)
+        if not data_wrapper.is_chat_message():
             return
 
         # Check if the propper command is used, the command is not on cooldown
         # and the user has permission to use the command.
-        command = data.GetParam(0).lower()
-        parsed_command = TryProcessCommand(command, data)
+        command = data_wrapper.get_param(0).lower()
+        parsed_command = TryProcessCommand(command, data_wrapper)
 
         # Check if it is unknown command.
         if parsed_command.is_unknown_command():
@@ -119,7 +122,7 @@ def Execute(data):
 
         # If user doesn't have permission, "func" will be equal to "None".
         if parsed_command.has_func():
-            parsed_command.func(Manager, data)
+            parsed_command.func(Manager, data_wrapper)
         else:
             HandleNoPermission(
                 parsed_command.required_permission, parsed_command.command
@@ -150,14 +153,14 @@ def Parse(parse_string, userid, username, targetid, targetname, message):
     return parse_string
 
 
-def ReloadSettings(jsonData):
+def ReloadSettings(jsondata):
     """
     [Optional] Reload Settings (called when a user clicks the Save Settings
     button in the Chatbot UI).
     """
     # Execute json reloading here.
     try:
-        ScriptSettings.reload(jsonData)
+        ScriptSettings.reload(jsondata)
         ScriptSettings.save(SettingsFile)
         Logger().info("Settings reloaded.")
     except Exception as ex:
@@ -208,13 +211,13 @@ def GetFuncToProcessIfHasPermission(process_command, user_id,
     return process_command if has_permission else None
 
 
-def TryProcessCommand(command, data):
+def TryProcessCommand(command, data_wrapper):
     func = None
     required_permission = None
     is_valid_call = None
     usage_example = None
 
-    param_count = data.GetParamCount()
+    param_count = data_wrapper.get_param_count()
 
     # !score
     if command == ScriptSettings.CommandGetScore:
@@ -222,7 +225,7 @@ def TryProcessCommand(command, data):
         permission_info = ScriptSettings.PermissionInfoOnGet
         func = GetFuncToProcessIfHasPermission(
             ProcessGetCommand,
-            data.User,
+            data_wrapper.user_id,
             required_permission,
             permission_info
         )
@@ -235,7 +238,7 @@ def TryProcessCommand(command, data):
         permission_info = ScriptSettings.PermissionInfoOnEdit
         func = GetFuncToProcessIfHasPermission(
             ProcessNewCommand,
-            data.User,
+            data_wrapper.user_id,
             required_permission,
             permission_info
         )
@@ -255,7 +258,7 @@ def TryProcessCommand(command, data):
         permission_info = ScriptSettings.PermissionInfoOnEdit
         func = GetFuncToProcessIfHasPermission(
             ProcessUpdateCommand,
-            data.User,
+            data_wrapper.user_id,
             required_permission,
             permission_info
         )
@@ -275,7 +278,7 @@ def TryProcessCommand(command, data):
         permission_info = ScriptSettings.PermissionInfoOnEdit
         func = GetFuncToProcessIfHasPermission(
             ProcessResetCommand,
-            data.User,
+            data_wrapper.user_id,
             required_permission,
             permission_info
         )
@@ -288,7 +291,7 @@ def TryProcessCommand(command, data):
         permission_info = ScriptSettings.PermissionInfoOnEdit
         func = GetFuncToProcessIfHasPermission(
             ProcessReloadCommand,
-            data.User,
+            data_wrapper.user_id,
             required_permission,
             permission_info
         )
@@ -312,7 +315,7 @@ def HandleResult(score_handler, to_debug=False):
     ParentHandler.send_stream_message(score_handler.message)
 
 
-def ProcessGetCommand(manager, data):
+def ProcessGetCommand(manager, data_wrapper):
     # Input example: !score
     # Command <Anything>
     try:
@@ -322,12 +325,12 @@ def ProcessGetCommand(manager, data):
         Logger().exception("Failed to get score: " + str(ex))
 
 
-def ProcessNewCommand(manager, data):
+def ProcessNewCommand(manager, data_wrapper):
     # Input example: !new_score Player1 Player2
     # Command Player1Name Player2Name
     try:
-        player1_name = data.GetParam(1)
-        player2_name = data.GetParam(2)
+        player1_name = data_wrapper.get_param(1)
+        player2_name = data_wrapper.get_param(2)
 
         score_handler = manager.create_score(player1_name, player2_name)
         HandleResult(score_handler)
@@ -335,12 +338,12 @@ def ProcessNewCommand(manager, data):
         Logger().exception("Failed to create score: " + str(ex))
 
 
-def ProcessUpdateCommand(manager, data):
+def ProcessUpdateCommand(manager, data_wrapper):
     # Input example: !update_score 1 1
     # Command Player1Score Player2Score
     try:
-        raw_player1_score = data.GetParam(1)
-        raw_player2_score = data.GetParam(2)
+        raw_player1_score = data_wrapper.get_param(1)
+        raw_player2_score = data_wrapper.get_param(2)
 
         score_handler = manager.update_score(
             raw_player1_score, raw_player2_score
@@ -350,7 +353,7 @@ def ProcessUpdateCommand(manager, data):
         Logger().excpetion("Failed to update score: " + str(ex))
 
 
-def ProcessResetCommand(manager, data):
+def ProcessResetCommand(manager, data_wrapper):
     # Input example: !reset_score
     # Command
     try:
@@ -360,7 +363,7 @@ def ProcessResetCommand(manager, data):
         Logger().exception("Failed to reset score: " + str(ex))
 
 
-def ProcessReloadCommand(manager, data):
+def ProcessReloadCommand(manager, data_wrapper):
     # Input example: !delete_score
     # Command
     try:

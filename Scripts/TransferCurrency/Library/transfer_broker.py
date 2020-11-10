@@ -194,13 +194,13 @@ def get_transfer_type(command, settings):
         )
 
 
-def create_request_from(data, command, parent_wrapper, settings):
-    user_data = UserData(data.User, data.UserName)
+def create_request_from(data_wrapper, command, parent_wrapper, settings):
+    user_data = UserData(data_wrapper.user_id, data_wrapper.user_name)
 
-    raw_target_id_or_name = data.GetParam(1)
+    raw_target_id_or_name = data_wrapper.get_param(1)
     target_id_or_name = helpers.strip_at_symbol_for_name(raw_target_id_or_name)
 
-    raw_amount = data.GetParam(2).lower()
+    raw_amount = data_wrapper.get_param(2).lower()
     currency_name = parent_wrapper.get_currency_name()
     transfer_type = get_transfer_type(command, settings)
 

@@ -25,6 +25,8 @@ import template_config as config
 import template_helpers as helpers  # pylint:disable=import-error
 # pylint:disable=import-error
 from template_parent_wrapper import TemplateParentWrapper as ParentWrapper
+# pylint:disable=import-error
+from template_data_wrapper import TemplateDataWrapper as DataWrapper
 
 # pylint:disable=import-error
 from template_command_wrapper import TemplateCommandWrapper as CommandWrapper
@@ -83,13 +85,14 @@ def Execute(data):
     [Required] Execute Data/Process messages.
     """
     try:
-        if not data.IsChatMessage():
+        data_wrapper = DataWrapper(data)
+        if not data_wrapper.is_chat_message():
             return
 
         # Check if the propper command is used, the command is not on cooldown
         # and the user has permission to use the command.
-        command = data.GetParam(0).lower()
-        parsed_command = TryProcessCommand(command, data)
+        command = data_wrapper.get_param(0).lower()
+        parsed_command = TryProcessCommand(command, data_wrapper)
 
         # Check if it is unknown command.
         if parsed_command.is_unknown_command():
@@ -114,7 +117,7 @@ def Execute(data):
 
         # If user doesn't have permission, "func" will be equal to "None".
         if parsed_command.has_func():
-            parsed_command.func(data)
+            parsed_command.func(data_wrapper)
         else:
             HandleNoPermission(
                 parsed_command.required_permission, parsed_command.command
@@ -148,14 +151,14 @@ def Parse(parseString, userid, username, targetid, targetname, message):
     return parseString
 
 
-def ReloadSettings(jsonData):
+def ReloadSettings(jsondata):
     """
     [Optional] Reload Settings (Called when a user clicks the Save Settings
     button in the Chatbot UI).
     """
     # Execute json reloading here.
     try:
-        ScriptSettings.reload(jsonData)
+        ScriptSettings.reload(jsondata)
         ScriptSettings.save(SettingsFile)
     except Exception as ex:
         Logger().exception(
@@ -198,16 +201,14 @@ def HandleNoPermission(required_permission, command):
 
 
 def GetFuncToProcessIfHasPermission(process_command, user_id,
-                                    required_permission):
+                                    required_permission, permission_info):
     has_permission = ParentHandler.has_permission(
-        user_id,
-        required_permission,
-        ScriptSettings.PermissionInfo
+        user_id, required_permission, permission_info
     )
     return process_command if has_permission else None
 
 
-def TryProcessCommand(command, data):
+def TryProcessCommand(command, data_wrapper):
     func = None
     required_permission = None
     is_valid_call = None
@@ -216,8 +217,12 @@ def TryProcessCommand(command, data):
     # !ping
     if command == ScriptSettings.CommandPing:
         required_permission = ScriptSettings.Permission
+        permission_info = ScriptSettings.PermissionInfo
         func = GetFuncToProcessIfHasPermission(
-            ProcessPingCommand, data.User, required_permission
+            ProcessPingCommand,
+            data_wrapper.user_id,
+            required_permission,
+            permission_info
         )
         is_valid_call = True  # Ping command call will always be valid.
         usage_example = ScriptSettings.CommandPing
@@ -227,16 +232,16 @@ def TryProcessCommand(command, data):
     )
 
 
-def ProcessPingCommand(data):
+def ProcessPingCommand(data_wrapper):
     # Input example: !ping
     # Command <Anything>
     is_on_user_cooldown = ParentHandler.is_on_user_cooldown(
-        ScriptName, ScriptSettings.CommandPing, data.User
+        ScriptName, ScriptSettings.CommandPing, data_wrapper.user_id
     )
 
     if is_on_user_cooldown:
         cooldown = ParentHandler.get_user_cooldown_duration(
-            ScriptName, ScriptSettings.CommandPing, data.User
+            ScriptName, ScriptSettings.CommandPing, data_wrapper.user_id
         )
         ParentHandler.send_stream_message("Time Remaining " + str(cooldown))
     else:
@@ -247,6 +252,6 @@ def ProcessPingCommand(data):
         ParentHandler.add_user_cooldown(
             ScriptName,
             ScriptSettings.CommandPing,
-            data.User,
+            data_wrapper.user_id,
             ScriptSettings.Cooldown
         )

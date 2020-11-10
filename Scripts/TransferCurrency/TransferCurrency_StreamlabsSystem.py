@@ -24,6 +24,8 @@ import transfer_config as config
 import transfer_helpers as helpers  # pylint:disable=import-error
 # pylint:disable=import-error
 from transfer_parent_wrapper import TransferParentWrapper as ParentWrapper
+# pylint:disable=import-error
+from transfer_data_wrapper import TransferDataWrapper as DataWrapper
 
 # pylint:disable=import-error
 from transfer_command_wrapper import TransferCommandWrapper as CommandWrapper
@@ -82,13 +84,14 @@ def Execute(data):
     [Required] Execute Data/Process messages.
     """
     try:
-        if not data.IsChatMessage():
+        data_wrapper = DataWrapper(data)
+        if not data_wrapper.is_chat_message():
             return
 
         # Check if the propper command is used, the command is not on cooldown
         # and the user has permission to use the command.
-        command = data.GetParam(0).lower()
-        parsed_command = TryProcessCommand(command, data)
+        command = data_wrapper.get_param(0).lower()
+        parsed_command = TryProcessCommand(command, data_wrapper)
 
         # Check if it is unknown command.
         if parsed_command.is_unknown_command():
@@ -113,7 +116,7 @@ def Execute(data):
 
         # If user doesn't have permission, "func" will be equal to "None".
         if parsed_command.has_func():
-            parsed_command.func(data, parsed_command.command)
+            parsed_command.func(data_wrapper, parsed_command.command)
         else:
             HandleNoPermission(
                 parsed_command.required_permission, parsed_command.command
@@ -144,14 +147,14 @@ def Parse(parse_string, userid, username, targetid, targetname, message):
     return parse_string
 
 
-def ReloadSettings(jsonData):
+def ReloadSettings(jsondata):
     """
     [Optional] Reload Settings (called when a user clicks the Save Settings
     button in the Chatbot UI).
     """
     # Execute json reloading here.
     try:
-        ScriptSettings.reload(jsonData)
+        ScriptSettings.reload(jsondata)
         ScriptSettings.save(SettingsFile)
         Logger().info("Settings reloaded.")
     except Exception as ex:
@@ -202,13 +205,13 @@ def GetFuncToProcessIfHasPermission(process_command, user_id,
     return process_command if has_permission else None
 
 
-def TryProcessCommand(command, data):
+def TryProcessCommand(command, data_wrapper):
     func = None
     required_permission = None
     is_valid_call = None
     usage_example = None
 
-    param_count = data.GetParamCount()
+    param_count = data_wrapper.get_param_count()
 
     # !give
     if command == ScriptSettings.CommandGive:
@@ -216,11 +219,12 @@ def TryProcessCommand(command, data):
         permission_info = ScriptSettings.PermissionInfoOnGiveGetTax
         func = GetFuncToProcessIfHasPermission(
             ProcessAnyTransferCurrencyCommand,
-            data.User,
+            data_wrapper.user_id,
             required_permission,
             permission_info
         )
-        is_valid_call = True  # Give command call will always be valid.
+        # Give command call can have optional text.
+        is_valid_call = param_count >= 3
 
         amount_example = config.ExampleAmountMinMaxRange.format(
             ScriptSettings.MinGiveAmount, ScriptSettings.MaxGiveAmount
@@ -240,7 +244,7 @@ def TryProcessCommand(command, data):
         permission_info = ScriptSettings.PermissionInfoOnAddRemoveSet
         func = GetFuncToProcessIfHasPermission(
             ProcessAnyTransferCurrencyCommand,
-            data.User,
+            data_wrapper.user_id,
             required_permission,
             permission_info
         )
@@ -261,7 +265,7 @@ def TryProcessCommand(command, data):
         permission_info = ScriptSettings.PermissionInfoOnAddRemoveSet
         func = GetFuncToProcessIfHasPermission(
             ProcessAnyTransferCurrencyCommand,
-            data.User,
+            data_wrapper.user_id,
             required_permission,
             permission_info
         )
@@ -282,7 +286,7 @@ def TryProcessCommand(command, data):
         permission_info = ScriptSettings.PermissionInfoOnAddRemoveSet
         func = GetFuncToProcessIfHasPermission(
             ProcessAnyTransferCurrencyCommand,
-            data.User,
+            data_wrapper.user_id,
             required_permission,
             permission_info
         )
@@ -303,7 +307,7 @@ def TryProcessCommand(command, data):
         permission_info = ScriptSettings.PermissionInfoOnGiveGetTax
         func = GetFuncToProcessIfHasPermission(
             ProcessGetTaxCommand,
-            data.User,
+            data_wrapper.user_id,
             required_permission,
             permission_info
         )
@@ -315,15 +319,15 @@ def TryProcessCommand(command, data):
     )
 
 
-def ProcessAnyTransferCurrencyCommand(data, command):
-    # Input example: !give Vasar 42
+def ProcessAnyTransferCurrencyCommand(data_wrapper, command):
+    # Input example: !give Vasar 42 <Anything>
     # Input example: !add Vasar 42
     # Input example: !remove Vasar 42
     # Input example: !set Vasar 42
     # Command <@>TargetUserNameOrId Amount
     try:
         request = transfer_broker.create_request_from(
-            data, command, ParentHandler, ScriptSettings
+            data_wrapper, command, ParentHandler, ScriptSettings
         )
         transfer_broker.handle_request(
             request, ParentHandler, ScriptSettings, Logger()
@@ -332,7 +336,7 @@ def ProcessAnyTransferCurrencyCommand(data, command):
         Logger().exception("Failed to handle transfer request: " + str(ex))
 
 
-def ProcessGetTaxCommand(data, command):
+def ProcessGetTaxCommand(data_wrapper, command):
     # Input example: !get_tax
     # Command <Anything>
     try:

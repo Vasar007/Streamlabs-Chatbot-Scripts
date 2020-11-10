@@ -35,7 +35,7 @@ So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
 - Description: Command that users will use when they want to transfer currency
 - Usage: !give TargetUserNameOrId Amount
 - Permissions: Everyone
-- Can have optional text: No
+- Can have optional text: Yes
 - Arguments:
   - TargetUserNameOrId: string — the target user name or ID to transfer currency (if name will be specified, script sends additional request to find target user name), `@` symbol at the beginning is allowed
   - Amount: integer — currency amount to transfer (should be greater than 0)
