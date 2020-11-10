@@ -44,9 +44,9 @@ So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
     - `all` — will be replaced by caller current amount of currency.
 - Samples:
   - `!give Vasar 42`
-  - `!give vasar 42`
+  - `!give vasar 42 SomeText`
   - `!give @Vasar 42`
-  - `!give Mark 123`
+  - `!give Mark 123 Kappa`
   - `!give John all`
 
 ### !add
