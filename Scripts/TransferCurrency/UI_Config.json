@@ -45,10 +45,10 @@
     },
     "GiveTaxPercent": {
         "type": "slider",
-        "value": 10.0,
+        "value": 10,
         "min": 0,
         "max": 100,
-        "ticks": 0.2,
+        "ticks": 1,
         "label": "Tax Percent For Give Command",
         "tooltip": "Tax percent that will use take into account when users transfer currency.",
         "group": "Setup"
@@ -67,21 +67,42 @@
         "tooltip": "Maximum amount of currency to transfer.",
         "group": "Setup"
     },
+    "AllowToTransferToYourself": {
+        "type": "checkbox",
+        "value": false,
+        "label": "Allow To Transfer To Yourself",
+        "tooltip": "Allow users to transfer to yourself.",
+        "group": "Setup"
+    },
 
     "PermissionOnGiveGetTax": {
         "type": "dropdown",
         "value": "everyone",
-        "items": ["everyone", "moderator", "subscriber", "user_specific", "editor"],
-        "label": "Permission",
+        "items": ["everyone", "subscriber", "user_specific", "moderator", "editor"],
+        "label": "Permission On Give And Get Tax Commands",
         "tooltip": "Who is able to use the commands to give currency and get tax percent.",
+        "group": "Permission"
+    },
+    "PermissionInfoOnGiveGetTax": {
+        "type": "textbox",
+        "value": "",
+        "label": "Info for Give And Get Tax Commands",
+        "tooltip": "This field should only be filled when using the user_specific permission on Give And Get Tax Commands.",
         "group": "Permission"
     },
     "PermissionOnAddRemoveSet": {
         "type": "dropdown",
         "value": "moderator",
-        "items": ["everyone", "moderator", "subscriber", "user_specific", "editor"],
-        "label": "Permission",
+        "items": ["everyone", "subscriber", "user_specific", "moderator", "editor"],
+        "label": "Permission On Add, Remove and Set Commands",
         "tooltip": "Who is able to use the commands to add, remove or set currency.",
+        "group": "Permission"
+    },
+    "PermissionInfoOnAddRemoveSet": {
+        "type": "textbox",
+        "value": "",
+        "label": "Info For Add, Remove and Set Commands",
+        "tooltip": "This field should only be filled when using the user_specific permission on Add, Remove and Set Commands.",
         "group": "Permission"
     },
     "PermissionDeniedMessage": {
@@ -91,11 +112,18 @@
         "tooltip": "Chat message will be sent on failed permission check. 0 — required permission, 1 — command.",
         "group": "Permission"
     },
-    "PermissionInfo": {
+    "AllowToAddRemoveSetForOtherWithSamePermissionOrHigher": {
+        "type": "checkbox",
+        "value": false,
+        "label": "Allow Operations Without Target Permission Check",
+        "tooltip": "Allow users to perform operations despite on target permissions.",
+        "group": "Permission"
+    },
+    "OperationDeniedMessage": {
         "type": "textbox",
-        "value": "",
-        "label": "Info",
-        "tooltip": "This field should only be filled when using the user_specific permission.",
+        "value": "Permission denied: cannot use {0} command on {1} which has the same or higher permission!",
+        "label": "Operation Denied Message",
+        "tooltip": "Chat message will be sent on invalid command call for target which has the same or higher permission. 0 — command, 1 — target.",
         "group": "Permission"
     },
 
@@ -169,7 +197,7 @@
         "tooltip": "Chat message will be sent if user specifies an invalid target. 0 — user, 1 — target.",
         "group": "Chat Messages"
     },
-    "TransferToYourselfMessage": {
+    "DeniedTransferToYourselfMessage": {
         "type": "textbox",
         "value": "Sorry {0}, but you cannot transfer {1} to yourself.",
         "label": "Transfer To Yourself Message",

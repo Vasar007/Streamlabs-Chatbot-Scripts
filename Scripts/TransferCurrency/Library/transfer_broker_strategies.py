@@ -5,7 +5,13 @@ from abc import ABCMeta, abstractmethod
 import transfer_config as config  # pylint:disable=import-error
 import transfer_helpers as helpers
 
-from transfer_broker_models import TransferAmount 
+from transfer_broker_models import TransferAmount
+from transfer_broker_models import TransferValidationIssueType as IssueType
+from transfer_broker_models import TransferValidationResult
+
+from transfer_permissions import TransferPermissionHandler as PermissionHandler
+from transfer_permissions import TransferPermissionChecker as PermissionChecker
+from transfer_permissions import TransferPermissionCheckResult as PermissionCheckResult
 
 
 class BaseTransferStrategy(object):
@@ -16,6 +22,10 @@ class BaseTransferStrategy(object):
         self.parent_wrapper = parent_wrapper
         self.settings = settings
         self.logger = logger
+
+    @abstractmethod
+    def validate_transfer(self, user_id, target_id):
+        raise NotImplementedError()
 
     @abstractmethod
     def try_get_amount_value(self, user_id, target_id, raw_amount):
@@ -34,7 +44,7 @@ class BaseTransferStrategy(object):
         raise NotImplementedError()
 
     @abstractmethod
-    def has_user_enough_funds(self, user_id, target_id, transfer_amount):
+    def has_enough_funds(self, user_id, target_id, transfer_amount):
         raise NotImplementedError()
 
     @abstractmethod
@@ -45,6 +55,52 @@ class BaseTransferStrategy(object):
     @abstractmethod
     def handle_transfer_request(self, request, target_data, transfer_amount):
         raise NotImplementedError()
+
+    def _can_transfer_to_youself(self, user_id, target_id):
+        """
+        Checks whether transfer to youself is allowed.
+        """
+        return (
+            self.settings.AllowToTransferToYourself or
+            user_id != target_id
+        )
+
+    def _is_operation_allowed(self, user_id, target_id, permission_handler):
+        """
+        Checks whether target user has enough permission to deny operation.
+
+        Contract: check of caller user permission should be applied before this
+        method call.
+        """
+        if self.settings.AllowToAddRemoveSetForOtherWithSamePermissionOrHigher:
+            return True
+
+        # Retrive target user permission. If target has required permission,
+        # operation should be denied. It can prevent moderator from changing
+        # own points and other moderator's points, for example.
+
+        checker = PermissionChecker(self.parent_wrapper, self.logger)
+        check_result = checker.check_permissions(
+            user_id, target_id, permission_handler
+        )
+        # Should return true only when user has higher permission.
+        # user > target == -1
+        return check_result < 0
+
+    def _validate_transfer(self, user_id, target_id, permission_handler=None):
+        if not self._can_transfer_to_youself(user_id, target_id):
+            return TransferValidationResult.failed(
+                IssueType.DeniedTransferToYouself
+            )
+
+        is_operation_allowed = (
+            permission_handler is None or
+            self._is_operation_allowed(user_id, target_id, permission_handler)
+        )
+        if not is_operation_allowed:
+            return TransferValidationResult.failed(IssueType.DeniedOperation)
+
+        return TransferValidationResult.successful()
 
     def _handle_add_tranfer(self, parameters, send_message):
         user_name = parameters.user_data.name
@@ -58,7 +114,7 @@ class BaseTransferStrategy(object):
         self.parent_wrapper.add_points(target_id, final_amount)
         if send_message:
             message = (
-                str(self.settings.SuccessfulAddingMessage)
+                self.settings.SuccessfulAddingMessage
                 .format(user_name, final_amount, currency_name, target_name)
             )
             self.logger.info(message)
@@ -78,7 +134,7 @@ class BaseTransferStrategy(object):
         self.parent_wrapper.remove_points(target_id, final_amount)
         if send_message:
             message = (
-                str(self.settings.SuccessfulRemovingMessage)
+                self.settings.SuccessfulRemovingMessage
                 .format(user_name, final_amount, currency_name, target_name)
             )
             self.logger.info(message)
@@ -102,6 +158,9 @@ class NormalTransferStrategy(BaseTransferStrategy):
         )
 
         self.tax_collector = tax_collector
+
+    def validate_transfer(self, user_id, target_id):
+        return self._validate_transfer(user_id, target_id)
 
     def try_get_amount_value(self, user_id, target_id, raw_amount):
         if raw_amount == self.settings.ParameterAll:
@@ -130,7 +189,7 @@ class NormalTransferStrategy(BaseTransferStrategy):
         )
 
         message = (
-            str(self.settings.InvalidAmountMessage)
+            self.settings.InvalidAmountMessage
             .format(user_name, raw_amount, amount_example)
         )
         self.logger.info(message)
@@ -142,7 +201,7 @@ class NormalTransferStrategy(BaseTransferStrategy):
         )
         return TransferAmount(amount, final_amount, fee)
 
-    def has_user_enough_funds(self, user_id, target_id, transfer_amount):
+    def has_enough_funds(self, user_id, target_id, transfer_amount):
         current_amount = self.parent_wrapper.get_points(user_id)
         return transfer_amount.initial_amount <= current_amount
 
@@ -150,7 +209,7 @@ class NormalTransferStrategy(BaseTransferStrategy):
                                 transfer_amount):
         current_amount = self.parent_wrapper.get_points(user_data.id)
         message = (
-            str(self.settings.NotEnoughFundsToTransferMessage)
+            self.settings.NotEnoughFundsToTransferMessage
             .format(
                 user_data.name,
                 currency_name,
@@ -178,7 +237,7 @@ class NormalTransferStrategy(BaseTransferStrategy):
         self._handle_add_tranfer(add_parameters, send_message=False)
 
         message = (
-            str(self.settings.SuccessfulTransferMessage)
+            self.settings.SuccessfulTransferMessage
             .format(
                 request.user_data.name,
                 transfer_amount.final_amount,
@@ -197,6 +256,12 @@ class AddTransferStrategy(BaseTransferStrategy):
             parent_wrapper, settings, logger
         )
 
+    def validate_transfer(self, user_id, target_id):
+        permission = self.settings.PermissionOnAddRemoveSet
+        permission_info = self.settings.PermissionInfoOnAddRemoveSet
+        permission_handler = PermissionHandler(permission, permission_info)
+        return self._validate_transfer(user_id, target_id, permission_handler)
+
     def try_get_amount_value(self, user_id, target_id, raw_amount):
         return helpers.safe_cast(raw_amount, int)
 
@@ -205,7 +270,7 @@ class AddTransferStrategy(BaseTransferStrategy):
 
     def handle_invalid_amount(self, user_name, raw_amount):
         message = (
-            str(self.settings.InvalidAmountMessage)
+            self.settings.InvalidAmountMessage
             .format(user_name, raw_amount, config.ExampleAmountValidRange)
         )
         self.logger.info(message)
@@ -214,7 +279,7 @@ class AddTransferStrategy(BaseTransferStrategy):
     def calculate_final_amount(self, user_id, amount):
         return TransferAmount(amount, amount)
 
-    def has_user_enough_funds(self, user_id, target_id, transfer_amount):
+    def has_enough_funds(self, user_id, target_id, transfer_amount):
         return True
 
     def handle_not_enough_funds(self, user_data, target_data, currency_name,
@@ -237,6 +302,12 @@ class RemoveTransferStrategy(BaseTransferStrategy):
             parent_wrapper, settings, logger
         )
 
+    def validate_transfer(self, user_id, target_id):
+        permission = self.settings.PermissionOnAddRemoveSet
+        permission_info = self.settings.PermissionInfoOnAddRemoveSet
+        permission_handler = PermissionHandler(permission, permission_info)
+        return self._validate_transfer(user_id, target_id, permission_handler)
+
     def try_get_amount_value(self, user_id, target_id, raw_amount):
         if raw_amount == self.settings.ParameterAll:
             return self.parent_wrapper.get_points(target_id)
@@ -248,7 +319,7 @@ class RemoveTransferStrategy(BaseTransferStrategy):
 
     def handle_invalid_amount(self, user_name, raw_amount):
         message = (
-            str(self.settings.InvalidAmountMessage)
+            self.settings.InvalidAmountMessage
             .format(user_name, raw_amount, config.ExampleAmountValidRange)
         )
         self.logger.info(message)
@@ -257,7 +328,7 @@ class RemoveTransferStrategy(BaseTransferStrategy):
     def calculate_final_amount(self, user_id, amount):
         return TransferAmount(amount, amount)
 
-    def has_user_enough_funds(self, user_id, target_id, transfer_amount):
+    def has_enough_funds(self, user_id, target_id, transfer_amount):
         current_amount = self.parent_wrapper.get_points(target_id)
         return transfer_amount.final_amount <= current_amount
 
@@ -265,7 +336,7 @@ class RemoveTransferStrategy(BaseTransferStrategy):
                                 transfer_amount):
         current_amount = self.parent_wrapper.get_points(target_data.id)
         message = (
-            str(self.settings.NotEnoughFundsToRemoveMessage)
+            self.settings.NotEnoughFundsToRemoveMessage
             .format(
                 user_data.name,
                 target_data.name,
@@ -292,6 +363,12 @@ class SetTransferStrategy(BaseTransferStrategy):
             parent_wrapper, settings, logger
         )
 
+    def validate_transfer(self, user_id, target_id):
+        permission = self.settings.PermissionOnAddRemoveSet
+        permission_info = self.settings.PermissionInfoOnAddRemoveSet
+        permission_handler = PermissionHandler(permission, permission_info)
+        return self._validate_transfer(user_id, target_id, permission_handler)
+
     def try_get_amount_value(self, user_id, target_id, raw_amount):
         return helpers.safe_cast(raw_amount, int)
 
@@ -300,7 +377,7 @@ class SetTransferStrategy(BaseTransferStrategy):
 
     def handle_invalid_amount(self, user_name, raw_amount):
         message = (
-            str(self.settings.InvalidAmountMessage)
+            self.settings.InvalidAmountMessage
             .format(user_name, raw_amount, config.ExampleAmountSetRange)
         )
         self.logger.info(message)
@@ -309,7 +386,7 @@ class SetTransferStrategy(BaseTransferStrategy):
     def calculate_final_amount(self, user_id, amount):
         return TransferAmount(amount, amount)
 
-    def has_user_enough_funds(self, user_id, target_id, transfer_amount):
+    def has_enough_funds(self, user_id, target_id, transfer_amount):
         return True
 
     def handle_not_enough_funds(self, user_data, target_data, currency_name,
@@ -332,7 +409,7 @@ class SetTransferStrategy(BaseTransferStrategy):
         self._handle_add_tranfer(add_parameters, send_message=False)
 
         message = (
-            str(self.settings.SuccessfulSettingMessage)
+            self.settings.SuccessfulSettingMessage
             .format(
                 request.user_data.name,
                 transfer_amount.final_amount,

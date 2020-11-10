@@ -195,11 +195,9 @@ def HandleNoPermission(required_permission, command):
 
 
 def GetFuncToProcessIfHasPermission(process_command, user_id,
-                                    required_permission):
+                                    required_permission, permission_info):
     has_permission = ParentHandler.has_permission(
-        user_id,
-        required_permission,
-        ScriptSettings.PermissionInfo
+        user_id, required_permission, permission_info
     )
     return process_command if has_permission else None
 
@@ -215,10 +213,14 @@ def TryProcessCommand(command, data):
     # !give
     if command == ScriptSettings.CommandGive:
         required_permission = ScriptSettings.PermissionOnGiveGetTax
+        permission_info = ScriptSettings.PermissionInfoOnGiveGetTax
         func = GetFuncToProcessIfHasPermission(
-            ProcessAnyTransferCurrencyCommand, data.User, required_permission
+            ProcessAnyTransferCurrencyCommand,
+            data.User,
+            required_permission,
+            permission_info
         )
-        is_valid_call = param_count == 3
+        is_valid_call = True  # Give command call will always be valid.
 
         amount_example = config.ExampleAmountMinMaxRange.format(
             ScriptSettings.MinGiveAmount, ScriptSettings.MaxGiveAmount
@@ -235,8 +237,12 @@ def TryProcessCommand(command, data):
     # !add
     elif command == ScriptSettings.CommandAdd:
         required_permission = ScriptSettings.PermissionOnAddRemoveSet
+        permission_info = ScriptSettings.PermissionInfoOnAddRemoveSet
         func = GetFuncToProcessIfHasPermission(
-            ProcessAnyTransferCurrencyCommand, data.User, required_permission
+            ProcessAnyTransferCurrencyCommand,
+            data.User,
+            required_permission,
+            permission_info
         )
         is_valid_call = param_count == 3
 
@@ -252,8 +258,12 @@ def TryProcessCommand(command, data):
     # !remove
     elif command == ScriptSettings.CommandRemove:
         required_permission = ScriptSettings.PermissionOnAddRemoveSet
+        permission_info = ScriptSettings.PermissionInfoOnAddRemoveSet
         func = GetFuncToProcessIfHasPermission(
-            ProcessAnyTransferCurrencyCommand, data.User, required_permission
+            ProcessAnyTransferCurrencyCommand,
+            data.User,
+            required_permission,
+            permission_info
         )
         is_valid_call = param_count == 3
 
@@ -269,8 +279,12 @@ def TryProcessCommand(command, data):
     # !set
     elif command == ScriptSettings.CommandSet:
         required_permission = ScriptSettings.PermissionOnAddRemoveSet
+        permission_info = ScriptSettings.PermissionInfoOnAddRemoveSet
         func = GetFuncToProcessIfHasPermission(
-            ProcessAnyTransferCurrencyCommand, data.User, required_permission
+            ProcessAnyTransferCurrencyCommand,
+            data.User,
+            required_permission,
+            permission_info
         )
         is_valid_call = param_count == 3
 
@@ -286,8 +300,12 @@ def TryProcessCommand(command, data):
     # !get_tax
     elif command == ScriptSettings.CommandGetTax:
         required_permission = ScriptSettings.PermissionOnGiveGetTax
+        permission_info = ScriptSettings.PermissionInfoOnGiveGetTax
         func = GetFuncToProcessIfHasPermission(
-            ProcessGetTaxCommand, data.User, required_permission
+            ProcessGetTaxCommand,
+            data.User,
+            required_permission,
+            permission_info
         )
         is_valid_call = True  # Get tax command call will always be valid.
         usage_example = ScriptSettings.CommandGetTax

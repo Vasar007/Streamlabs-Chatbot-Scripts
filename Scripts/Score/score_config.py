@@ -25,6 +25,12 @@ AllowLoggingToFile = False
 
 SettingsReloadEventName = "settings_reload"
 
+Everyone = "everyone"
+UserSpecific = "user_specific"
+Subscriber = "subscriber"
+Moderator = "moderator"
+Editor = "editor"
+
 CommandNewScoreUsage = "{0} {1} {2}"
 CommandUpdateScoreUsage = "{0} {1} {2}"
 ExamplePlayerName = "[PlayerName]"
@@ -46,15 +52,15 @@ CommandResetScore = "!reset_score"
 CommandDeleteScore = "!delete_score"
 
 # Values: everyone, moderator, subscriber, user_specific, editor.
-PermissionOnGet = "everyone"
-PermissionOnEdit = "moderator"
-
-PermissionDeniedMessage = (
-    "Permission denied: You have to be a {0} to use {1} command!"
-)
-
+PermissionOnGet = Everyone
 # This field should only be filled when using the user_specific permission.
-PermissionInfo = ""
+PermissionInfoOnGet = ""
+
+PermissionOnEdit = Moderator
+# This field should only be filled when using the user_specific permission.
+PermissionInfoOnEdit = ""
+
+PermissionDeniedMessage = "Permission denied: You have to be a {0} to use {1} command!"
 
 InvalidCommandCallMessage = "Invalid {0} command call. Usage: {1}"
 NoScoreFoundMessage = "No score found."

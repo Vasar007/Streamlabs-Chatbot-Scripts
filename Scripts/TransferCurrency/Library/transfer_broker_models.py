@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-class TransferType:
+class TransferType(object):
     NormalTransfer = 1
     AddTransfer = 2
     RemoveTransfer = 3
@@ -39,3 +39,23 @@ class TransferAmount(object):
         self.initial_amount = initial_amount
         self.final_amount = final_amount
         self.fee = fee
+
+
+class TransferValidationIssueType(object):
+    DeniedTransferToYouself = 1
+    DeniedOperation = 2
+
+
+class TransferValidationResult(object):
+
+    def __init__(self, is_valid, issue_type):
+        self.is_valid = is_valid
+        self.issue_type = issue_type
+
+    @staticmethod
+    def successful():
+        return TransferValidationResult(True, None)
+
+    @staticmethod
+    def failed(issue_type):
+        return TransferValidationResult(False, issue_type)

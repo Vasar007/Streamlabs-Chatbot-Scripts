@@ -10,6 +10,7 @@ from transfer_user_data import TransferUserData as UserData
 from transfer_broker_models import TransferType
 from transfer_broker_models import TransferParameters
 from transfer_broker_models import TransferRequest
+from transfer_broker_models import TransferValidationIssueType as IssueType
 
 import transfer_broker_strategies as strategies
 
@@ -32,6 +33,18 @@ class TransferBroker(object):
 
         strategy = self._create_transfer_strategy(request.transfer_type)
 
+        validation_result = strategy.validate_transfer(
+            request.user_data.id, target_data.id
+        )
+        if not validation_result.is_valid:
+            self._handle_invalid_validation(
+                validation_result.issue_type,
+                request.user_data,
+                target_data.name,
+                request.currency_name
+            )
+            return False
+
         amount_int = strategy.try_get_amount_value(
             request.user_data.id, target_data.id, request.raw_amount
         )
@@ -45,14 +58,14 @@ class TransferBroker(object):
             )
             return False
 
-        self.logger.info("Initial amount to transfer: " + str(amount_int))
+        self.logger.info("Initial amount to transfer: {0}.".format(amount_int))
         final_amount = strategy.calculate_final_amount(
             request.user_data.id, amount_int
         )
-        has_user_enough_funds = strategy.has_user_enough_funds(
+        has_enough_funds = strategy.has_enough_funds(
             request.user_data.id, target_data.id, final_amount
         )
-        if not has_user_enough_funds:
+        if not has_enough_funds:
             strategy.handle_not_enough_funds(
                 request.user_data,
                 target_data,
@@ -65,6 +78,7 @@ class TransferBroker(object):
         return True
 
     def _prepare_transfer(self, request):
+        # Retrive data about target.
         target_data = self.searcher.find_user_data(
             request.target_id_or_name
         )
@@ -77,12 +91,7 @@ class TransferBroker(object):
                 self._handle_invalid_target(
                     request.user_data.name, request.target
                 )
-            return target_data
-
-        if request.user_data.id == target_data.id:
-            self._handle_target_is_sender(
-                request.user_data.name, request.currency_name
-            )
+            # "target_data" == UserData.empty() here.
             return target_data
 
         return target_data
@@ -116,13 +125,13 @@ class TransferBroker(object):
         # Default case.
         else:
             raise ValueError(
-                "Unexpected transfer request type to handle: " +
-                str(transfer_type)
+                "Unexpected transfer request type to handle: {0}."
+                .format(transfer_type)
             )
 
     def _handle_no_target(self, user_name, currency_name):
         message = (
-            str(self.settings.NoTargetMessage)
+            self.settings.NoTargetMessage
             .format(user_name, currency_name)
         )
         self.logger.info(message)
@@ -130,16 +139,41 @@ class TransferBroker(object):
 
     def _handle_invalid_target(self, user_name, target):
         message = (
-            str(self.settings.InvalidTargetMessage)
+            self.settings.InvalidTargetMessage
             .format(user_name, target)
         )
         self.logger.info(message)
         self.parent_wrapper.send_stream_message(message)
 
+    def _handle_invalid_validation(self, issue_type, user_name, target_name,
+                                   currency_name):
+        # Denied transfer to youself case.
+        if issue_type == IssueType.DeniedTransferToYouself:
+            self._handle_target_is_sender(user_name, currency_name)
+
+        # Denied operation case.
+        elif issue_type == IssueType.DeniedOperation:
+            self._handle_operation_denied(target_name, currency_name)
+
+        # Default case.
+        else:
+            raise ValueError(
+                "Unexpected validation request type to handle: {0}."
+                .format(issue_type)
+            )
+
     def _handle_target_is_sender(self, user_name, currency_name):
         message = (
-            str(self.settings.TransferToYourselfMessage)
+            self.settings.DeniedTransferToYourselfMessage
             .format(user_name, currency_name)
+        )
+        self.logger.info(message)
+        self.parent_wrapper.send_stream_message(message)
+
+    def _handle_operation_denied(self, target_name, currency_name):
+        message = (
+            self.settings.OperationDeniedMessage
+            .format(target_name, currency_name)
         )
         self.logger.info(message)
         self.parent_wrapper.send_stream_message(message)
@@ -156,7 +190,7 @@ def get_transfer_type(command, settings):
         return TransferType.SetTransfer
     else:
         raise ValueError(
-            "Unexpected command to get transfer type: " + str(command)
+            "Unexpected command to get transfer type: {0}.".format(command)
         )
 
 

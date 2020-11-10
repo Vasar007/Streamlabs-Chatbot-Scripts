@@ -201,11 +201,9 @@ def HandleNoPermission(required_permission, command):
 
 
 def GetFuncToProcessIfHasPermission(process_command, user_id,
-                                    required_permission):
+                                    required_permission, permission_info):
     has_permission = ParentHandler.has_permission(
-        user_id,
-        required_permission,
-        ScriptSettings.PermissionInfo
+        user_id, required_permission, permission_info
     )
     return process_command if has_permission else None
 
@@ -221,8 +219,12 @@ def TryProcessCommand(command, data):
     # !score
     if command == ScriptSettings.CommandGetScore:
         required_permission = ScriptSettings.PermissionOnGet
+        permission_info = ScriptSettings.PermissionInfoOnGet
         func = GetFuncToProcessIfHasPermission(
-            ProcessGetCommand, data.User, required_permission
+            ProcessGetCommand,
+            data.User,
+            required_permission,
+            permission_info
         )
         is_valid_call = True  # Get command call will always be valid.
         usage_example = ScriptSettings.CommandGetScore
@@ -230,8 +232,12 @@ def TryProcessCommand(command, data):
     # !new_score
     elif command == ScriptSettings.CommandNewScore:
         required_permission = ScriptSettings.PermissionOnEdit
+        permission_info = ScriptSettings.PermissionInfoOnEdit
         func = GetFuncToProcessIfHasPermission(
-            ProcessNewCommand, data.User, required_permission
+            ProcessNewCommand,
+            data.User,
+            required_permission,
+            permission_info
         )
         is_valid_call = param_count == 3
         usage_example = (
@@ -246,8 +252,12 @@ def TryProcessCommand(command, data):
     # !update_score
     elif command == ScriptSettings.CommandUpdateScore:
         required_permission = ScriptSettings.PermissionOnEdit
+        permission_info = ScriptSettings.PermissionInfoOnEdit
         func = GetFuncToProcessIfHasPermission(
-            ProcessUpdateCommand, data.User, required_permission
+            ProcessUpdateCommand,
+            data.User,
+            required_permission,
+            permission_info
         )
         is_valid_call = param_count == 3
         usage_example = (
@@ -262,8 +272,12 @@ def TryProcessCommand(command, data):
     # !reset_score
     elif command == ScriptSettings.CommandResetScore:
         required_permission = ScriptSettings.PermissionOnEdit
+        permission_info = ScriptSettings.PermissionInfoOnEdit
         func = GetFuncToProcessIfHasPermission(
-            ProcessResetCommand, data.User, required_permission
+            ProcessResetCommand,
+            data.User,
+            required_permission,
+            permission_info
         )
         is_valid_call = param_count == 1
         usage_example = ScriptSettings.CommandResetScore
@@ -271,8 +285,12 @@ def TryProcessCommand(command, data):
     # !delete_score
     elif command == ScriptSettings.CommandDeleteScore:
         required_permission = ScriptSettings.PermissionOnEdit
+        permission_info = ScriptSettings.PermissionInfoOnEdit
         func = GetFuncToProcessIfHasPermission(
-            ProcessReloadCommand, data.User, required_permission
+            ProcessReloadCommand,
+            data.User,
+            required_permission,
+            permission_info
         )
         is_valid_call = param_count == 1
         usage_example = ScriptSettings.CommandDeleteScore

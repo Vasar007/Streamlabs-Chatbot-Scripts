@@ -25,6 +25,12 @@ AllowLoggingToFile = False
 
 SettingsReloadEventName = "settings_reload"
 
+Everyone = "everyone"
+UserSpecific = "user_specific"
+Subscriber = "subscriber"
+Moderator = "moderator"
+Editor = "editor"
+
 # [Required] Script Information.
 ScriptName = "Template Script"
 Website = "https://github.com/Vasar007/Streamlabs-Chatbot-Scripts"
@@ -38,11 +44,9 @@ CommandPing = "!ping"
 Cooldown = 4
 
 # Values: everyone, moderator, subscriber, user_specific, editor.
-Permission = "everyone"
+Permission = Everyone
 
-PermissionDeniedMessage = (
-    "Permission denied: You have to be a {0} to use {1} command!"
-)
+PermissionDeniedMessage = "Permission denied: You have to be a {0} to use {1} command!"
 
 # This field should only be filled when using the user_specific permission.
 PermissionInfo = ""

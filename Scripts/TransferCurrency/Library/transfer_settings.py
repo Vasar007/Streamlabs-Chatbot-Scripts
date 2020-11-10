@@ -77,12 +77,16 @@ class TransferSettings(object):
         self.GiveTaxPercent = config.GiveTaxPercent
         self.MinGiveAmount = config.MinGiveAmount
         self.MaxGiveAmount = config.MaxGiveAmount
+        self.AllowToTransferToYourself = config.AllowToTransferToYourself
 
         # Permission group.
         self.PermissionOnGiveGetTax = config.PermissionOnGiveGetTax
+        self.PermissionInfoOnGiveGetTax = config.PermissionInfoOnGiveGetTax
         self.PermissionOnAddRemoveSet = config.PermissionOnAddRemoveSet
+        self.PermissionInfoOnAddRemoveSet = config.PermissionInfoOnAddRemoveSet
         self.PermissionDeniedMessage = config.PermissionDeniedMessage
-        self.PermissionInfo = config.PermissionInfo
+        self.AllowToAddRemoveSetForOtherWithSamePermissionOrHigher = config.AllowToAddRemoveSetForOtherWithSamePermissionOrHigher
+        self.OperationDeniedMessage = config.OperationDeniedMessage
 
         # Chat Messages group.
         self.InvalidCommandCallMessage = config.InvalidCommandCallMessage
@@ -95,7 +99,7 @@ class TransferSettings(object):
         self.InvalidAmountMessage = config.InvalidAmountMessage
         self.NoTargetMessage = config.NoTargetMessage
         self.InvalidTargetMessage = config.InvalidTargetMessage
-        self.TransferToYourselfMessage = config.TransferToYourselfMessage
+        self.DeniedTransferToYourselfMessage = config.DeniedTransferToYourselfMessage
         self.CurrentTaxPercentMessage = config.CurrentTaxPercentMessage
 
         # Debugging group.

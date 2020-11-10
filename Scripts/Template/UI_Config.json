@@ -22,7 +22,7 @@
     "Permission": {
         "type": "dropdown",
         "value": "everyone",
-        "items": ["everyone", "moderator", "subscriber", "user_specific", "editor"],
+        "items": ["everyone", "subscriber", "user_specific", "moderator", "editor"],
         "label": "Permission",
         "tooltip": "Who is able to use the script commands.",
         "group": "Permission"
