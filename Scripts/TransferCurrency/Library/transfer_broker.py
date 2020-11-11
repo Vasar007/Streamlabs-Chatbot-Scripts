@@ -83,13 +83,13 @@ class TransferBroker(object):
             request.target_id_or_name
         )
         if target_data.is_empty():
-            if not request.target:
+            if not request.target_id_or_name:
                 self._handle_no_target(
                     request.user_data.name, request.currency_name
                 )
             else:
                 self._handle_invalid_target(
-                    request.user_data.name, request.target
+                    request.user_data.name, request.target_id_or_name
                 )
             # "target_data" == UserData.empty() here.
             return target_data
