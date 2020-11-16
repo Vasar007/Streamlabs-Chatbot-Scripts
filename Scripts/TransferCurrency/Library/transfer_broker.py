@@ -41,7 +41,8 @@ class TransferBroker(object):
                 validation_result.issue_type,
                 request.user_data,
                 target_data.name,
-                request.currency_name
+                request.currency_name,
+                request.command
             )
             return False
 
@@ -146,14 +147,14 @@ class TransferBroker(object):
         self.parent_wrapper.send_stream_message(message)
 
     def _handle_invalid_validation(self, issue_type, user_name, target_name,
-                                   currency_name):
+                                   currency_name, command):
         # Denied transfer to youself case.
         if issue_type == IssueType.DeniedTransferToYouself:
             self._handle_target_is_sender(user_name, currency_name)
 
         # Denied operation case.
         elif issue_type == IssueType.DeniedOperation:
-            self._handle_operation_denied(target_name, currency_name)
+            self._handle_operation_denied(command, target_name)
 
         # Default case.
         else:
@@ -170,10 +171,10 @@ class TransferBroker(object):
         self.logger.info(message)
         self.parent_wrapper.send_stream_message(message)
 
-    def _handle_operation_denied(self, target_name, currency_name):
+    def _handle_operation_denied(self, command, target_name):
         message = (
             self.settings.OperationDeniedMessage
-            .format(target_name, currency_name)
+            .format(command, target_name)
         )
         self.logger.info(message)
         self.parent_wrapper.send_stream_message(message)
@@ -205,7 +206,12 @@ def create_request_from(data_wrapper, command, parent_wrapper, settings):
     transfer_type = get_transfer_type(command, settings)
 
     return TransferRequest(
-        user_data, target_id_or_name, currency_name, raw_amount, transfer_type
+        user_data,
+        target_id_or_name,
+        currency_name,
+        raw_amount,
+        transfer_type,
+        command
     )
 
 
