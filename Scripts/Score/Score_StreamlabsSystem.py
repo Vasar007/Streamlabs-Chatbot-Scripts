@@ -326,7 +326,8 @@ def TryExtractDescription(required_parameters_number, data_wrapper):
             for i in range(required_parameters_number, param_count)
         )
 
-    Logger().debug("Extracted description: " + description)
+    log_description = description if description else "<None>"
+    Logger().debug("Extracted description: " + log_description)
     return description
 
 

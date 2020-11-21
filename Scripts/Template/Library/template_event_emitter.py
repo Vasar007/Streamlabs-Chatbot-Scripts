@@ -7,43 +7,34 @@ Python port of the extended Node.js EventEmitter 2 approach providing
 namespaces, wildcards and TTL.
 """
 
-# python imports
 from time import time
 
 
 class TemplateEventEmitter(object):
+    """
+    The EventEmitter class.
+
+    - *wildcard*: When *True*, wildcards are used.
+    - *new_listener*: When *True*, the "new_listener" event is emitted
+      every time a new listener is registered with arguments
+      *(func, event=None)*.
+    - *max_listeners*: Maximum number of listeners per event. Negative
+      values mean infinity.
+    - *delimiter*: The delimiter to separate event namespaces. Event names have
+      namespace support with each namspace being separated by a *delimiter*
+    """
 
     __CBKEY = "__callbacks"
     __WCCHAR = "*"
 
-    def __init__(self, **kwargs):
-        """
-        EventEmitter(wildcard=False, delimiter=".", new_listener=False,
-        max_listeners=-1)
-
-        The EventEmitter class.
-        Please always use *kwargs* in the constructor.
-        - *wildcard*: When *True*, wildcards are used.
-        - *delimiter*: The delimiter to separate event namespaces.
-        - *new_listener*: When *True*, the "new_listener" event is emitted
-          every time a new listener is registered with arguments
-          *(func, event=None)*.
-        - *max_listeners*: Maximum number of listeners per event. Negative
-          values mean infinity.
-        """
-        self.wildcard = kwargs.get("wildcard", False)
-        self.__delimiter = kwargs.get("delimiter", ".")
-        self.new_listener = kwargs.get("new_listener", False)
-        self.max_listeners = kwargs.get("max_listeners", -1)
+    def __init__(self, wildcard=False, new_listener=False, max_listeners=-1,
+                 delimiter="."):
+        self.wildcard = wildcard
+        self.new_listener = new_listener
+        self.max_listeners = max_listeners
+        self.delimiter = delimiter
 
         self.__tree = self.__new_branch()
-
-    @property
-    def delimiter(self):
-        """
-        *delimiter* getter.
-        """
-        return self.__delimiter
 
     @classmethod
     def __new_branch(cls):
@@ -80,9 +71,8 @@ class TemplateEventEmitter(object):
         listeners = branch[cls.__CBKEY]
 
         indexes = [i for i, l in enumerate(listeners) if l.func == func]
-        indexes.reverse()
 
-        for i in indexes:
+        for i in indexes[::-1]:
             listeners.pop(i)
 
     def on(self, event, func=None, ttl=-1):
@@ -92,7 +82,7 @@ class TemplateEventEmitter(object):
         mean infinity. Returns the function.
         """
         def _on(func):
-            if not hasattr(func, "__call__"):
+            if not callable(func):
                 return func
 
             parts = event.split(self.delimiter)
@@ -117,30 +107,23 @@ class TemplateEventEmitter(object):
 
             return func
 
-        if func is not None:
-            return _on(func)
-        else:
-            return _on
+        return _on(func) if func else _on
 
-    def once(self, *args, **kwargs):
+    def once(self, event, func=None):
         """
-        Registers a function to an event with *ttl = 1*. See *on*. Returns the
-        function.
+        Registers a function to an event that is called once. When *func* is
+        *None*, decorator usage is assumed. Returns the function.
         """
-        if len(args) == 3:
-            args = (args[0], args[1], 1)
-        else:
-            kwargs["ttl"] = 1
-        return self.on(*args, **kwargs)
+        return self.on(event, func=func, ttl=1)
 
-    def on_any(self, func=None):
+    def on_any(self, func=None, ttl=-1):
         """
         Registers a function that is called every time an event is emitted.
         When *func* is *None*, decorator usage is assumed. Returns the
         function.
         """
         def _on_any(func):
-            if not hasattr(func, "__call__"):
+            if not callable(func):
                 return func
 
             listeners = self.__tree[self.__CBKEY]
@@ -148,7 +131,7 @@ class TemplateEventEmitter(object):
             if 0 <= self.max_listeners <= len(listeners):
                 return func
 
-            listener = TemplateListener(func, None, -1)
+            listener = TemplateListener(func, None, ttl)
             listeners.append(listener)
 
             if self.new_listener:
@@ -156,10 +139,7 @@ class TemplateEventEmitter(object):
 
             return func
 
-        if func is not None:
-            return _on_any(func)
-        else:
-            return _on_any
+        return _on_any(func) if func else _on_any
 
     def off(self, event, func=None):
         """
@@ -175,10 +155,7 @@ class TemplateEventEmitter(object):
 
             return func
 
-        if func is not None:
-            return _off(func)
-        else:
-            return _off
+        return _off(func) if func else _off
 
     def off_any(self, func=None):
         """
@@ -190,10 +167,7 @@ class TemplateEventEmitter(object):
 
             return func
 
-        if func is not None:
-            return _off_any(func)
-        else:
-            return _off_any
+        return _off_any(func) if func else _off_any
 
     def off_all(self):
         """
@@ -223,9 +197,9 @@ class TemplateEventEmitter(object):
         """
         Returns all registered functions.
         """
-        listeners = self.__tree[self.__CBKEY][:]
-
+        listeners = list(self.__tree[self.__CBKEY])
         branches = self.__tree.values()
+
         for b in branches:
             if not isinstance(b, dict):
                 continue
@@ -238,17 +212,16 @@ class TemplateEventEmitter(object):
 
     def emit(self, event, *args, **kwargs):
         """
-        Emits an event. All functions of events that match *event* are invoked
-        with *args* and *kwargs* in the exact order of their registration.
-        Wildcards might be applied.
+        Emits an *event*. All functions of events that match *event* are
+        invoked with *args* and *kwargs* in the exact order of their
+        registration. Wildcards might be applied.
         """
         parts = event.split(self.delimiter)
 
         if self.__CBKEY in parts:
             return
 
-        listeners = self.__tree[self.__CBKEY][:]
-
+        listeners = list(self.__tree[self.__CBKEY])
         branches = [self.__tree]
 
         for p in parts:
@@ -259,47 +232,49 @@ class TemplateEventEmitter(object):
                         continue
                     if k == p:
                         _branches.append(b)
-                    elif self.wildcard:
-                        if p == self.__WCCHAR or k == self.__WCCHAR:
-                            _branches.append(b)
+                    elif self.wildcard and self.__WCCHAR in (p, k):
+                        _branches.append(b)
+
             branches = _branches
 
         for b in branches:
             listeners.extend(b[self.__CBKEY])
 
-        listeners.sort(key=lambda l: l.time)
+        # Call listeners in the order of their registration time.
+        for l in sorted(listeners, key=lambda l: l.time):
+            l(*args, **kwargs)
 
-        remove = [l for l in listeners if not l(*args, **kwargs)]
-
-        for l in remove:
-            self.off(l.event, func=l.func)
+        # Remove listeners whose ttl value is 0.
+        for l in listeners:
+            if l.ttl == 0:
+                self.off(l.event, func=l.func)
 
 
 class TemplateListener(object):
+    """
+    The Listener class.
+
+    A simple event listener class that wraps a function *func* for a specific\
+    *event* and that keeps track of the times to listen left.
+    """
 
     def __init__(self, func, event, ttl):
-        """
-        The Listener class.
-        Listener instances are simple structures to handle functions and their
-        ttl values.
-        """
         self.func = func
         self.event = event
         self.ttl = ttl
 
+        # Store the registration time.
         self.time = time()
 
     def __call__(self, *args, **kwargs):
         """
-        Invokes the wrapped function. If the ttl value is non-negative, it is
-        decremented by 1. In this case, returns *False* if the ttl value
-        approached 0. Returns *True* otherwise.
+        Invokes the wrapped function when ttl is non-zero, decreases the ttl
+        value when positive and returns whether it reached zero or not.
         """
-        self.func(*args, **kwargs)
+        if self.ttl != 0:
+            self.func(*args, **kwargs)
 
         if self.ttl > 0:
             self.ttl -= 1
-            if self.ttl == 0:
-                return False
 
-        return True
+        return self.ttl == 0
