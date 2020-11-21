@@ -20,9 +20,9 @@ See common instruction [here](../../README.md#how-to-install-any-script).
 
 ## How to use
 
-Script has several commands and options to use.
-Some of them you can configure though SL Chatbot UI.
-The other ones you can change directly in script directory config or script file.
+Script has single command to use.
+You can configure almost all script settings though SL Chatbot UI.
+The other ones you can change directly in script directory config (`*_config.py`) or script file.
 
 **Note:** prefer to reload script manually if you change any settings because SL Chatbot can skip settings reload for script sometimes!
 

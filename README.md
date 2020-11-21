@@ -31,7 +31,7 @@ If you're having trouble with loading scripts in the SL Chatbot, see: [Scripts E
 
 Enable script in your stream and have fun!
 
-Notice that the script settings in SL Chatbot can be buggy so if you cannot change some settings, you can try to change it directly in config file (`config.py` which stores default values).
+Notice that the script settings in SL Chatbot can be buggy so if you cannot change some settings, you can try to change it directly in config file (`*_config.py` which stores default values).
 
 **Note:** prefer to reload script manually if you change any settings because SL Chatbot can skip settings reload for script sometimes!
 
