@@ -2,7 +2,7 @@
 
 Transfer script allows viewers to transfer Streamlabs currency between eachother.
 
-Latest version: `1.0.0.0`
+Latest version: `1.0.1.0`
 
 ## Available features
 

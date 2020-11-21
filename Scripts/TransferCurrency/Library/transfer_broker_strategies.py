@@ -13,6 +13,8 @@ from transfer_permissions import TransferPermissionHandler as PermissionHandler
 from transfer_permissions import TransferPermissionChecker as PermissionChecker
 from transfer_permissions import TransferPermissionCheckResult as PermissionCheckResult
 
+from transfer_transaction import TransferTransaction
+
 
 class BaseTransferStrategy(object):
 
@@ -111,7 +113,10 @@ class BaseTransferStrategy(object):
 
         self._log_current_currency(target_id, currency_name, "before adding")
 
-        self.parent_wrapper.add_points(target_id, final_amount)
+        is_success = self.parent_wrapper.add_points(target_id, final_amount)
+        self.logger.debug(
+            "Add points completed with status: " + str(is_success)
+        )
         if send_message:
             message = (
                 self.settings.SuccessfulAddingMessage
@@ -121,6 +126,7 @@ class BaseTransferStrategy(object):
             self.parent_wrapper.send_stream_message(message)
 
         self._log_current_currency(target_id, currency_name, "after adding")
+        return is_success
 
     def _handle_remove_tranfer(self, parameters, send_message):
         user_name = parameters.user_data.name
@@ -131,7 +137,10 @@ class BaseTransferStrategy(object):
 
         self._log_current_currency(target_id, currency_name, "before removing")
 
-        self.parent_wrapper.remove_points(target_id, final_amount)
+        is_success = self.parent_wrapper.remove_points(target_id, final_amount)
+        self.logger.debug(
+            "Remove points completed with status: " + str(is_success)
+        )
         if send_message:
             message = (
                 self.settings.SuccessfulRemovingMessage
@@ -141,12 +150,20 @@ class BaseTransferStrategy(object):
             self.parent_wrapper.send_stream_message(message)
 
         self._log_current_currency(target_id, currency_name, "after removing")
+        return is_success
 
     def _log_current_currency(self, user_id, currency_name, message_part):
         current_points = self.parent_wrapper.get_points(user_id)
         self.logger.debug(
             "User {0} has {1} {2} {3}."
             .format(user_id, current_points, currency_name, message_part)
+        )
+
+    def _create_transaction(self):
+        return TransferTransaction(
+            self.logger,
+            self._handle_add_tranfer,
+            self._handle_remove_tranfer
         )
 
 
@@ -224,29 +241,39 @@ class NormalTransferStrategy(BaseTransferStrategy):
         self._handle_normal_transfer(request, target_data, transfer_amount)
 
     def _handle_normal_transfer(self, request, target_data, transfer_amount):
-        remove_parameters = request.to_paramters(
-            target_data=request.user_data,
-            final_amount=transfer_amount.initial_amount
-        )
-        self._handle_remove_tranfer(remove_parameters, send_message=False)
-
-        add_parameters = request.to_paramters(
-            target_data=target_data,
-            final_amount=transfer_amount.final_amount
-        )
-        self._handle_add_tranfer(add_parameters, send_message=False)
-
-        message = (
-            self.settings.SuccessfulTransferMessage
-            .format(
-                request.user_data.name,
-                transfer_amount.final_amount,
-                request.currency_name,
-                target_data.name,
-                transfer_amount.fee
+        # Normal transfer is implemented as two function call:
+        # 1. Remove specified points from the caller user.
+        # 2. Add specified number of points to the target user.
+        with self._create_transaction() as transaction:
+            # Remove points from the caller user.
+            remove_parameters = request.to_paramters(
+                target_data=request.user_data,
+                final_amount=transfer_amount.initial_amount
             )
-        )
-        self.parent_wrapper.send_stream_message(message)
+            transaction.execute_remove(remove_parameters, send_message=False)
+
+            # Add points to the target user.
+            add_parameters = request.to_paramters(
+                target_data=target_data,
+                final_amount=transfer_amount.final_amount
+            )
+            transaction.execute_add(add_parameters, send_message=False)
+
+            # Send message to chat.
+            message = (
+                self.settings.SuccessfulTransferMessage
+                .format(
+                    request.user_data.name,
+                    transfer_amount.final_amount,
+                    request.currency_name,
+                    target_data.name,
+                    transfer_amount.fee
+                )
+            )
+            self.parent_wrapper.send_stream_message(message)
+
+            # Commit changes.
+            transaction.commit()
 
 
 class AddTransferStrategy(BaseTransferStrategy):
@@ -288,11 +315,16 @@ class AddTransferStrategy(BaseTransferStrategy):
         raise NotImplementedError()
 
     def handle_transfer_request(self, request, target_data, transfer_amount):
-        add_parameters = request.to_paramters(
-            target_data=target_data,
-            final_amount=transfer_amount.final_amount
-        )
-        self._handle_add_tranfer(add_parameters, send_message=True)
+        with self._create_transaction() as transaction:
+            # Add points to the target user.
+            add_parameters = request.to_paramters(
+                target_data=target_data,
+                final_amount=transfer_amount.final_amount
+            )
+            transaction.execute_add(add_parameters, send_message=True)
+
+            # Commit changes.
+            transaction.commit()
 
 
 class RemoveTransferStrategy(BaseTransferStrategy):
@@ -349,11 +381,16 @@ class RemoveTransferStrategy(BaseTransferStrategy):
         self.parent_wrapper.send_stream_message(message)
 
     def handle_transfer_request(self, request, target_data, transfer_amount):
-        remove_parameters = request.to_paramters(
-            target_data=target_data,
-            final_amount=transfer_amount.final_amount
-        )
-        self._handle_remove_tranfer(remove_parameters, send_message=True)
+        with self._create_transaction() as transaction:
+            # Remove points from the target user.
+            remove_parameters = request.to_paramters(
+                target_data=target_data,
+                final_amount=transfer_amount.final_amount
+            )
+            transaction.execute_remove(remove_parameters, send_message=True)
+
+            # Commit changes.
+            transaction.commit()
 
 
 class SetTransferStrategy(BaseTransferStrategy):
@@ -395,26 +432,39 @@ class SetTransferStrategy(BaseTransferStrategy):
         raise NotImplementedError()
 
     def handle_transfer_request(self, request, target_data, transfer_amount):
-        current_amount = self.parent_wrapper.get_points(target_data.id)
-        remove_parameters = request.to_paramters(
-            target_data=target_data,
-            final_amount=current_amount
-        )
-        self._handle_remove_tranfer(remove_parameters, send_message=False)
+        self._handle_set_transfer(request, target_data, transfer_amount)
 
-        add_parameters = request.to_paramters(
-            target_data=target_data,
-            final_amount=transfer_amount.final_amount
-        )
-        self._handle_add_tranfer(add_parameters, send_message=False)
-
-        message = (
-            self.settings.SuccessfulSettingMessage
-            .format(
-                request.user_data.name,
-                transfer_amount.final_amount,
-                request.currency_name,
-                target_data.name
+    def _handle_set_transfer(self, request, target_data, transfer_amount):
+        # Set transfer is implemented as two function call:
+        # 1. Remove all points from the target user.
+        # 2. Add specified number of points to the target user.
+        with self._create_transaction() as transaction:
+            # Remove points from the target user.
+            current_amount = self.parent_wrapper.get_points(target_data.id)
+            remove_parameters = request.to_paramters(
+                target_data=target_data,
+                final_amount=current_amount
             )
-        )
-        self.parent_wrapper.send_stream_message(message)
+            transaction.execute_remove(remove_parameters, send_message=False)
+
+            # Add points to the target user.
+            add_parameters = request.to_paramters(
+                target_data=target_data,
+                final_amount=transfer_amount.final_amount
+            )
+            transaction.execute_add(add_parameters, send_message=False)
+
+            # Send message to chat.
+            message = (
+                self.settings.SuccessfulSettingMessage
+                .format(
+                    request.user_data.name,
+                    transfer_amount.final_amount,
+                    request.currency_name,
+                    target_data.name
+                )
+            )
+            self.parent_wrapper.send_stream_message(message)
+
+            # Commit changes.
+            transaction.commit()
