@@ -25,28 +25,42 @@ AllowLoggingToFile = False
 
 SettingsReloadEventName = "settings_reload"
 
+# All possible options for permission:
+# - Everyone
+# - Regular
+# - Subscriber
+# - GameWisp Subscriber
+# - Moderator
+# - Editor
+# - Invisible
+# - User_Specific (info:username)
+# - Min_Rank (info:rank)
+# - Min_Points (info:points)
+# - Min_Hours (info:hours)
+
 Everyone = "everyone"
 UserSpecific = "user_specific"
 Subscriber = "subscriber"
 Moderator = "moderator"
 Editor = "editor"
 
-CommandNewScoreUsage = "{0} {1} {2}"
-CommandUpdateScoreUsage = "{0} {1} {2}"
+CommandCreateScoreUsage = "{0} {1} {2} {3}"
+CommandUpdateScoreUsage = "{0} {1} {2} {3}"
 ExamplePlayerName = "[PlayerName]"
 ExampleScoreValue = "[0–∞]"
+ExampleOptionalDescription = "[OptionalDescription enclosed in [] brackets]"
 
 # [Required] Script Information.
 ScriptName = "Score Script"
 Website = "https://github.com/Vasar007/Streamlabs-Chatbot-Scripts"
 Description = "Adds an opportunity to create and update score"
 Creator = "Vasar007"
-Version = "1.0.0.0"
+Version = "1.0.1"
 
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).
 CommandGetScore = "!score"
-CommandNewScore = "!new_score"
+CommandCreateScore = "!create_score"
 CommandUpdateScore = "!update_score"
 CommandResetScore = "!reset_score"
 CommandDeleteScore = "!delete_score"
@@ -64,7 +78,7 @@ PermissionDeniedMessage = "Permission denied: You have to be a {0} to use {1} co
 
 InvalidCommandCallMessage = "Invalid {0} command call. Usage: {1}"
 NoScoreFoundMessage = "No score found."
-CurrentScoreMessage = "Current score {0}"
+CurrentScoreMessage = "Current score: {0}"
 CreatedScoreMessage = "Created new score: {0}"
 RecreatedScoreMessage = "Score has created already, created the new one: {0}"
 NothingToUpdateMessage = "No score found, nothing to update."

@@ -25,6 +25,19 @@ AllowLoggingToFile = False
 
 SettingsReloadEventName = "settings_reload"
 
+# All possible options for permission:
+# - Everyone
+# - Regular
+# - Subscriber
+# - GameWisp Subscriber
+# - Moderator
+# - Editor
+# - Invisible
+# - User_Specific (info:username)
+# - Min_Rank (info:rank)
+# - Min_Points (info:points)
+# - Min_Hours (info:hours)
+
 Everyone = "everyone"
 UserSpecific = "user_specific"
 Subscriber = "subscriber"
@@ -36,7 +49,7 @@ ScriptName = "Template Script"
 Website = "https://github.com/Vasar007/Streamlabs-Chatbot-Scripts"
 Description = "Basic boilerplate script to play with."
 Creator = "Vasar007"
-Version = "1.0.0.0"
+Version = "1.0.0"
 
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).
@@ -45,11 +58,11 @@ Cooldown = 4
 
 # Values: everyone, moderator, subscriber, user_specific, editor.
 Permission = Everyone
+# This field should only be filled when using the user_specific permission.
+PermissionInfo = ""
 
 PermissionDeniedMessage = "Permission denied: You have to be a {0} to use {1} command!"
 
-# This field should only be filled when using the user_specific permission.
-PermissionInfo = ""
 
 InvalidCommandCallMessage = "Invalid {0} command call. Usage: {1}"
 ResponseMessage = "Pong!"

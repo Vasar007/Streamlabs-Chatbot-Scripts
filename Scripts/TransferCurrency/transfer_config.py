@@ -25,6 +25,19 @@ AllowLoggingToFile = False
 
 SettingsReloadEventName = "settings_reload"
 
+# All possible options for permission:
+# - Everyone
+# - Regular
+# - Subscriber
+# - GameWisp Subscriber
+# - Moderator
+# - Editor
+# - Invisible
+# - User_Specific (info:username)
+# - Min_Rank (info:rank)
+# - Min_Points (info:points)
+# - Min_Hours (info:hours)
+
 Everyone = "everyone"
 UserSpecific = "user_specific"
 Subscriber = "subscriber"
@@ -44,7 +57,7 @@ ScriptName = "Transfer Currency Script"
 Website = "https://github.com/Vasar007/Streamlabs-Chatbot-Scripts"
 Description = "Allows viewers to transfer Streamlabs currency between eachother."
 Creator = "Vasar007"
-Version = "1.0.1.0"
+Version = "1.0.1"
 
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).

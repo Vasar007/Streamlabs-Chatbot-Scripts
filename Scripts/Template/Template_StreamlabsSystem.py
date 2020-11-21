@@ -139,7 +139,7 @@ def Tick():
 def Parse(parseString, userid, username, targetid, targetname, message):
     """
     [Optional] Parse method (Allows you to create your own custom $parameters).
-    Here"s where the magic happens, all the strings are sent and processed
+    Here's where the magic happens, all the strings are sent and processed
     through this function.
 
     Parent.FUNCTION allows to use functions of the Chatbot and other outside

@@ -4,11 +4,11 @@ This repository contains some useful Streamlabs Chatbot (SL Chatbot) scripts.
 
 ## Available scripts
 
-| Name             | Description                                                                  | GitHub folder                                        | Download link                                                                                             | Latest version |
-| ---------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | -------------- |
-| Template         | Basic boilerplate script to play with                                        | [Scripts/Template](Scripts/Template)                 | [Download](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/Template.zip)         | `1.0.0.0`      |
-| Score            | Script that adds score counter between two opponents                         | [Scripts/Score](Scripts/Score)                       | [Download](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/Score.zip)            | `1.0.0.0`      |
-| TransferCurrency | Script that allows viewers to transfer Streamlabs currency between eachother | [Scripts/TransferCurrency](Scripts/TransferCurrency) | [Download](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/TransferCurrency.zip) | `1.0.1.0`      |
+| Name             | Description                                                                  | GitHub folder                                        | Download link                                                                                                                              | Latest version |
+| ---------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | -------------- |
+| Template         | Basic boilerplate script to play with                                        | [Scripts/Template](Scripts/Template)                 | [Download latest version](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/Latest%20versions/Template.zip)         | `1.0.0`        |
+| Score            | Script that adds score counter between two opponents                         | [Scripts/Score](Scripts/Score)                       | [Download latest version](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/Latest%20versions/Score.zip)            | `1.0.1`        |
+| TransferCurrency | Script that allows viewers to transfer Streamlabs currency between eachother | [Scripts/TransferCurrency](Scripts/TransferCurrency) | [Download latest version](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/Latest%20versions/TransferCurrency.zip) | `1.0.1`        |
 
 ## How to install any script
 
@@ -26,6 +26,8 @@ This repository contains some useful Streamlabs Chatbot (SL Chatbot) scripts.
    Otherwise, check "Errors" and "Logs" tabs.
 
 If you're having trouble with loading scripts in the SL Chatbot, see: [Scripts Explained video](youtube.com/watch?v=l3FBpY-0880)
+
+Additional FAQ and known issues you can find here: [Streamlabs Support — Chatbot](https://github.com/StreamlabsSupport/Streamlabs-Chatbot)
 
 ## How to use
 

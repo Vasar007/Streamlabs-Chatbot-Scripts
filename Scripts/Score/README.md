@@ -2,7 +2,7 @@
 
 Score script adds score counter between two opponents.
 
-Latest version: `1.0.0.0`
+Documentation for script version: `1.0.1`
 
 ## Available features
 
@@ -11,10 +11,11 @@ Latest version: `1.0.0.0`
 - Reset score.
 - Retrieve current score.
 - Delete current score.
+- Append optional score description.
 
 ## How to install script
 
-[Download script](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/Score.zip).
+[Download script](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/All%20versions/Score/Score_1.0.1.zip).
 
 See common instruction [here](../../README.md#how-to-install-any-script).
 
@@ -39,19 +40,21 @@ So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
 - Permissions: Everyone
 - Can have optional text: Yes
 
-### !new_score
+### !create_score
 
-- Label: New Command
+- Label: Create Command
 - Description: The command to create new score
-- Usage: !new_score Player1 Player2
+- Usage: !create_score Player1 Player2
 - Permissions: Moderator or higher
-- Can have optional text: No
+- Can have optional text: No (note: all text after required parameters will be converted to description value)
 - Arguments:
   - Player1: string — the first player name
   - Player1: string — the second player name
+  - Description: string — optional score description
 - Samples:
-  - `!new_score Foo Bar`
-  - `!new_score USeR BeasT`
+  - `!create_score Foo Bar`
+  - `!create_score USeR BeasT`
+  - `!create_score USeR BeasT The rest of params will be description`
 
 ### !update_score
 
@@ -59,14 +62,16 @@ So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
 - Description: The command to update current score
 - Usage: !update_score Player1Score Player2Score
 - Permissions: Moderator or higher
-- Can have optional text: No
+- Can have optional text: No (note: all text after required parameters will be converted to description value)
 - Arguments:
   - Player1Score: integer — new value to set for player 1 (positive number)
   - Player2Score: integer — new value to set for player 2 (positive number)
+  - Description: string — optional score description which will replace the current one
 - Samples:
   - `!update_score 1 1`
   - `!update_score 2 5`
   - `!update_score 2 0`
+  - `!update_score 2 1 The rest of params will be new description`
 
 ### !reset_score
 

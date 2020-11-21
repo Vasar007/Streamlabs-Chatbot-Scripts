@@ -2,7 +2,7 @@
 
 Transfer script allows viewers to transfer Streamlabs currency between eachother.
 
-Latest version: `1.0.1.0`
+Documentation for script version: `1.0.1`
 
 ## Available features
 
@@ -14,7 +14,7 @@ Latest version: `1.0.1.0`
 
 ## How to install script
 
-[Download script](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/TransferCurrency.zip).
+[Download script](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/All%20versions/TransferCurrency/TransferCurrency_1.0.1.zip).
 
 See common instruction [here](../../README.md#how-to-install-any-script).
 

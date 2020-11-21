@@ -31,8 +31,10 @@ class ScoreManager(object):
 
         return ScoreValueHandler(True, self.active_score, message)
 
-    def create_score(self, player1_name, player2_name):
-        new_score = score.create_score_from_string(player1_name, player2_name)
+    def create_score(self, player1_name, player2_name, description):
+        new_score = score.create_score_from_scratch(
+            player1_name, player2_name, description
+        )
 
         if self.active_score is None:
             self.active_score = new_score
@@ -48,7 +50,7 @@ class ScoreManager(object):
 
         return ScoreValueHandler(True, self.active_score, message)
 
-    def update_score(self, raw_player1_score, raw_player2_score):
+    def update_score(self, raw_player1_score, raw_player2_score, description):
         if self.active_score is None:
             message = self.settings.NothingToUpdateMessage
         else:
@@ -60,7 +62,7 @@ class ScoreManager(object):
             if player2_score is None:
                 return ScoreValueHandler(False, self.active_score, message)
 
-            self.active_score.update(player1_score, player2_score)
+            self.active_score.update(player1_score, player2_score, description)
 
             message = (
                 self.settings.UpdatedScoreMessage

@@ -144,7 +144,7 @@ def Tick():
 def Parse(parse_string, userid, username, targetid, targetname, message):
     """
     [Optional] Parse method (Allows you to create your own custom $parameters).
-    Here"s where the magic happens, all the strings are sent and processed
+    Here's where the magic happens, all the strings are sent and processed
     through this function.
 
     Parent.FUNCTION allows to use functions of the Chatbot and other outside
@@ -232,23 +232,24 @@ def TryProcessCommand(command, data_wrapper):
         is_valid_call = True  # Get command call will always be valid.
         usage_example = ScriptSettings.CommandGetScore
 
-    # !new_score
-    elif command == ScriptSettings.CommandNewScore:
+    # !create_score
+    elif command == ScriptSettings.CommandCreateScore:
         required_permission = ScriptSettings.PermissionOnEdit
         permission_info = ScriptSettings.PermissionInfoOnEdit
         func = GetFuncToProcessIfHasPermission(
-            ProcessNewCommand,
+            ProcessCreateCommand,
             data_wrapper.user_id,
             required_permission,
             permission_info
         )
-        is_valid_call = param_count == 3
+        is_valid_call = param_count >= 3
         usage_example = (
-            config.CommandNewScoreUsage
+            config.CommandCreateScoreUsage
             .format(
-                ScriptSettings.CommandNewScore,
+                ScriptSettings.CommandCreateScore,
                 config.ExamplePlayerName,
-                config.ExamplePlayerName
+                config.ExamplePlayerName,
+                config.ExampleOptionalDescription
             )
         )
 
@@ -262,13 +263,14 @@ def TryProcessCommand(command, data_wrapper):
             required_permission,
             permission_info
         )
-        is_valid_call = param_count == 3
+        is_valid_call = param_count >= 3
         usage_example = (
             config.CommandUpdateScoreUsage
             .format(
                 ScriptSettings.CommandUpdateScore,
                 config.ExampleScoreValue,
-                config.ExampleScoreValue
+                config.ExampleScoreValue,
+                config.ExampleOptionalDescription
             )
         )
 
@@ -315,6 +317,19 @@ def HandleResult(score_handler, to_debug=False):
     ParentHandler.send_stream_message(score_handler.message)
 
 
+def TryExtractDescription(required_parameters_number, data_wrapper):
+    description = ""
+    param_count = data_wrapper.get_param_count()
+    if param_count > required_parameters_number:
+        description = " ".join(
+            data_wrapper.get_param(i) 
+            for i in range(required_parameters_number, param_count)
+        )
+
+    Logger().debug("Extracted description: " + description)
+    return description
+
+
 def ProcessGetCommand(manager, data_wrapper):
     # Input example: !score
     # Command <Anything>
@@ -325,32 +340,36 @@ def ProcessGetCommand(manager, data_wrapper):
         Logger().exception("Failed to get score: " + str(ex))
 
 
-def ProcessNewCommand(manager, data_wrapper):
-    # Input example: !new_score Player1 Player2
-    # Command Player1Name Player2Name
+def ProcessCreateCommand(manager, data_wrapper):
+    # Input example: !create_score Player1 Player2 Score is great!
+    # Command Player1Name Player2Name <OptionalDescription>
     try:
         player1_name = data_wrapper.get_param(1)
         player2_name = data_wrapper.get_param(2)
+        description = TryExtractDescription(3, data_wrapper)
 
-        score_handler = manager.create_score(player1_name, player2_name)
+        score_handler = manager.create_score(
+            player1_name, player2_name, description
+        )
         HandleResult(score_handler)
     except Exception as ex:
         Logger().exception("Failed to create score: " + str(ex))
 
 
 def ProcessUpdateCommand(manager, data_wrapper):
-    # Input example: !update_score 1 1
-    # Command Player1Score Player2Score
+    # Input example: !update_score 1 1 Score is great!
+    # Command Player1Score Player2Score <OptionalDescription>
     try:
         raw_player1_score = data_wrapper.get_param(1)
         raw_player2_score = data_wrapper.get_param(2)
+        description = TryExtractDescription(3, data_wrapper)
 
         score_handler = manager.update_score(
-            raw_player1_score, raw_player2_score
+            raw_player1_score, raw_player2_score, description
         )
         HandleResult(score_handler)
     except Exception as ex:
-        Logger().excpetion("Failed to update score: " + str(ex))
+        Logger().exception("Failed to update score: " + str(ex))
 
 
 def ProcessResetCommand(manager, data_wrapper):

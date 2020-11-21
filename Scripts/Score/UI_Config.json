@@ -8,10 +8,10 @@
         "tooltip": "The command to show current score.",
         "group": "Setup"
     },
-    "CommandNewScore": {
+    "CommandCreateScore": {
         "type": "textbox",
-        "value": "!new_score",
-        "label": "New Command",
+        "value": "!create_score",
+        "label": "Create Command",
         "tooltip": "The command to create new score.",
         "group": "Setup"
     },
@@ -91,23 +91,23 @@
     },
     "CurrentScoreMessage": {
         "type": "textbox",
-        "value": "Current score {0}",
+        "value": "Current score: {0}",
         "label": "Current Score Message",
-        "tooltip": "Chat message will be sent if user calls a Get Score command. 0 — current score.",
+        "tooltip": "Chat message will be sent if user calls a Get Score command. 0 — current score info.",
         "group": "Chat Messages"
     },
     "CreatedScoreMessage": {
         "type": "textbox",
         "value": "Created new score: {0}",
         "label": "Created Score Message",
-        "tooltip": "Chat message will be sent when new score has been created (using New Command). 0 — created score.",
+        "tooltip": "Chat message will be sent when new score has been created (using Create Command). 0 — created score info.",
         "group": "Chat Messages"
     },
     "RecreatedScoreMessage": {
         "type": "textbox",
         "value": "Score has created already, created the new one: {0}",
         "label": "Recreated Score Message",
-        "tooltip": "Chat message will be sent when existing score has been recreated (using New Command). 0 — created score.",
+        "tooltip": "Chat message will be sent when existing score has been recreated (using Create Command). 0 — created score info.",
         "group": "Chat Messages"
     },
     "NothingToUpdateMessage": {
@@ -128,7 +128,7 @@
         "type": "textbox",
         "value": "Updated score: {0}",
         "label": "Updated Score Message",
-        "tooltip": "Chat message will be sent when score has been updated (using Update Command). 0 — updated score.",
+        "tooltip": "Chat message will be sent when score has been updated (using Update Command). 0 — updated score info.",
         "group": "Chat Messages"
     },
     "NothingToResetMessage": {
@@ -142,7 +142,7 @@
         "type": "textbox",
         "value": "Reset score: {0}",
         "label": "Reset Score Message",
-        "tooltip": "Chat message will be sent when score has been reset (using Reset Command). 0 — reset score.",
+        "tooltip": "Chat message will be sent when score has been reset (using Reset Command). 0 — reset score info.",
         "group": "Chat Messages"
     },
     "NothingToDeleteMessage": {
@@ -156,7 +156,7 @@
         "type": "textbox",
         "value": "Deleted score: {0}",
         "label": "Deleted Score Message",
-        "tooltip": "Chat message will be sent when score has been deleted (using Delete Command). 0 — deleted score.",
+        "tooltip": "Chat message will be sent when score has been deleted (using Delete Command). 0 — deleted score info.",
         "group": "Chat Messages"
     },
 

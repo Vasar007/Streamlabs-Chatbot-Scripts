@@ -2,7 +2,7 @@
 
 Basic boilerplate script to play with.
 
-Latest version: `1.0.0.0`
+Documentation for script version: `1.0.0`
 
 ## Available features
 
@@ -10,7 +10,7 @@ Latest version: `1.0.0.0`
 
 ## How to install script
 
-[Download script](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/Template.zip).
+[Download script](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/All%20versions/Template/Template_1.0.0.zip).
 
 See common instruction [here](../../README.md#how-to-install-any-script).
 

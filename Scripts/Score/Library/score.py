@@ -4,6 +4,8 @@ import score_helpers as helpers
 
 
 default_player_name = "Player"
+default_space_number = 1
+default_full_format = "{0} ({1})"
 
 
 class PlayerScore(object):
@@ -47,28 +49,46 @@ class PlayerScore(object):
 
 class Score(object):
 
-    def __init__(self, logger, player1, player2, space_number=1):
+    def __init__(self, logger, player1, player2, description, space_number=1,
+                 full_format=None):
+        self._logger = logger
         self.player1 = player1
         self.player2 = player2
-        self.space_number = space_number
-        self._logger = logger
+        self.description = str(description)
+
+        space_number = helpers.safe_cast(space_number, int, 1)
+        self.space_number = (
+            space_number if space_number >= 1
+            else default_space_number
+        )
+
+        self.full_format = (
+            str(full_format) if full_format
+            else default_full_format
+        )
 
     def reset(self):
         self.player1.reset()
         self.player2.reset()
-        self._logger.info("Resetted score for both players.")
+        self._logger.debug("Resetted score for both players.")
 
-    def update(self, player1_score, player2_score):
+    def update(self, player1_score, player2_score, description):
         self._update_player_score(self.player1, player1_score)
         self._update_player_score(self.player2, player2_score)
+        self._update_description(description)
 
     def _update_player_score(self, player, new_score):
         player.update(new_score)
         message = (
-            "Updated score for player " + player.name +
-            ", new score " + str(new_score)
+            "Updated score for player {0}, new score: {1}"
+            .format(player, new_score)
         )
-        self._logger.info(message)
+        self._logger.debug(message)
+
+    def _update_description(self, description):
+        self.description = str(description)
+        message = "Updated score description: {0}".format(description)
+        self._logger.debug(message)
 
     def to_display_string(self, space_number=1, separator_text="vs."):
         player1_string = self.player1.to_forward_string(
@@ -80,11 +100,16 @@ class Score(object):
         return player1_string + separator_text + player2_string
 
     def __str__(self):
-        return (
+        score_str = (
             self.player1.to_forward_string(self.space_number) +
             ":" +
             self.player2.to_reversed_string(self.space_number)
         )
+
+        if self.description:
+            return self.full_format.format(score_str, self.description)
+
+        return score_str
 
 
 def fix_player_name_if_needed(player_name, number):
@@ -94,16 +119,16 @@ def fix_player_name_if_needed(player_name, number):
     return default_player_name + str(number)
 
 
-def create_score_from_string(player1_name, player2_name, space_number=1):
+def create_score_from_scratch(player1_name, player2_name, description):
     player1_name = fix_player_name_if_needed(player1_name, 1)
     player2_name = fix_player_name_if_needed(player2_name, 2)
 
     player1 = PlayerScore(player1_name)
     player2 = PlayerScore(player2_name)
     logger = helpers.get_logger()
-    score = Score(logger, player1, player2, space_number)
+    score = Score(logger, player1, player2, description)
 
-    message = "Created new score: " + str(score)
-    logger.info(message)
+    message = "Created new score for players: " + str(score)
+    logger.debug(message)
 
     return score

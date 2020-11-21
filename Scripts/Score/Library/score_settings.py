@@ -69,7 +69,7 @@ class ScoreSettings(object):
     def _set_default(self):
         # Setup group.
         self.CommandGetScore = config.CommandGetScore
-        self.CommandNewScore = config.CommandNewScore
+        self.CommandCreateScore = config.CommandCreateScore
         self.CommandUpdateScore = config.CommandUpdateScore
         self.CommandResetScore = config.CommandResetScore
         self.CommandDeleteScore = config.CommandDeleteScore
