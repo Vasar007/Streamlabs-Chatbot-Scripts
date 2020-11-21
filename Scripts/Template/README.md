@@ -2,6 +2,8 @@
 
 Basic boilerplate script to play with.
 
+Latest version: `1.0.0.0`
+
 ## Available features
 
 - Send responses on trigger message.

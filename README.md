@@ -4,9 +4,11 @@ This repository contains some useful Streamlabs Chatbot (SL Chatbot) scripts.
 
 ## Available scripts
 
-- [Template](Scripts/Template) — basic boilerplate script to play with ([download](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/Template.zip)).
-- [Score](Scripts/Score) — script that adds score counter between two opponents ([download](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/Score.zip)).
-- [TransferCurrency](Scripts/TransferCurrency) — script that allows viewers to transfer Streamlabs currency between eachother ([download](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/TransferCurrency.zip)).
+| Name             | Description                                                                  | GitHub folder                                        | Download link                                                                                             | Latest version |
+| ---------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | -------------- |
+| Template         | Basic boilerplate script to play with                                        | [Scripts/Template](Scripts/Template)                 | [Download](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/Template.zip)         | `1.0.0.0`      |
+| Score            | Script that adds score counter between two opponents                         | [Scripts/Score](Scripts/Score)                       | [Download](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/Score.zip)            | `1.0.0.0`      |
+| TransferCurrency | Script that allows viewers to transfer Streamlabs currency between eachother | [Scripts/TransferCurrency](Scripts/TransferCurrency) | [Download](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/TransferCurrency.zip) | `1.0.0.0`      |
 
 ## How to install any script
 

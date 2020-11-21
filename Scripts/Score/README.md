@@ -2,6 +2,8 @@
 
 Score script adds score counter between two opponents.
 
+Latest version: `1.0.0.0`
+
 ## Available features
 
 - Create score with opponents names.
