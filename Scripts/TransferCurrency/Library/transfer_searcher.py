@@ -34,8 +34,25 @@ class TransferUserSearcher(object):
         if result is not None:
             return result
 
+        # Use another method to retrieve viewers data.
+        # List<string userid>
+        active_users_ids = self.parent_wrapper.get_active_users()
+        self._log_viewers(active_users_ids)
+
         self.logger.debug(
-            "WARNING! Using dangerous extended search to find user."
+            "WARNING! Cannot find target user by 'get_viewer_list' request." +
+            "Using 'get_active_users' request to find user."
+        )
+        # Try to find target user by original parameter.
+        result = self._find_by_supposed_id(
+            user_id_or_name_low, active_users_ids
+        )
+        if result is not None:
+            return result
+
+        self.logger.debug(
+            "WARNING! Cannot find target user by get_viewer_list request. " +
+            "Using dangerous extended search to find user."
         )
 
         # Retrive extended viewers data.
@@ -83,6 +100,6 @@ class TransferUserSearcher(object):
             return
 
         message = (
-            "Retrived {0} users: [{1}].".format(len(viewers), str(viewers))
+            "Retrieved {0} users: [{1}].".format(len(viewers), str(viewers))
         )
         self.logger.debug(message)

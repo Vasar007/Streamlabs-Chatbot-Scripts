@@ -15,7 +15,7 @@ Documentation for script version: `1.0.1`
 
 ## How to install script
 
-[Download script](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/All%20versions/Score/Score_1.0.1.zip).
+[Download script of latest version](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/Latest%20versions/Score.zip).
 
 See common instruction [here](../../README.md#how-to-install-any-script).
 

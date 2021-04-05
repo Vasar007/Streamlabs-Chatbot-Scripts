@@ -10,7 +10,7 @@ Documentation for script version: `1.0.0`
 
 ## How to install script
 
-[Download script](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/All%20versions/Template/Template_1.0.0.zip).
+[Download script of latest version](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/Latest%20versions/Template.zip).
 
 See common instruction [here](../../README.md#how-to-install-any-script).
 
