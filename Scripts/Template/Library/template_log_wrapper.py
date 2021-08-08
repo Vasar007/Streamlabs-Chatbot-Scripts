@@ -4,7 +4,7 @@ import os
 import logging
 from logging.handlers import RotatingFileHandler
 
-import template_config as config  # pylint:disable=import-error
+import template_config as config
 import template_helpers as helpers
 
 

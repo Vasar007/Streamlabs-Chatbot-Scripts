@@ -8,9 +8,7 @@ import time
 import json
 import codecs
 from datetime import datetime
-from shutil import copyfile
 
-import score_config as config  # pylint:disable=import-error
 from score_log_wrapper import ScoreLoggerFactory as LoggerFactory
 
 

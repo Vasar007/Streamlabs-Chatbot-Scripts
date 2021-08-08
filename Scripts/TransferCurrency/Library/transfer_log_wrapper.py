@@ -4,7 +4,7 @@ import os
 import logging
 from logging.handlers import RotatingFileHandler
 
-import transfer_config as config  # pylint:disable=import-error
+import transfer_config as config
 import transfer_helpers as helpers
 
 

@@ -4,7 +4,7 @@ import os
 import codecs
 import json
 
-import transfer_config as config  # pylint:disable=import-error
+import transfer_config as config
 import transfer_helpers as helpers
 from transfer_event_emitter import TransferEventEmitter as EventEmitter 
 

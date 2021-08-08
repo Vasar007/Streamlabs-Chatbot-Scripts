@@ -2,7 +2,7 @@
 
 import score
 import score_helpers as helpers
-import score_config as config  # pylint:disable=import-error
+import score_config as config
 
 
 class ScoreValueHandler(object):

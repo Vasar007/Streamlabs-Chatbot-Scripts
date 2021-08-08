@@ -4,7 +4,7 @@ import os
 import codecs
 import json
 
-import template_config as config  # pylint:disable=import-error
+import template_config as config
 import template_helpers as helpers
 from template_event_emitter import TemplateEventEmitter as EventEmitter 
 
@@ -72,9 +72,9 @@ class TemplateSettings(object):
         self.CommandPingCooldown = config.CommandPingCooldown
 
         # Permission group.
-        self.Permission = config.Permission
+        self.PermissionOnPing = config.Permission
         self.PermissionDeniedMessage = config.PermissionDeniedMessage
-        self.PermissionInfo = config.PermissionInfo
+        self.PermissionInfoOnPing = config.PermissionInfo
 
         # Chat Messages group.
         self.InvalidCommandCallMessage = config.InvalidCommandCallMessage

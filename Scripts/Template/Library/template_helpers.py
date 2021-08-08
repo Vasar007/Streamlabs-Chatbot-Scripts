@@ -8,9 +8,7 @@ import time
 import json
 import codecs
 from datetime import datetime
-from shutil import copyfile
 
-import template_config as config  # pylint:disable=import-error
 from template_log_wrapper import TemplateLoggerFactory as LoggerFactory
 
 

@@ -8,9 +8,7 @@ import time
 import json
 import codecs
 from datetime import datetime
-from shutil import copyfile
 
-import song_request_config as config  # pylint:disable=import-error
 from song_request_log_wrapper import SongRequestLoggerFactory as LoggerFactory
 
 

@@ -4,7 +4,7 @@ import os
 import logging
 from logging.handlers import RotatingFileHandler
 
-import score_config as config  # pylint:disable=import-error
+import score_config as config
 import score_helpers as helpers
 
 

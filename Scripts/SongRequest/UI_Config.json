@@ -1,30 +1,144 @@
 {
     "output_file": "Settings/settings.json",
 
-    "CommandSongRequest": {
+    "CommandAddSongRequest": {
         "type": "textbox",
         "value": "!sr",
-        "label": "Song Request Command",
-        "tooltip": "The command that will be used to send song requests.",
+        "label": "Add Song Request Command",
+        "tooltip": "The command that will be used to add song requests.",
         "group": "Setup"
     },
-    "CommandSongRequestCooldown": {
+    "CommandAddSongRequestCooldown": {
         "type": "slider",
         "value": 1,
         "min": 1,
         "max": 100,
         "ticks": 1,
-        "label": "Song Request Command Cooldown (seconds)",
-        "tooltip": "How long the Song Request command should go on cooldown for.",
+        "label": "Add Song Request Command Cooldown (seconds)",
+        "tooltip": "How long the Add Song Request command should go on cooldown for.",
+        "group": "Setup"
+    },
+    "CommandCancelSongRequest": {
+        "type": "textbox",
+        "value": "!sr_cancel",
+        "label": "Cancel Song Request Command",
+        "tooltip": "The command that will be used to cancel song requests.",
+        "group": "Setup"
+    },
+    "CommandCancelSongRequestCooldown": {
+        "type": "slider",
+        "value": 1,
+        "min": 1,
+        "max": 100,
+        "ticks": 1,
+        "label": "Cancel Song Request Command Cooldown (seconds)",
+        "tooltip": "How long the Cancel Song Request command should go on cooldown for.",
+        "group": "Setup"
+    },
+    "CommandApproveSongRequest": {
+        "type": "textbox",
+        "value": "!sr_approve",
+        "label": "Approve Song Request Command",
+        "tooltip": "The command that will be used to approve song requests from other users.",
+        "group": "Setup"
+    },
+    "CommandApproveSongRequestCooldown": {
+        "type": "slider",
+        "value": 1,
+        "min": 1,
+        "max": 100,
+        "ticks": 1,
+        "label": "Approve Song Request Command Cooldown (seconds)",
+        "tooltip": "How long the Approve Song Request command should go on cooldown for.",
+        "group": "Setup"
+    },
+    "CommandRejectSongRequest": {
+        "type": "textbox",
+        "value": "!sr_reject",
+        "label": "Reject Song Request Command",
+        "tooltip": "The command that will be used to reject song requests from other users.",
+        "group": "Setup"
+    },
+    "CommandRejectSongRequestCooldown": {
+        "type": "slider",
+        "value": 1,
+        "min": 1,
+        "max": 100,
+        "ticks": 1,
+        "label": "Reject Song Request Command Cooldown (seconds)",
+        "tooltip": "How long the Reject Song Request command should go on cooldown for.",
+        "group": "Setup"
+    },
+    "CommandGetSongRequest": {
+        "type": "textbox",
+        "value": "!sr_get",
+        "label": "Get Song Request Command",
+        "tooltip": "The command that will be used to get song requests from other users.",
+        "group": "Setup"
+    },
+    "CommandGetSongRequestCooldown": {
+        "type": "slider",
+        "value": 1,
+        "min": 1,
+        "max": 100,
+        "ticks": 1,
+        "label": "Get Song Request Command Cooldown (seconds)",
+        "tooltip": "How long the Get Song Request command should go on cooldown for.",
+        "group": "Setup"
+    },
+    "HttpPageLinkToParse": {
+        "type": "textbox",
+        "value": "",
+        "label": "HTTP page link to parse",
+        "tooltip": "HTTP page of song request site with player. This page will be parsed and used in script logic.",
+        "group": "Setup"
+    },
+    "NumberOfSongRequestsToAdd": {
+        "type": "slider",
+        "value": 3,
+        "min": 1,
+        "max": 10,
+        "ticks": 1,
+        "label": "Number of song requests for each user to add",
+        "tooltip": "How many song requests users can add per stream.",
+        "group": "Setup"
+    },
+    "UseWhisperMessagesToControlSongRequests": {
+        "type": "checkbox",
+        "value": true,
+        "label": "Use Whisper Messages To Control Song Requests",
+        "tooltip": "Allow bot to use whisper messages to control song requests. You can use this feature to decrease amount of messages in chat.",
         "group": "Setup"
     },
 
-    "Permission": {
+    "PermissionOnAddCancelSongRequest": {
         "type": "dropdown",
-        "value": "everyone",
+        "value": "subscriber",
         "items": ["everyone", "subscriber", "user_specific", "moderator", "editor"],
         "label": "Permission",
-        "tooltip": "Who is able to use the script commands.",
+        "tooltip": "Who is able to use the add and cancel song request commands.",
+        "group": "Permission"
+    },
+    "PermissionInfoOnAddCancelSongRequest": {
+        "type": "textbox",
+        "value": "",
+        "label": "Info",
+        "tooltip": "This field should only be filled when using the user_specific permission on Add or Cancel Song Request Commands.",
+        "group": "Permission"
+    },
+    "PermissionOnApproveRejectGetSongRequest": {
+        "type": "dropdown",
+        "value": "moderator",
+        "items": ["everyone", "subscriber", "user_specific", "moderator", "editor"],
+        "label": "Permission",
+        "tooltip": "Who is able to use the approve, deny or get song request commands.",
+        "group": "Permission"
+    },
+    "PermissionInfoOnApproveRejectGetSongRequest": {
+        "type": "textbox",
+        "value": "",
+        "label": "Info",
+        "tooltip": "This field should only be filled when using the user_specific permission on Approve, Reject or Get Song Request Commands.",
         "group": "Permission"
     },
     "PermissionDeniedMessage": {
@@ -32,13 +146,6 @@
         "value": "Permission denied: You have to be a {0} to use {1} command!",
         "label": "Permission Denied Message",
         "tooltip": "Chat message will be sent on failed permission check. 0 — required permission, 1 — command.",
-        "group": "Permission"
-    },
-    "PermissionInfo": {
-        "type": "textbox",
-        "value": "",
-        "label": "Info",
-        "tooltip": "This field should only be filled when using the user_specific permission.",
         "group": "Permission"
     },
 

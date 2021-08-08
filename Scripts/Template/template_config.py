@@ -56,12 +56,12 @@ Version = "1.0.0"
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).
 CommandPing = "!ping"
-CommandPingCooldown = 4
+CommandPingCooldown = 1
 
 # Values: everyone, moderator, subscriber, user_specific, editor.
-Permission = Everyone
+PermissionOnPing = Everyone
 # This field should only be filled when using the user_specific permission.
-PermissionInfo = ""
+PermissionInfoOnPing = ""
 
 PermissionDeniedMessage = "Permission denied: You have to be a {0} to use {1} command!"
 

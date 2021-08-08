@@ -2,7 +2,7 @@
 
 from abc import ABCMeta, abstractmethod
 
-import transfer_config as config  # pylint:disable=import-error
+import transfer_config as config
 import transfer_helpers as helpers
 
 from transfer_broker_models import TransferAmount

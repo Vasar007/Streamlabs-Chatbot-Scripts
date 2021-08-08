@@ -8,9 +8,7 @@ import time
 import json
 import codecs
 from datetime import datetime
-from shutil import copyfile
 
-import transfer_config as config  # pylint:disable=import-error
 from transfer_log_wrapper import TransferLoggerFactory as LoggerFactory
 
 

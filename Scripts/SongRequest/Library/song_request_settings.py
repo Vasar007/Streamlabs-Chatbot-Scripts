@@ -4,7 +4,7 @@ import os
 import codecs
 import json
 
-import song_request_config as config  # pylint:disable=import-error
+import song_request_config as config
 import song_request_helpers as helpers
 from song_request_event_emitter import SongRequestEventEmitter as EventEmitter 
 
@@ -68,14 +68,28 @@ class SongRequestSettings(object):
 
     def _set_default(self):
         # Setup group.
-        self.CommandSongRequest = config.CommandSongRequest
-        self.CommandSongRequestCooldown = config.CommandSongRequestCooldown
+        self.CommandAddSongRequest = config.CommandAddSongRequest
+        self.CommandAddSongRequestCooldown = config.CommandAddSongRequestCooldown
+        self.CommandCancelSongRequest = config.CommandCancelSongRequest
+        self.CommandCancelSongRequestCooldown = config.CommandCancelSongRequestCooldown
+        self.CommandApproveSongRequest = config.CommandApproveSongRequest
+        self.CommandApproveSongRequestCooldown = config.CommandApproveSongRequestCooldown
+        self.CommandRejectSongRequest = config.CommandRejectSongRequest
+        self.CommandRejectSongRequestCooldown = config.CommandRejectSongRequestCooldown
+        self.CommandGetSongRequest = config.CommandGetSongRequest
+        self.CommandGetSongRequestCooldown = config.CommandGetSongRequestCooldown
+        self.CommandUseWhisperSongRequest = config.CommandUseWhisperSongRequest
+        self.CommandUseWhisperSongRequestCooldown = config.CommandUseWhisperSongRequestCooldown
         self.HttpPageLinkToParse = config.HttpPageLinkToParse
+        self.NumberOfSongRequestsToAdd = config.NumberOfSongRequestsToAdd
+        self.UseWhisperMessagesToControlSongRequests = config.UseWhisperMessagesToControlSongRequests
 
         # Permission group.
-        self.Permission = config.Permission
+        self.PermissionOnAddCancelSongRequest = config.PermissionOnAddCancelSongRequest
+        self.PermissionInfoOnAddCancelSongRequest = config.PermissionInfoOnAddCancelSongRequest
+        self.PermissionOnApproveRejectGetSongRequest = config.PermissionOnApproveRejectGetSongRequest
+        self.PermissionInfoOnApproveRejectGetSongRequest = config.PermissionInfoOnApproveRejectGetSongRequest
         self.PermissionDeniedMessage = config.PermissionDeniedMessage
-        self.PermissionInfo = config.PermissionInfo
 
         # Chat Messages group.
         self.InvalidCommandCallMessage = config.InvalidCommandCallMessage

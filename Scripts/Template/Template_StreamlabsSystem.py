@@ -245,8 +245,8 @@ def TryProcessCommand(command, data_wrapper):
 
     # !ping
     if command == ScriptSettings.CommandPing:
-        required_permission = ScriptSettings.Permission
-        permission_info = ScriptSettings.PermissionInfo
+        required_permission = ScriptSettings.PermissionOnPing
+        permission_info = ScriptSettings.PermissionInfoOnPing
         func = GetFuncToProcessIfHasPermission(
             ProcessPingCommand,
             ScriptSettings.CommandPingCoolown,

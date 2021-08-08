@@ -4,7 +4,7 @@ import os
 import logging
 from logging.handlers import RotatingFileHandler
 
-import song_request_config as config  # pylint:disable=import-error
+import song_request_config as config
 import song_request_helpers as helpers
 
 

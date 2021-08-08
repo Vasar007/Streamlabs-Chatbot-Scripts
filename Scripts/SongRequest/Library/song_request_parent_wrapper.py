@@ -29,7 +29,7 @@ class SongRequestParentWrapper(object):
 
     def send_twitch_message(self, message):
         r"""
-        Sends whisper message to the Twitch chat (only if the user has set up
+        Sends message to the Twitch chat (only if the user has set up
         the bot for Twitch).
 
         void SendTwitchMessage(string message)

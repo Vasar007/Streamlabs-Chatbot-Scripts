@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import transfer_config as config  # pylint:disable=import-error
 import transfer_helpers as helpers
 
 from transfer_searcher import TransferUserSearcher as UserSearcher

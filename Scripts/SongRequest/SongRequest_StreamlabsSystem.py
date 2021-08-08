@@ -261,12 +261,12 @@ def TryProcessCommand(command, data_wrapper):
     param_count = data_wrapper.get_param_count()
 
     # !sr
-    if command == ScriptSettings.CommandSongRequest:
-        required_permission = ScriptSettings.Permission
-        permission_info = ScriptSettings.PermissionInfo
+    if command == ScriptSettings.CommandAddSongRequest:
+        required_permission = ScriptSettings.PermissionOnAddCancelSongRequest
+        permission_info = ScriptSettings.PermissionInfoOnAddCancelSongRequest
         func = GetFuncToProcessIfHasPermission(
             ProcessSongRequestCommand,
-            ScriptSettings.CommandSongRequestCooldown,
+            ScriptSettings.CommandAddSongRequestCooldown,
             data_wrapper.user_id,
             required_permission,
             permission_info
@@ -274,9 +274,9 @@ def TryProcessCommand(command, data_wrapper):
         is_valid_call = param_count == 2
 
         usage_example = (
-            config.CommandSongRequestUsage
+            config.CommandAddSongRequestUsage
             .format(
-                ScriptSettings.CommandSongRequest,
+                ScriptSettings.CommandAddSongRequest,
                 config.ExampleYouTubeLinkToSong
             )
         )
@@ -289,6 +289,4 @@ def TryProcessCommand(command, data_wrapper):
 def ProcessSongRequestCommand(command, data_wrapper):
     # Input example: !sr https://www.youtube.com/watch?v=CAEUnn0HNLM
     # Command <YouTube link>
-    ParentHandler.broadcast_ws_event("EVENT_MINE", "{'show':false}")
-    # Send your message to chat.
     ParentHandler.send_stream_message(ScriptSettings.Response)

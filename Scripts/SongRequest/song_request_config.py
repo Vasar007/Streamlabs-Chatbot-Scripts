@@ -46,7 +46,7 @@ Editor = "editor"
 
 PermissionHierarchy = (Everyone, Subscriber, UserSpecific, Moderator, Editor)
 
-CommandSongRequestUsage = "{0} {1}"
+CommandAddSongRequestUsage = "{0} {1}"
 ExampleYouTubeLinkToSong = "[YouTube link]"
 
 # [Required] Script Information.
@@ -58,14 +58,32 @@ Version = "1.0.0"
 
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).
-CommandSongRequest = "!sr"
-CommandSongRequestCooldown = 4
+CommandAddSongRequest = "!sr"
+CommandAddSongRequestCooldown = 1
+CommandCancelSongRequest = "!sr_cancel"
+CommandCancelSongRequestCooldown = 1
+CommandApproveSongRequest = "!sr_approve"
+CommandApproveSongRequestCooldown = 1
+CommandRejectSongRequest = "!sr_reject"
+CommandRejectSongRequestCooldown = 1
+CommandGetSongRequest = "!sr_get"
+CommandGetSongRequestCooldown = 1
+CommandUseWhisperSongRequest = "!sr_whisper"
+CommandUseWhisperSongRequestCooldown = 1
+
 HttpPageLinkToParse = ""
+NumberOfSongRequestsToAdd = 3
+UseWhisperMessagesToControlSongRequests = True
 
 # Values: everyone, moderator, subscriber, user_specific, editor.
-Permission = Everyone
+PermissionOnAddCancelSongRequest = Subscriber
 # This field should only be filled when using the user_specific permission.
-PermissionInfo = ""
+PermissionInfoOnAddCancelSongRequest = ""
+
+# Values: everyone, moderator, subscriber, user_specific, editor.
+PermissionOnApproveRejectGetSongRequest = Moderator
+# This field should only be filled when using the user_specific permission.
+PermissionInfoOnApproveRejectGetSongRequest = ""
 
 PermissionDeniedMessage = "Permission denied: You have to be a {0} to use {1} command!"
 ResponseMessage = "Added!"
