@@ -44,6 +44,8 @@ Subscriber = "subscriber"
 Moderator = "moderator"
 Editor = "editor"
 
+PermissionHierarchy = (Everyone, Subscriber, UserSpecific, Moderator, Editor)
+
 # [Required] Script Information.
 ScriptName = "Sentinel Script"
 Website = "https://github.com/Vasar007/Streamlabs-Chatbot-Scripts"
@@ -62,7 +64,6 @@ Permission = Everyone
 PermissionInfo = ""
 
 PermissionDeniedMessage = "Permission denied: You have to be a {0} to use {1} command!"
-
 
 InvalidCommandCallMessage = "Invalid {0} command call. Usage: {1}"
 ResponseMessage = "Pong!"

@@ -3,7 +3,6 @@
 # Import Libraries.
 import os
 import sys
-import json
 
 import clr
 clr.AddReference("IronPython.SQLite.dll")
@@ -136,7 +135,7 @@ def Tick():
     return
 
 
-def Parse(parseString, userid, username, targetid, targetname, message):
+def Parse(parse_string, userid, username, targetid, targetname, message):
     """
     [Optional] Parse method (Allows you to create your own custom $parameters).
     Here's where the magic happens, all the strings are sent and processed
@@ -145,10 +144,7 @@ def Parse(parseString, userid, username, targetid, targetname, message):
     Parent.FUNCTION allows to use functions of the Chatbot and other outside
     APIs (see: https://github.com/AnkhHeart/Streamlabs-Chatbot-Python-Boilerplate/wiki/Parent).
     """
-    if "$myparameter" in parseString:
-        return parseString.replace("$myparameter", "I am a cat!")
-
-    return parseString
+    return parse_string
 
 
 def ReloadSettings(jsondata):
@@ -214,34 +210,43 @@ def TryProcessCommand(command, data_wrapper):
     is_valid_call = None
     usage_example = None
 
-    # !ping
-    if command == ScriptSettings.CommandPing:
+    param_count = data_wrapper.get_param_count()
+
+    # !sr
+    if command == ScriptSettings.CommandSongRequest:
         required_permission = ScriptSettings.Permission
         permission_info = ScriptSettings.PermissionInfo
         func = GetFuncToProcessIfHasPermission(
-            ProcessPingCommand,
+            ProcessSongRequestCommand,
             data_wrapper.user_id,
             required_permission,
             permission_info
         )
-        is_valid_call = True  # Ping command call will always be valid.
-        usage_example = ScriptSettings.CommandPing
+        is_valid_call = param_count == 2
+
+        usage_example = (
+            config.CommandSongRequestUsage
+            .format(
+                ScriptSettings.CommandSongRequest,
+                config.ExampleYouTubeLinkToSong
+            )
+        )
 
     return CommandWrapper(
         command, func, required_permission, is_valid_call, usage_example
     )
 
 
-def ProcessPingCommand(data_wrapper):
-    # Input example: !ping
-    # Command <Anything>
+def ProcessSongRequestCommand(data_wrapper):
+    # Input example: !sr https://www.youtube.com/watch?v=CAEUnn0HNLM
+    # Command <YouTube link>
     is_on_user_cooldown = ParentHandler.is_on_user_cooldown(
-        ScriptName, ScriptSettings.CommandPing, data_wrapper.user_id
+        ScriptName, ScriptSettings.CommandSongRequest, data_wrapper.user_id
     )
 
     if is_on_user_cooldown:
         cooldown = ParentHandler.get_user_cooldown_duration(
-            ScriptName, ScriptSettings.CommandPing, data_wrapper.user_id
+            ScriptName, ScriptSettings.CommandSongRequest, data_wrapper.user_id
         )
         ParentHandler.send_stream_message("Time Remaining " + str(cooldown))
     else:
@@ -251,7 +256,7 @@ def ProcessPingCommand(data_wrapper):
         # Put the command on cooldown.
         ParentHandler.add_user_cooldown(
             ScriptName,
-            ScriptSettings.CommandPing,
+            ScriptSettings.CommandSongRequest,
             data_wrapper.user_id,
             ScriptSettings.Cooldown
         )

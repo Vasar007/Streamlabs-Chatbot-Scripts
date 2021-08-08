@@ -3,7 +3,6 @@
 # Import Libraries.
 import os
 import sys
-import json
 
 import clr
 clr.AddReference("IronPython.SQLite.dll")
@@ -136,7 +135,7 @@ def Tick():
     return
 
 
-def Parse(parseString, userid, username, targetid, targetname, message):
+def Parse(parse_string, userid, username, targetid, targetname, message):
     """
     [Optional] Parse method (Allows you to create your own custom $parameters).
     Here's where the magic happens, all the strings are sent and processed
@@ -145,10 +144,10 @@ def Parse(parseString, userid, username, targetid, targetname, message):
     Parent.FUNCTION allows to use functions of the Chatbot and other outside
     APIs (see: https://github.com/AnkhHeart/Streamlabs-Chatbot-Python-Boilerplate/wiki/Parent).
     """
-    if "$myparameter" in parseString:
-        return parseString.replace("$myparameter", "I am a cat!")
+    if "$myparameter" in parse_string:
+        return parse_string.replace("$myparameter", "I am a cat!")
 
-    return parseString
+    return parse_string
 
 
 def ReloadSettings(jsondata):

@@ -44,17 +44,23 @@ Subscriber = "subscriber"
 Moderator = "moderator"
 Editor = "editor"
 
+PermissionHierarchy = (Everyone, Subscriber, UserSpecific, Moderator, Editor)
+
+CommandSongRequestUsage = "{0} {1}"
+ExampleYouTubeLinkToSong = "[YouTube link]"
+
 # [Required] Script Information.
 ScriptName = "SongRequest Script"
 Website = "https://github.com/Vasar007/Streamlabs-Chatbot-Scripts"
-Description = "Basic boilerplate script to play with."
+Description = "Custom song request script."
 Creator = "Vasar007"
 Version = "1.0.0"
 
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).
-CommandPing = "!ping"
+CommandSongRequest = "!sr"
 Cooldown = 4
+HttpPageLinkToParse = ""
 
 # Values: everyone, moderator, subscriber, user_specific, editor.
 Permission = Everyone
@@ -63,6 +69,6 @@ PermissionInfo = ""
 
 PermissionDeniedMessage = "Permission denied: You have to be a {0} to use {1} command!"
 
-
 InvalidCommandCallMessage = "Invalid {0} command call. Usage: {1}"
-ResponseMessage = "Pong!"
+
+ResponseMessage = "Added!"

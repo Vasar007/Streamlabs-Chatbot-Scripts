@@ -68,8 +68,9 @@ class SongRequestSettings(object):
 
     def _set_default(self):
         # Setup group.
-        self.CommandPing = config.CommandPing
+        self.CommandSongRequest = config.CommandSongRequest
         self.Cooldown = config.Cooldown
+        self.HttpPageLinkToParse = config.HttpPageLinkToParse
 
         # Permission group.
         self.Permission = config.Permission

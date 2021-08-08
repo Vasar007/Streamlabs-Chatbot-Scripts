@@ -44,6 +44,8 @@ Subscriber = "subscriber"
 Moderator = "moderator"
 Editor = "editor"
 
+PermissionHierarchy = (Everyone, Subscriber, UserSpecific, Moderator, Editor)
+
 CommandCreateScoreUsage = "{0} {1} {2} {3}"
 CommandUpdateScoreUsage = "{0} {1} {2} {3}"
 ExamplePlayerName = "[PlayerName]"
