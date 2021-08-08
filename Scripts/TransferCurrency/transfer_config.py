@@ -62,10 +62,15 @@ Version = "1.0.2"
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).
 CommandGive = "!give"
+CommandGiveCooldown = 1
 CommandAdd = "!add"
+CommandAddCooldown = 1
 CommandRemove = "!remove"
+CommandRemoveCooldown = 1
 CommandSet = "!set"
+CommandSetCooldown = 1
 CommandGetTax = "!get_tax"
+CommandGetTaxCooldown = 1
 
 ParameterAll = "all"
 
@@ -102,3 +107,4 @@ NoTargetMessage = "Sorry {0}, but you didn't say who to send the {1} to."
 InvalidTargetMessage = "Sorry {0}, but {1} doesn't exist."
 DeniedTransferToYourselfMessage = "Sorry {0}, but you cannot transfer {1} to yourself."
 CurrentTaxPercentMessage = "Current tax: {0}%"
+TimeRemainingMessage = "Command {0} is on cooldown. Time remaining: {1} (seconds)."

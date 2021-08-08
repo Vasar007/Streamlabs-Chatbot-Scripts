@@ -69,10 +69,15 @@ class ScoreSettings(object):
     def _set_default(self):
         # Setup group.
         self.CommandGetScore = config.CommandGetScore
+        self.CommandGetScoreCooldown = config.CommandGetScoreCooldown
         self.CommandCreateScore = config.CommandCreateScore
+        self.CommandCreateScoreCooldown = config.CommandCreateScoreCooldown
         self.CommandUpdateScore = config.CommandUpdateScore
+        self.CommandUpdateScoreCooldown = config.CommandUpdateScoreCooldown
         self.CommandResetScore = config.CommandResetScore
+        self.CommandResetScoreCooldown = config.CommandResetScoreCooldown
         self.CommandDeleteScore = config.CommandDeleteScore
+        self.CommandDeleteScoreCooldown = config.CommandDeleteScoreCooldown
 
         # Permission group.
         self.PermissionOnGet = config.PermissionOnGet
@@ -94,6 +99,7 @@ class ScoreSettings(object):
         self.ResetScoreMessage = config.ResetScoreMessage
         self.NothingToDeleteMessage = config.NothingToDeleteMessage
         self.DeletedScoreMessage = config.DeletedScoreMessage
+        self.TimeRemainingMessage = config.TimeRemainingMessage
 
         # Debugging group.
         self.LoggingLevel = config.LoggingLevel

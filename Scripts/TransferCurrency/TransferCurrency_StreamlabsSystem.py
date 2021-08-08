@@ -116,7 +116,7 @@ def Execute(data):
 
         # If user doesn't have permission, "func" will be equal to "None".
         if parsed_command.has_func():
-            parsed_command.func(data_wrapper, parsed_command.command)
+            parsed_command.func(parsed_command.command, data_wrapper)
         else:
             HandleNoPermission(
                 parsed_command.required_permission, parsed_command.command
@@ -197,12 +197,60 @@ def HandleNoPermission(required_permission, command):
     ParentHandler.send_stream_message(message)
 
 
-def GetFuncToProcessIfHasPermission(process_command, user_id,
+def WrapCommand(process_command, command_cooldown):
+    def ProcessCommandWrapper(command, data_wrapper):
+        try:
+            is_on_cooldown = ParentHandler.is_on_cooldown(ScriptName, command)
+            is_on_user_cooldown = ParentHandler.is_on_user_cooldown(
+                ScriptName, command, data_wrapper.user_id
+            )
+
+            # Check cooldown.
+            if is_on_cooldown:
+                cooldown = ParentHandler.get_cooldown_duration(
+                    ScriptName, command
+                )
+
+                # If command is on cooldown, send message.
+                message = (
+                    ScriptSettings.TimeRemainingMessage
+                    .format(command, cooldown)
+                )
+                ParentHandler.send_stream_message(message)
+            elif is_on_user_cooldown:
+                cooldown = ParentHandler.get_user_cooldown_duration(
+                    ScriptName, command, data_wrapper.user_id
+                )
+
+                # If command is on cooldown for user, send message.
+                message = (
+                    ScriptSettings.TimeRemainingMessage
+                    .format(command, cooldown)
+                )
+                ParentHandler.send_stream_message(message)
+            else:
+                # If not, process command.
+                process_command(command, data_wrapper)
+                # Put the command on cooldown.
+                ParentHandler.add_cooldown(
+                    ScriptName,
+                    command,
+                    command_cooldown
+                )
+        except Exception as ex:
+            Logger().exception(
+                "Failed to process command {0}: {1}".format(command, str(ex))
+            )
+
+    return ProcessCommandWrapper
+
+
+def GetFuncToProcessIfHasPermission(process_command, cooldown, user_id,
                                     required_permission, permission_info):
     has_permission = ParentHandler.has_permission(
         user_id, required_permission, permission_info
     )
-    return process_command if has_permission else None
+    return WrapCommand(process_command, cooldown) if has_permission else None
 
 
 def TryProcessCommand(command, data_wrapper):
@@ -219,6 +267,7 @@ def TryProcessCommand(command, data_wrapper):
         permission_info = ScriptSettings.PermissionInfoOnGiveGetTax
         func = GetFuncToProcessIfHasPermission(
             ProcessAnyTransferCurrencyCommand,
+            ScriptSettings.CommandGiveCooldown,
             data_wrapper.user_id,
             required_permission,
             permission_info
@@ -244,6 +293,7 @@ def TryProcessCommand(command, data_wrapper):
         permission_info = ScriptSettings.PermissionInfoOnAddRemoveSet
         func = GetFuncToProcessIfHasPermission(
             ProcessAnyTransferCurrencyCommand,
+            ScriptSettings.CommandAddCooldown,
             data_wrapper.user_id,
             required_permission,
             permission_info
@@ -265,6 +315,7 @@ def TryProcessCommand(command, data_wrapper):
         permission_info = ScriptSettings.PermissionInfoOnAddRemoveSet
         func = GetFuncToProcessIfHasPermission(
             ProcessAnyTransferCurrencyCommand,
+            ScriptSettings.CommandRemoveCooldown,
             data_wrapper.user_id,
             required_permission,
             permission_info
@@ -286,6 +337,7 @@ def TryProcessCommand(command, data_wrapper):
         permission_info = ScriptSettings.PermissionInfoOnAddRemoveSet
         func = GetFuncToProcessIfHasPermission(
             ProcessAnyTransferCurrencyCommand,
+            ScriptSettings.CommandSetCooldown,
             data_wrapper.user_id,
             required_permission,
             permission_info
@@ -307,6 +359,7 @@ def TryProcessCommand(command, data_wrapper):
         permission_info = ScriptSettings.PermissionInfoOnGiveGetTax
         func = GetFuncToProcessIfHasPermission(
             ProcessGetTaxCommand,
+            ScriptSettings.CommandGetTaxCooldown,
             data_wrapper.user_id,
             required_permission,
             permission_info
@@ -319,32 +372,26 @@ def TryProcessCommand(command, data_wrapper):
     )
 
 
-def ProcessAnyTransferCurrencyCommand(data_wrapper, command):
+def ProcessAnyTransferCurrencyCommand(command, data_wrapper):
     # Input example: !give Vasar 42 <Anything>
     # Input example: !add Vasar 42
     # Input example: !remove Vasar 42
     # Input example: !set Vasar 42
     # Command <@>TargetUserNameOrId Amount
-    try:
-        request = transfer_broker.create_request_from(
-            data_wrapper, command, ParentHandler, ScriptSettings
-        )
-        transfer_broker.handle_request(
-            request, ParentHandler, ScriptSettings, Logger()
-        )
-    except Exception as ex:
-        Logger().exception("Failed to handle transfer request: " + str(ex))
+    request = transfer_broker.create_request_from(
+        data_wrapper, command, ParentHandler, ScriptSettings
+    )
+    transfer_broker.handle_request(
+        request, ParentHandler, ScriptSettings, Logger()
+    )
 
 
-def ProcessGetTaxCommand(data_wrapper, command):
+def ProcessGetTaxCommand(command, data_wrapper):
     # Input example: !get_tax
     # Command <Anything>
-    try:
-        message = (
-            ScriptSettings.CurrentTaxPercentMessage
-            .format(ScriptSettings.GiveTaxPercent)
-        )
-        Logger().debug(message)
-        ParentHandler.send_stream_message(message)
-    except Exception as ex:
-        Logger().exception("Failed to retrive tax percent: " + str(ex))
+    message = (
+        ScriptSettings.CurrentTaxPercentMessage
+        .format(ScriptSettings.GiveTaxPercent)
+    )
+    Logger().debug(message)
+    ParentHandler.send_stream_message(message)

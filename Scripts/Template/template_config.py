@@ -56,7 +56,7 @@ Version = "1.0.0"
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).
 CommandPing = "!ping"
-Cooldown = 4
+CommandPingCooldown = 4
 
 # Values: everyone, moderator, subscriber, user_specific, editor.
 Permission = Everyone
@@ -67,3 +67,4 @@ PermissionDeniedMessage = "Permission denied: You have to be a {0} to use {1} co
 
 InvalidCommandCallMessage = "Invalid {0} command call. Usage: {1}"
 ResponseMessage = "Pong!"
+TimeRemainingMessage = "Command {0} is on cooldown. Time remaining: {1} (seconds)."

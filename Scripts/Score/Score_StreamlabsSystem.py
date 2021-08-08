@@ -122,7 +122,7 @@ def Execute(data):
 
         # If user doesn't have permission, "func" will be equal to "None".
         if parsed_command.has_func():
-            parsed_command.func(Manager, data_wrapper)
+            parsed_command.func(parsed_command.command, data_wrapper, Manager)
         else:
             HandleNoPermission(
                 parsed_command.required_permission, parsed_command.command
@@ -203,12 +203,42 @@ def HandleNoPermission(required_permission, command):
     ParentHandler.send_stream_message(message)
 
 
-def GetFuncToProcessIfHasPermission(process_command, user_id,
+def WrapCommand(process_command):
+    def ProcessCommandWrapper(command, data_wrapper, manager):
+        try:
+            is_on_user_cooldown = ParentHandler.is_on_user_cooldown(
+                ScriptName, command, data_wrapper.user_id
+            )
+
+            # Check cooldown.
+            if is_on_user_cooldown:
+                cooldown = ParentHandler.get_user_cooldown_duration(
+                    ScriptName, command, data_wrapper.user_id
+                )
+
+                # If command is on cooldown, send message.
+                message = (
+                    ScriptSettings.TimeRemainingMessage
+                    .format(command, cooldown)
+                )
+                ParentHandler.send_stream_message(message)
+            else:
+                # If not, process command.
+                process_command(command, data_wrapper, manager)
+        except Exception as ex:
+            Logger().exception(
+                "Failed to process command {0}: {1}".format(command, str(ex))
+            )
+
+    return ProcessCommandWrapper
+
+
+def GetFuncToProcessIfHasPermission(process_command, cooldown, user_id,
                                     required_permission, permission_info):
     has_permission = ParentHandler.has_permission(
         user_id, required_permission, permission_info
     )
-    return process_command if has_permission else None
+    return WrapCommand(process_command, cooldown) if has_permission else None
 
 
 def TryProcessCommand(command, data_wrapper):
@@ -225,6 +255,7 @@ def TryProcessCommand(command, data_wrapper):
         permission_info = ScriptSettings.PermissionInfoOnGet
         func = GetFuncToProcessIfHasPermission(
             ProcessGetCommand,
+            ScriptSettings.CommandGetScoreCooldown,
             data_wrapper.user_id,
             required_permission,
             permission_info
@@ -238,6 +269,7 @@ def TryProcessCommand(command, data_wrapper):
         permission_info = ScriptSettings.PermissionInfoOnEdit
         func = GetFuncToProcessIfHasPermission(
             ProcessCreateCommand,
+            ScriptSettings.CommandCreateScoreCooldown,
             data_wrapper.user_id,
             required_permission,
             permission_info
@@ -259,6 +291,7 @@ def TryProcessCommand(command, data_wrapper):
         permission_info = ScriptSettings.PermissionInfoOnEdit
         func = GetFuncToProcessIfHasPermission(
             ProcessUpdateCommand,
+            ScriptSettings.CommandUpdateScoreCooldown,
             data_wrapper.user_id,
             required_permission,
             permission_info
@@ -280,6 +313,7 @@ def TryProcessCommand(command, data_wrapper):
         permission_info = ScriptSettings.PermissionInfoOnEdit
         func = GetFuncToProcessIfHasPermission(
             ProcessResetCommand,
+            ScriptSettings.CommandResetScoreCooldown,
             data_wrapper.user_id,
             required_permission,
             permission_info
@@ -292,7 +326,8 @@ def TryProcessCommand(command, data_wrapper):
         required_permission = ScriptSettings.PermissionOnEdit
         permission_info = ScriptSettings.PermissionInfoOnEdit
         func = GetFuncToProcessIfHasPermission(
-            ProcessReloadCommand,
+            ProcessDeleteCommand,
+            ScriptSettings.CommandDeleteScoreCooldown,
             data_wrapper.user_id,
             required_permission,
             permission_info
@@ -331,7 +366,7 @@ def TryExtractDescription(required_parameters_number, data_wrapper):
     return description
 
 
-def ProcessGetCommand(manager, data_wrapper):
+def ProcessGetCommand(command, data_wrapper, manager):
     # Input example: !score
     # Command <Anything>
     try:
@@ -341,7 +376,7 @@ def ProcessGetCommand(manager, data_wrapper):
         Logger().exception("Failed to get score: " + str(ex))
 
 
-def ProcessCreateCommand(manager, data_wrapper):
+def ProcessCreateCommand(command, data_wrapper, manager):
     # Input example: !create_score Player1 Player2 Score is great!
     # Command Player1Name Player2Name <OptionalDescription>
     try:
@@ -357,37 +392,28 @@ def ProcessCreateCommand(manager, data_wrapper):
         Logger().exception("Failed to create score: " + str(ex))
 
 
-def ProcessUpdateCommand(manager, data_wrapper):
+def ProcessUpdateCommand(command, data_wrapper, manager):
     # Input example: !update_score 1 1 Score is great!
     # Command Player1Score Player2Score <OptionalDescription>
-    try:
-        raw_player1_score = data_wrapper.get_param(1)
-        raw_player2_score = data_wrapper.get_param(2)
-        description = TryExtractDescription(3, data_wrapper)
+    raw_player1_score = data_wrapper.get_param(1)
+    raw_player2_score = data_wrapper.get_param(2)
+    description = TryExtractDescription(3, data_wrapper)
 
-        score_handler = manager.update_score(
-            raw_player1_score, raw_player2_score, description
-        )
-        HandleResult(score_handler)
-    except Exception as ex:
-        Logger().exception("Failed to update score: " + str(ex))
+    score_handler = manager.update_score(
+        raw_player1_score, raw_player2_score, description
+    )
+    HandleResult(score_handler)
 
 
-def ProcessResetCommand(manager, data_wrapper):
+def ProcessResetCommand(command, data_wrapper, manager):
     # Input example: !reset_score
     # Command
-    try:
-        score_handler = manager.reset_score()
-        HandleResult(score_handler)
-    except Exception as ex:
-        Logger().exception("Failed to reset score: " + str(ex))
+    score_handler = manager.reset_score()
+    HandleResult(score_handler)
 
 
-def ProcessReloadCommand(manager, data_wrapper):
+def ProcessDeleteCommand(command, data_wrapper, manager):
     # Input example: !delete_score
     # Command
-    try:
-        score_handler = manager.delete_score()
-        HandleResult(score_handler)
-    except Exception as ex:
-        Logger().exception("Failed to delete score: " + str(ex))
+    score_handler = manager.delete_score()
+    HandleResult(score_handler)

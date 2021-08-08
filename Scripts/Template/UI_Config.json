@@ -8,14 +8,14 @@
         "tooltip": "The command that will be responded to.",
         "group": "Setup"
     },
-    "Cooldown": {
+    "CommandPingCooldown": {
         "type": "slider",
-        "value": 4,
+        "value": 1,
         "min": 1,
         "max": 100,
         "ticks": 1,
-        "label": "Cooldown (seconds)",
-        "tooltip": "How long the command should go on cooldown for.",
+        "label": "Ping Command Cooldown (seconds)",
+        "tooltip": "How long the Ping command should go on cooldown for.",
         "group": "Setup"
     },
 
@@ -54,6 +54,13 @@
         "value": "Invalid {0} command call. Usage: {1}",
         "label": "Invalid Command Call Message",
         "tooltip": "Chat message will be sent if user calls a command with invalid parameters. 0 — command, 1 — command usage example.",
+        "group": "Chat Messages"
+    },
+    "TimeRemainingMessage": {
+        "type": "textbox",
+        "value": "Command {0} is on cooldown. Time remaining: {1} (seconds).",
+        "label": "Time Remaining Message",
+        "tooltip": "Chat message will be sent if user tries to call command which is on cooldown now. 0 — command which is on cooldown, 1 — time remaining.",
         "group": "Chat Messages"
     },
 

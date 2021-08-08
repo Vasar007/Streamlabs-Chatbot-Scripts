@@ -69,10 +69,15 @@ class TransferSettings(object):
     def _set_default(self):
         # Setup group.
         self.CommandGive = config.CommandGive
+        self.CommandGiveCooldown = config.CommandGiveCooldown
         self.CommandAdd = config.CommandAdd
+        self.CommandAddCooldown = config.CommandAddCooldown
         self.CommandRemove = config.CommandRemove
+        self.CommandRemoveCooldown = config.CommandRemoveCooldown
         self.CommandSet = config.CommandSet
+        self.CommandSetCooldown = config.CommandSetCooldown
         self.CommandGetTax = config.CommandGetTax
+        self.CommandGetTaxCooldown = config.CommandGetTaxCooldown
         self.ParameterAll = config.ParameterAll
         self.GiveTaxPercent = config.GiveTaxPercent
         self.MinGiveAmount = config.MinGiveAmount
@@ -101,6 +106,7 @@ class TransferSettings(object):
         self.InvalidTargetMessage = config.InvalidTargetMessage
         self.DeniedTransferToYourselfMessage = config.DeniedTransferToYourselfMessage
         self.CurrentTaxPercentMessage = config.CurrentTaxPercentMessage
+        self.TimeRemainingMessage = config.TimeRemainingMessage
 
         # Debugging group.
         self.LoggingLevel = config.LoggingLevel

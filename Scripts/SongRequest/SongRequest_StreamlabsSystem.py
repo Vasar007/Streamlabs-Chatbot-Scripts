@@ -116,7 +116,7 @@ def Execute(data):
 
         # If user doesn't have permission, "func" will be equal to "None".
         if parsed_command.has_func():
-            parsed_command.func(data_wrapper)
+            parsed_command.func(parsed_command.command, data_wrapper)
         else:
             HandleNoPermission(
                 parsed_command.required_permission, parsed_command.command
@@ -196,12 +196,60 @@ def HandleNoPermission(required_permission, command):
     ParentHandler.send_stream_message(message)
 
 
-def GetFuncToProcessIfHasPermission(process_command, user_id,
+def WrapCommand(process_command, command_cooldown):
+    def ProcessCommandWrapper(command, data_wrapper):
+        try:
+            is_on_cooldown = ParentHandler.is_on_cooldown(ScriptName, command)
+            is_on_user_cooldown = ParentHandler.is_on_user_cooldown(
+                ScriptName, command, data_wrapper.user_id
+            )
+
+            # Check cooldown.
+            if is_on_cooldown:
+                cooldown = ParentHandler.get_cooldown_duration(
+                    ScriptName, command
+                )
+
+                # If command is on cooldown, send message.
+                message = (
+                    ScriptSettings.TimeRemainingMessage
+                    .format(command, cooldown)
+                )
+                ParentHandler.send_stream_message(message)
+            elif is_on_user_cooldown:
+                cooldown = ParentHandler.get_user_cooldown_duration(
+                    ScriptName, command, data_wrapper.user_id
+                )
+
+                # If command is on cooldown for user, send message.
+                message = (
+                    ScriptSettings.TimeRemainingMessage
+                    .format(command, cooldown)
+                )
+                ParentHandler.send_stream_message(message)
+            else:
+                # If not, process command.
+                process_command(command, data_wrapper)
+                # Put the command on cooldown.
+                ParentHandler.add_cooldown(
+                    ScriptName,
+                    command,
+                    command_cooldown
+                )
+        except Exception as ex:
+            Logger().exception(
+                "Failed to process command {0}: {1}".format(command, str(ex))
+            )
+
+    return ProcessCommandWrapper
+
+
+def GetFuncToProcessIfHasPermission(process_command, command_cooldown, user_id,
                                     required_permission, permission_info):
     has_permission = ParentHandler.has_permission(
         user_id, required_permission, permission_info
     )
-    return process_command if has_permission else None
+    return WrapCommand(process_command, command_cooldown) if has_permission else None
 
 
 def TryProcessCommand(command, data_wrapper):
@@ -218,6 +266,7 @@ def TryProcessCommand(command, data_wrapper):
         permission_info = ScriptSettings.PermissionInfo
         func = GetFuncToProcessIfHasPermission(
             ProcessSongRequestCommand,
+            ScriptSettings.CommandSongRequestCooldown,
             data_wrapper.user_id,
             required_permission,
             permission_info
@@ -237,26 +286,9 @@ def TryProcessCommand(command, data_wrapper):
     )
 
 
-def ProcessSongRequestCommand(data_wrapper):
+def ProcessSongRequestCommand(command, data_wrapper):
     # Input example: !sr https://www.youtube.com/watch?v=CAEUnn0HNLM
     # Command <YouTube link>
-    is_on_user_cooldown = ParentHandler.is_on_user_cooldown(
-        ScriptName, ScriptSettings.CommandSongRequest, data_wrapper.user_id
-    )
-
-    if is_on_user_cooldown:
-        cooldown = ParentHandler.get_user_cooldown_duration(
-            ScriptName, ScriptSettings.CommandSongRequest, data_wrapper.user_id
-        )
-        ParentHandler.send_stream_message("Time Remaining " + str(cooldown))
-    else:
-        ParentHandler.broadcast_ws_event("EVENT_MINE", "{'show':false}")
-        # Send your message to chat.
-        ParentHandler.send_stream_message(ScriptSettings.Response)
-        # Put the command on cooldown.
-        ParentHandler.add_user_cooldown(
-            ScriptName,
-            ScriptSettings.CommandSongRequest,
-            data_wrapper.user_id,
-            ScriptSettings.Cooldown
-        )
+    ParentHandler.broadcast_ws_event("EVENT_MINE", "{'show':false}")
+    # Send your message to chat.
+    ParentHandler.send_stream_message(ScriptSettings.Response)

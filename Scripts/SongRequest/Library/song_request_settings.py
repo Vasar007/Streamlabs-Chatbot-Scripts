@@ -69,7 +69,7 @@ class SongRequestSettings(object):
     def _set_default(self):
         # Setup group.
         self.CommandSongRequest = config.CommandSongRequest
-        self.Cooldown = config.Cooldown
+        self.CommandSongRequestCooldown = config.CommandSongRequestCooldown
         self.HttpPageLinkToParse = config.HttpPageLinkToParse
 
         # Permission group.
@@ -80,6 +80,7 @@ class SongRequestSettings(object):
         # Chat Messages group.
         self.InvalidCommandCallMessage = config.InvalidCommandCallMessage
         self.ResponseMessage = config.ResponseMessage
+        self.TimeRemainingMessage = config.TimeRemainingMessage
 
         # Debugging group.
         self.LoggingLevel = config.LoggingLevel

@@ -62,10 +62,15 @@ Version = "1.0.1"
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).
 CommandGetScore = "!score"
+CommandGetScoreCooldown = 1
 CommandCreateScore = "!create_score"
+CommandCreateScoreCooldown = 1
 CommandUpdateScore = "!update_score"
+CommandUpdateScoreCooldown = 1
 CommandResetScore = "!reset_score"
+CommandResetScoreCooldown = 1
 CommandDeleteScore = "!delete_score"
+CommandDeleteScoreCooldown = 1
 
 # Values: everyone, moderator, subscriber, user_specific, editor.
 PermissionOnGet = Everyone
@@ -90,3 +95,4 @@ NothingToResetMessage = "No score found, nothing to reset."
 ResetScoreMessage = "Reset score: {0}"
 NothingToDeleteMessage = "No score found, nothing to delete."
 DeletedScoreMessage = "Deleted score: {0}"
+TimeRemainingMessage = "Command {0} is on cooldown. Time remaining: {1} (seconds)."

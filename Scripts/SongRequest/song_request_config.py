@@ -59,7 +59,7 @@ Version = "1.0.0"
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).
 CommandSongRequest = "!sr"
-Cooldown = 4
+CommandSongRequestCooldown = 4
 HttpPageLinkToParse = ""
 
 # Values: everyone, moderator, subscriber, user_specific, editor.
@@ -68,7 +68,6 @@ Permission = Everyone
 PermissionInfo = ""
 
 PermissionDeniedMessage = "Permission denied: You have to be a {0} to use {1} command!"
-
-InvalidCommandCallMessage = "Invalid {0} command call. Usage: {1}"
-
 ResponseMessage = "Added!"
+InvalidCommandCallMessage = "Invalid {0} command call. Usage: {1}"
+TimeRemainingMessage = "Command {0} is on cooldown. Time remaining: {1} (seconds)."
