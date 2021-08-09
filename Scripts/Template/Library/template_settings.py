@@ -73,9 +73,9 @@ class TemplateSettings(object):
         self.CommandPingCooldown = config.CommandPingCooldown
 
         # Permission group.
-        self.PermissionOnPing = config.Permission
+        self.PermissionOnPing = config.PermissionOnPing
         self.PermissionDeniedMessage = config.PermissionDeniedMessage
-        self.PermissionInfoOnPing = config.PermissionInfo
+        self.PermissionInfoOnPing = config.PermissionInfoOnPing
 
         # Chat Messages group.
         self.InvalidCommandCallMessage = config.InvalidCommandCallMessage

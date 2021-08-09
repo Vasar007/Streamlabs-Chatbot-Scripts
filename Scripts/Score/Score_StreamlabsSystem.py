@@ -29,7 +29,6 @@ from score_parent_wrapper import ScoreParentWrapper as ParentWrapper
 # pylint:disable=import-error
 from score_data_wrapper import ScoreDataWrapper as DataWrapper
 
-import score  # pylint:disable=import-error
 # pylint:disable=import-error
 from score_command_wrapper import ScoreCommandWrapper as CommandWrapper
 from score_manager import ScoreManager  # pylint:disable=import-error
@@ -372,27 +371,21 @@ def TryExtractDescription(required_parameters_number, data_wrapper):
 def ProcessGetCommand(command, data_wrapper, manager):
     # Input example: !score
     # Command <Anything>
-    try:
-        score_handler = manager.get_score()
-        HandleResult(score_handler, to_debug=True)
-    except Exception as ex:
-        Logger().exception("Failed to get score: " + str(ex))
+    score_handler = manager.get_score()
+    HandleResult(score_handler, to_debug=True)
 
 
 def ProcessCreateCommand(command, data_wrapper, manager):
     # Input example: !create_score Player1 Player2 Score is great!
     # Command Player1Name Player2Name <OptionalDescription>
-    try:
-        player1_name = data_wrapper.get_param(1)
-        player2_name = data_wrapper.get_param(2)
-        description = TryExtractDescription(3, data_wrapper)
+    player1_name = data_wrapper.get_param(1)
+    player2_name = data_wrapper.get_param(2)
+    description = TryExtractDescription(3, data_wrapper)
 
-        score_handler = manager.create_score(
-            player1_name, player2_name, description
-        )
-        HandleResult(score_handler)
-    except Exception as ex:
-        Logger().exception("Failed to create score: " + str(ex))
+    score_handler = manager.create_score(
+        player1_name, player2_name, description
+    )
+    HandleResult(score_handler)
 
 
 def ProcessUpdateCommand(command, data_wrapper, manager):

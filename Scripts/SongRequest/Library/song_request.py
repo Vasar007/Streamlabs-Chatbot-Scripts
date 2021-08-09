@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from Scripts.Score.score_config import Description
 import uuid
 
 
@@ -31,7 +30,7 @@ class SongRequest(object):
             )
         )
 
-    def __hash__(self) -> int:
+    def __hash__(self):
         return hash(self.id)
 
     def __eq__(self, other):
@@ -67,16 +66,21 @@ class SongRequest(object):
 
 class SongRequestResult(object):
 
-    def __init__(self, song_request, description=None):
+    def __init__(self, song_request, is_success, description=None):
         self.song_request = song_request
+        self.is_success = is_success
         self.description = description
 
     @staticmethod
     def successful(song_request):
         song_request.add_to_queue()
-        return SongRequestResult(song_request, description=None)
+        return SongRequestResult(
+            song_request, is_success=True, description=None
+        )
 
     @staticmethod
     def failed(song_request, description):
         song_request.fail_to_add()
-        return SongRequestResult(song_request, description)
+        return SongRequestResult(
+            song_request, is_success=True, description=description
+        )

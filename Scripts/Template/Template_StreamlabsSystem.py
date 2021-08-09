@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+# TODO:
+# Redirect warnings to logger.
+# import warnings
+# warnings.warn("Warnings message")
+
 # Import Libraries.
 import os
 import sys

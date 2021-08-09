@@ -84,6 +84,7 @@ class SongRequestSettings(object):
         self.HttpPageLinkToParse = config.HttpPageLinkToParse
         self.NumberOfSongRequestsToAdd = config.NumberOfSongRequestsToAdd
         self.UseWhisperMessagesToControlSongRequests = config.UseWhisperMessagesToControlSongRequests
+        self.DispatchTimeoutInSeconds = config.DispatchTimeoutInSeconds
         self.BrowserDriverPath = config.BrowserDriverPath
         self.SelectedBrowserDriver = config.SelectedBrowserDriver
         self.ElementIdOfNewSongTextField = config.ElementIdOfNewSongTextField
@@ -102,7 +103,7 @@ class SongRequestSettings(object):
 
         # Chat Messages group.
         self.InvalidCommandCallMessage = config.InvalidCommandCallMessage
-        self.ResponseMessage = config.ResponseMessage
+        self.OnSuccessSongRequestMessage = config.OnSuccessSongRequestMessage
         self.TimeRemainingMessage = config.TimeRemainingMessage
 
         # Debugging group.

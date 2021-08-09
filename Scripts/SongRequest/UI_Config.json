@@ -110,6 +110,13 @@
         "tooltip": "Allow bot to use whisper messages to control song requests. You can use this feature to decrease amount of messages in chat.",
         "group": "Setup"
     },
+    "DispatchTimeoutInSeconds": {
+        "type": "numberbox",
+        "value": 10,
+        "label": "Dispatch Timeout For Song Requests (In Seconds)",
+        "tooltip": "Dispatch timeout for song requests (in seconds).",
+        "group": "Setup"
+    },
     "SelectedBrowserDriver": {
         "type": "dropdown",
         "value": "Edge",
@@ -206,11 +213,11 @@
         "group": "Permission"
     },
 
-    "ResponseMessage": {
+    "OnSuccessSongRequestMessage": {
         "type": "textbox",
-        "value": "Pong!",
-        "label": "Command",
-        "tooltip": "The message that will be sent to chat when using the command.",
+        "value": "{0}, your song request approved and added!",
+        "label": "On Success Song Request Message",
+        "tooltip": "The message that will be sent to chat when user's song request approved and added to playlist. 0 — user name.",
         "group": "Chat Messages"
     },
     "InvalidCommandCallMessage": {

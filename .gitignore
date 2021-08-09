@@ -138,4 +138,6 @@ dmypy.json
 cython_debug/
 
 # User defined block
-/.vs
+.vs
+obj
+bin

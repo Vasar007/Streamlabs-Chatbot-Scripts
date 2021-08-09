@@ -1,21 +1,18 @@
 # -*- coding: utf-8 -*-
 
-import selenium.webdriver as webdriver
-
 import song_request_helpers as helpers
-import song_request_config as config
 
 from song_request import SongRequestState
 from song_request import SongRequestResult
 
 
+# TODO: rewrite on C#
 class SongRequestProcessor(object):
 
-    def __init__(self, settings, logger):
+    def __init__(self, settings, logger, scrapper):
         self.settings = settings
         self.logger = logger
-
-        self.driver = self._create_browser_driver()
+        self.scrapper = scrapper
 
     def __enter__(self):
         """
@@ -43,46 +40,20 @@ class SongRequestProcessor(object):
             self.release_resources()
             return False
 
-    def _create_browser_driver(self):
-        executable_path = self.settings.BrowserDriverPath
-
-        # Edge
-        if self.settings.SelectedBrowserDriver == config.EdgeDriver:
-            return webdriver.Edge(executable_path=executable_path)
-
-        # Chrome
-        elif self.settings.SelectedBrowserDriver == config.ChromeDriver:
-            return webdriver.Chrome(executable_path=executable_path)
-
-        # Firefox.
-        elif self.settings.SelectedBrowserDriver == config.FirefoxDriver:
-            return webdriver.Firefox(executable_path=executable_path)
-
-        # Opera.
-        elif self.settings.SelectedBrowserDriver == config.OperaDriver:
-            return webdriver.Opera(executable_path=executable_path)
-
-        # Default case.
-        else:
-            raise ValueError(
-                "Unexpected browser driver type to create: {0}."
-                .format(self.settings.SelectedBrowserDriver)
-            )
-
     @helpers.lazy_property
     def _new_song_text_field(self):
-        return self.driver.find_element_by_id(
+        return self.scrapper.find_element_by_id(
             self.settings.ElementIdOfNewSongTextField
         )
 
     @helpers.lazy_property
     def _add_song_button(self):
-        return self.driver.find_element_by_id(
+        return self.scrapper.find_element_by_id(
             self.settings.ElementIdOfAddSongButton
         )
 
     def release_resources(self):
-        self.driver.quit()
+        self.scrapper.dispose()
 
     def process(self, song_request):
         self.logger.info(
@@ -109,7 +80,7 @@ class SongRequestProcessor(object):
         self._add_song_button.click()
 
     def _process_result(self, song_request):
-        notification = self.driver.find_element_by_class_name(
+        notification = self.scrapper.find_element_by_class_name(
             self.settings.ClassNameOfNotificationIcon
         )
 

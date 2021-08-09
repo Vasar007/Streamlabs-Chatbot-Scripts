@@ -49,7 +49,7 @@ PermissionHierarchy = (Everyone, Subscriber, UserSpecific, Moderator, Editor)
 CommandAddSongRequestUsage = "{0} {1}"
 ExampleYouTubeLinkToSong = "[YouTube link]"
 
-BrowserDriverPath = os.path.join("Services", "Scripts", "SongRequest", "External", "edgedriver_win64", "msedgedriver.exe")
+BrowserDriverPath = "C:\\Program Files\\Common Files\\Webdrivers"
 EdgeDriver = "Edge"
 ChromeDriver = "Chromium/Chrome"
 FirefoxDriver = "Firefox"
@@ -87,6 +87,7 @@ CommandUseWhisperSongRequestCooldown = 1
 HttpPageLinkToParse = ""
 NumberOfSongRequestsToAdd = 3
 UseWhisperMessagesToControlSongRequests = True
+DispatchTimeoutInSeconds = 10
 
 # Values: everyone, moderator, subscriber, user_specific, editor.
 PermissionOnAddCancelSongRequest = Subscriber
@@ -99,6 +100,6 @@ PermissionOnApproveRejectGetSongRequest = Moderator
 PermissionInfoOnApproveRejectGetSongRequest = ""
 
 PermissionDeniedMessage = "Permission denied: You have to be a {0} to use {1} command!"
-ResponseMessage = "Added!"
+OnSuccessSongRequestMessage = "{0}, your song request approved and added!"
 InvalidCommandCallMessage = "Invalid {0} command call. Usage: {1}"
 TimeRemainingMessage = "Command {0} is on cooldown. Time remaining: {1} (seconds)."

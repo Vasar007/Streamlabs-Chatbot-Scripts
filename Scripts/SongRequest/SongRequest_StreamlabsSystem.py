@@ -12,6 +12,8 @@ clr.AddReference("IronPython.Modules.dll")
 
 # Load own modules.
 ScriptDir = os.path.dirname(__file__)
+AbsoluteScriptDir = os.path.dirname(os.path.realpath(__file__))
+DllsDirName = "Dlls"
 LibraryDirName = "Library"
 SettingsDirName = "Settings"
 SettingsFileName = "settings.json"
@@ -32,8 +34,19 @@ from song_request_data_wrapper import SongRequestDataWrapper as DataWrapper
 # pylint:disable=import-error
 from song_request_command_wrapper import SongRequestCommandWrapper as CommandWrapper
 
+# pylint:disable=import-error
+from song_request_processor import SongRequestProcessor as Processor
+# pylint:disable=import-error
+from song_request_storage import SongRequestStorage as Storage
+# pylint:disable=import-error
+from song_request import SongRequest as Request
+
 # Import your Settings class.
 from song_request_settings import SongRequestSettings  # pylint:disable=import-error
+
+# Import C# external dll.
+clr.AddReferenceToFileAndPath(os.path.join(AbsoluteScriptDir, DllsDirName, "WebScrapper.dll"))
+from Scripts.SongRequest.WebScrapper import HttpWebScrapper
 
 sys.path.remove(ScriptDir)
 sys.path.remove(os.path.join(ScriptDir, LibraryDirName))
@@ -55,6 +68,8 @@ Version = config.Version
 ParentHandler = None  # Parent wrapper instance.
 SettingsFile = ""
 ScriptSettings = SongRequestSettings()
+SrStorage = None  # Song request storage instance.
+SrProcessor = None  # Song request processor instance.
 
 
 def Init():
@@ -75,9 +90,17 @@ def Init():
     global ScriptSettings
     SettingsFile = os.path.join(ScriptDir, SettingsDirName, SettingsFileName)
     ScriptSettings = SongRequestSettings(SettingsFile)
-    ScriptSettings.Response = "Overwritten pong! ^_^"
 
+    # Initialize global variables.
     helpers.init_logging(ParentHandler, ScriptSettings)
+
+    global SrStorage
+    SrStorage = Storage(Logger())
+
+    global SrProcessor
+    scrapper = HttpWebScrapper.Create(ScriptSettings.BrowserDriverPath, ScriptSettings.SelectedBrowserDriver)
+    SrProcessor = Processor(ScriptSettings, Logger(), scrapper)
+
     Logger().info("Script successfully initialized.")
 
 
@@ -169,6 +192,9 @@ def Unload():
     [Optional] Unload (Called when a user reloads their scripts or closes
     the bot/cleanup stuff).
     """
+    if SrProcessor is not None:
+        SrProcessor.release_resources()
+
     Logger().info("Script unloaded.")
 
 
@@ -292,4 +318,14 @@ def TryProcessCommand(command, data_wrapper):
 def ProcessSongRequestCommand(command, data_wrapper):
     # Input example: !sr https://www.youtube.com/watch?v=CAEUnn0HNLM
     # Command <YouTube link>
-    ParentHandler.send_stream_message(ScriptSettings.Response)
+    song_link = data_wrapper.get_param(1)
+    number = 1
+    
+    request = Request.create_new(data_wrapper.user_id, song_link, number)
+    request.approve()
+    result = SrProcessor.process(request)
+    if result.is_success:
+        ParentHandler.send_stream_message(
+            ScriptSettings.OnSuccessSongRequestMessage
+        )
+
