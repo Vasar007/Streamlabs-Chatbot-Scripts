@@ -4,6 +4,8 @@
 import os
 import sys
 
+from functools import wraps
+
 import clr
 clr.AddReference("IronPython.SQLite.dll")
 clr.AddReference("IronPython.Modules.dll")
@@ -200,6 +202,7 @@ def HandleNoPermission(required_permission, command):
 
 
 def WrapCommand(process_command):
+    @wraps(process_command)
     def ProcessCommandWrapper(command, data_wrapper, manager):
         try:
             is_on_user_cooldown = ParentHandler.is_on_user_cooldown(

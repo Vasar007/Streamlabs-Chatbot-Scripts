@@ -110,6 +110,63 @@
         "tooltip": "Allow bot to use whisper messages to control song requests. You can use this feature to decrease amount of messages in chat.",
         "group": "Setup"
     },
+    "SelectedBrowserDriver": {
+        "type": "dropdown",
+        "value": "Edge",
+        "items": ["Edge", "Chromium/Chrome", "Firefox", "Opera"],
+        "label": "Browser Driver Type To Use",
+        "tooltip": "Browser driver type which will be used to process song request commands.",
+        "group": "Setup"
+    },
+    "BrowserDriverPath": {
+        "type": "textbox",
+        "value": "Services/Scripts/SongRequest/External/edgedriver_win64/msedgedriver.exe",
+        "label": "Browser Driver Executable Path",
+        "tooltip": "Browser driver path to use.",
+        "group": "Setup"
+    },
+    "ElementIdOfNewSongTextField": {
+        "type": "textbox",
+        "value": "newSong",
+        "label": "Element ID Of New Song Text Field",
+        "tooltip": "Element ID of new song text field on song request page.",
+        "group": "Setup"
+    },
+    "ElementIdOfAddSongButton": {
+        "type": "textbox",
+        "value": "newSong",
+        "label": "Element ID Of Add Song Button",
+        "tooltip": "Element ID of add song button on song request page.",
+        "group": "Setup"
+    },
+    "ClassNameOfNotificationIcon": {
+        "type": "textbox",
+        "value": "ui-pnotify-icon",
+        "label": "Class Name Of Notification Item",
+        "tooltip": "Class name of notification item on song request page to parse and process result.",
+        "group": "Setup"
+    },
+    "ClassNameOfSuccessNotificationIcon": {
+        "type": "textbox",
+        "value": "brighttheme-icon-success",
+        "label": "Class Name Of Successful Notification Item",
+        "tooltip": "Class name of successful notification item on song request page to parse and process result.",
+        "group": "Setup"
+    },
+    "ClassNameOfErrorNotificationIcon": {
+        "type": "textbox",
+        "value": "brighttheme-icon-errors",
+        "label": "Class Name Of Error Notification Item",
+        "tooltip": "Class name of error notification item on song request page to parse and process result.",
+        "group": "Setup"
+    },
+    "ClassNameOfNotificationDescription": {
+        "type": "textbox",
+        "value": "ui-pnotify-text",
+        "label": "Class Name Of Notification Description",
+        "tooltip": "Class name of notification description on song request page to parse and process result.",
+        "group": "Setup"
+    },
 
     "PermissionOnAddCancelSongRequest": {
         "type": "dropdown",

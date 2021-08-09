@@ -11,7 +11,6 @@ from transfer_broker_models import TransferValidationResult
 
 from transfer_permissions import TransferPermissionHandler as PermissionHandler
 from transfer_permissions import TransferPermissionChecker as PermissionChecker
-from transfer_permissions import TransferPermissionCheckResult as PermissionCheckResult
 
 from transfer_transaction import TransferTransaction
 

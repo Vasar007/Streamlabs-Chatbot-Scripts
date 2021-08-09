@@ -210,3 +210,32 @@ def get_valid_filename(raw_filename):
     """
     raw_filename = str(raw_filename).strip().replace(" ", "_")
     return re.sub(r"(?u)[^-\w.]", "", raw_filename)
+
+
+def first_or_default(iterable, default=False, pred=None):
+    """
+    Returns the first true value in the iterable.
+
+    If no true value is found, returns *default*
+
+    If *pred* is not None, returns the first item
+    for which pred(item) is true.
+    """
+    # first_or_default([a, b, c], x) --> a or b or c or x
+    # first_or_default([a, b], x, f) --> a if f(a) else b if f(b) else x
+    return next(filter(pred, iterable), default)
+
+
+def lazy_property(fn):
+    """
+    Decorator that makes a property lazy-evaluated.
+    """
+    attr_name = "_lazy_" + fn.__name__
+
+    @property
+    def _lazy_property(self):
+        if not hasattr(self, attr_name):
+            setattr(self, attr_name, fn(self))
+        return getattr(self, attr_name)
+
+    return _lazy_property

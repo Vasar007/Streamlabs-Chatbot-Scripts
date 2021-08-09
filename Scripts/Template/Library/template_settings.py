@@ -13,18 +13,19 @@ class TemplateSettings(object):
 
     _reload_event = EventEmitter()
 
-    def __init__(self, settingsfile=None):
+    def __init__(self, settingsfile=None, encoding="utf-8"):
         """
         Load in saved settings file if available or else set default values.
         """
+        self.encoding = encoding
         if settingsfile is None:
             self._set_default()
         else:
             try:
                 if os.path.isfile(settingsfile):
-                    with codecs.open(settingsfile, encoding="utf-8",
+                    with codecs.open(settingsfile, encoding=self.encoding,
                                      mode="r") as f:
-                        self.__dict__ = json.load(f, encoding="utf-8")
+                        self.__dict__ = json.load(f, encoding=self.encoding)
                 else:
                     self._set_default()
             except Exception as ex:
@@ -37,7 +38,7 @@ class TemplateSettings(object):
         """
         Reload settings from Chatbot user interface by given json data.
         """
-        self.__dict__ = json.loads(jsondata, encoding="utf-8")
+        self.__dict__ = json.loads(jsondata, encoding=self.encoding)
 
         TemplateSettings._reload_event.emit(
             config.SettingsReloadEventName, self
@@ -50,10 +51,10 @@ class TemplateSettings(object):
         helpers.save_json(self.__dict__, settingsfile)
 
         with codecs.open(settingsfile.replace("json", "js"),
-                         encoding="utf-8", mode="w+") as f:
+                         encoding=self.encoding, mode="w+") as f:
             content = (
                 "var settings = {0};".format(
-                    json.dumps(self.__dict__, encoding="utf-8")
+                    json.dumps(self.__dict__, encoding=self.encoding)
                 )
             )
             f.write(content)

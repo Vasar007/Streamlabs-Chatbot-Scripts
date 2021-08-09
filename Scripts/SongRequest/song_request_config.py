@@ -49,6 +49,19 @@ PermissionHierarchy = (Everyone, Subscriber, UserSpecific, Moderator, Editor)
 CommandAddSongRequestUsage = "{0} {1}"
 ExampleYouTubeLinkToSong = "[YouTube link]"
 
+BrowserDriverPath = os.path.join("Services", "Scripts", "SongRequest", "External", "edgedriver_win64", "msedgedriver.exe")
+EdgeDriver = "Edge"
+ChromeDriver = "Chromium/Chrome"
+FirefoxDriver = "Firefox"
+OperaDriver = "Opera"
+SelectedBrowserDriver = EdgeDriver
+ElementIdOfNewSongTextField = "newSong"
+ElementIdOfAddSongButton = "playerAddSong"
+ClassNameOfNotificationIcon = "ui-pnotify-icon"
+ClassNameOfSuccessNotificationIcon = "brighttheme-icon-success"
+ClassNameOfErrorNotificationIcon = "brighttheme-icon-error"
+ClassNameOfNotificationDescription = "ui-pnotify-text"
+
 # [Required] Script Information.
 ScriptName = "SongRequest Script"
 Website = "https://github.com/Vasar007/Streamlabs-Chatbot-Scripts"

@@ -7,7 +7,6 @@ from transfer_tax_collector import TransferTaxCollector as TaxCollector
 from transfer_user_data import TransferUserData as UserData
 
 from transfer_broker_models import TransferType
-from transfer_broker_models import TransferParameters
 from transfer_broker_models import TransferRequest
 from transfer_broker_models import TransferValidationIssueType as IssueType
 

@@ -169,7 +169,7 @@ class SongRequestLoggerFactory(object):
         return formatter
 
     @classmethod
-    def create_file_log_handler(cls, log_level):
+    def create_file_log_handler(cls, log_level, encoding="utf-8"):
         log_file_name = helpers.get_valid_filename(
             config.LogFileNameFormat.format(config.ScriptName)
         )
@@ -182,7 +182,7 @@ class SongRequestLoggerFactory(object):
             mode="a",
             maxBytes=config.LogFileMaxBytes,
             backupCount=config.LogFileBackupCount,
-            encoding="utf-8",
+            encoding=encoding,
             delay=0
         )
         handler.setLevel(log_level)
