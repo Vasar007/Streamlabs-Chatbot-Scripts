@@ -213,13 +213,6 @@
         "group": "Permission"
     },
 
-    "OnSuccessSongRequestMessage": {
-        "type": "textbox",
-        "value": "{0}, your song request approved and added!",
-        "label": "On Success Song Request Message",
-        "tooltip": "The message that will be sent to chat when user's song request approved and added to playlist. 0 — user name.",
-        "group": "Chat Messages"
-    },
     "InvalidCommandCallMessage": {
         "type": "textbox",
         "value": "Invalid {0} command call. Usage: {1}",
@@ -232,6 +225,20 @@
         "value": "Command {0} is on cooldown. Time remaining: {1} (seconds).",
         "label": "Time Remaining Message",
         "tooltip": "Chat message will be sent if user tries to call command which is on cooldown now. 0 — command which is on cooldown, 1 — time remaining.",
+        "group": "Chat Messages"
+    },
+    "OnSuccessSongRequestMessage": {
+        "type": "textbox",
+        "value": "{0}, your song request approved and added!",
+        "label": "On Success Song Request Message",
+        "tooltip": "The message that will be sent to chat when user's song request approved and added to playlist. 0 — user name.",
+        "group": "Chat Messages"
+    },
+    "OnFailureSongRequestMessage": {
+        "type": "textbox",
+        "value": "{0}, your song request finihsed with error: {1}",
+        "label": "On Failure Song Request Message",
+        "tooltip": "The message that will be sent to chat when user's song request approved but couldn't be added to playlist. 0 — user name, 1 — error description.",
         "group": "Chat Messages"
     },
 

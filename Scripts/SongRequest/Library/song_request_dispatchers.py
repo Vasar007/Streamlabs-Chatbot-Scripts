@@ -2,7 +2,7 @@
 
 from abc import ABCMeta, abstractmethod
 
-from song_request import SongRequestState
+from Scripts.SongRequest.CSharp.Models.Requests import SongRequestState
 
 
 class BaseSongRequestDispatcher(object):

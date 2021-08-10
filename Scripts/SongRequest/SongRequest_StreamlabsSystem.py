@@ -13,7 +13,7 @@ clr.AddReference("IronPython.Modules.dll")
 # Load own modules.
 ScriptDir = os.path.dirname(__file__)
 AbsoluteScriptDir = os.path.dirname(os.path.realpath(__file__))
-DllsDirName = "Dlls"
+ReferencesDirName = "References"
 LibraryDirName = "Library"
 SettingsDirName = "Settings"
 SettingsFileName = "settings.json"
@@ -24,6 +24,11 @@ sys.path.append(ScriptDir)
 # Point at lib folder for classes/references.
 sys.path.append(os.path.join(ScriptDir, LibraryDirName))
 
+# Import C# external dll.
+clr.AddReferenceToFileAndPath(os.path.join(AbsoluteScriptDir, ReferencesDirName, "Scripts.SongRequest.CSharp.dll"))
+from Scripts.SongRequest.CSharp.Web import HttpWebScrapperFactory
+from Scripts.SongRequest.CSharp.Models.Requests import SongRequestModel
+
 import song_request_config as config
 import song_request_helpers as helpers  # pylint:disable=import-error
 # pylint:disable=import-error
@@ -32,21 +37,18 @@ from song_request_parent_wrapper import SongRequestParentWrapper as ParentWrappe
 from song_request_data_wrapper import SongRequestDataWrapper as DataWrapper
 
 # pylint:disable=import-error
+from song_request_log_wrapper import SongRequestCSharpLogWrapper as CSharpLogWrapper
+# pylint:disable=import-error
+from song_request_settings import SongRequestCSharpSettings as CSharpSettings
+
+# pylint:disable=import-error
 from song_request_command_wrapper import SongRequestCommandWrapper as CommandWrapper
 
 # pylint:disable=import-error
-from song_request_processor import SongRequestProcessor as Processor
-# pylint:disable=import-error
-from song_request_storage import SongRequestStorage as Storage
-# pylint:disable=import-error
-from song_request import SongRequest as Request
+from song_request_storage import SongRequestStorage
 
 # Import your Settings class.
 from song_request_settings import SongRequestSettings  # pylint:disable=import-error
-
-# Import C# external dll.
-clr.AddReferenceToFileAndPath(os.path.join(AbsoluteScriptDir, DllsDirName, "WebScrapper.dll"))
-from Scripts.SongRequest.WebScrapper import HttpWebScrapper
 
 sys.path.remove(ScriptDir)
 sys.path.remove(os.path.join(ScriptDir, LibraryDirName))
@@ -69,7 +71,7 @@ ParentHandler = None  # Parent wrapper instance.
 SettingsFile = ""
 ScriptSettings = SongRequestSettings()
 SrStorage = None  # Song request storage instance.
-SrProcessor = None  # Song request processor instance.
+SrPageScrapper = None  # Song request page scrapper instance.
 
 
 def Init():
@@ -95,11 +97,16 @@ def Init():
     helpers.init_logging(ParentHandler, ScriptSettings)
 
     global SrStorage
-    SrStorage = Storage(Logger())
+    SrStorage = SongRequestStorage(Logger())
 
-    global SrProcessor
-    scrapper = HttpWebScrapper.Create(ScriptSettings.BrowserDriverPath, ScriptSettings.SelectedBrowserDriver)
-    SrProcessor = Processor(ScriptSettings, Logger(), scrapper)
+    global SrPageScrapper
+    SrPageScrapper = HttpWebScrapperFactory.Create(
+        CSharpSettings(ScriptSettings),
+        CSharpLogWrapper(Logger()),
+        ScriptSettings.BrowserDriverPath,
+        ScriptSettings.SelectedBrowserDriver
+    )
+    SrPageScrapper.OpenUrl()
 
     Logger().info("Script successfully initialized.")
 
@@ -181,6 +188,8 @@ def ReloadSettings(jsondata):
     try:
         ScriptSettings.reload(jsondata)
         ScriptSettings.save(SettingsFile)
+
+        SrPageScrapper.OpenUrl()
     except Exception as ex:
         Logger().exception(
             "Failed to save or reload settings to file: " + str(ex)
@@ -192,10 +201,15 @@ def Unload():
     [Optional] Unload (Called when a user reloads their scripts or closes
     the bot/cleanup stuff).
     """
-    if SrProcessor is not None:
-        SrProcessor.release_resources()
+    try:
+        if SrPageScrapper:
+            SrPageScrapper.Dispose()
 
-    Logger().info("Script unloaded.")
+        Logger().info("Script unloaded.")
+    except Exception as ex:
+        Logger().exception(
+            "Failed to unload script: " + str(ex)
+        )
 
 
 def ScriptToggled(state):
@@ -318,14 +332,21 @@ def TryProcessCommand(command, data_wrapper):
 def ProcessSongRequestCommand(command, data_wrapper):
     # Input example: !sr https://www.youtube.com/watch?v=CAEUnn0HNLM
     # Command <YouTube link>
-    song_link = data_wrapper.get_param(1)
+    song_link = helpers.wrap_http_link(data_wrapper.get_param(1))
+    user_id = helpers.wrap_user_id(data_wrapper.user_id)
     number = 1
-    
-    request = Request.create_new(data_wrapper.user_id, song_link, number)
-    request.approve()
-    result = SrProcessor.process(request)
-    if result.is_success:
+
+    request = SongRequestModel.CreateNew(user_id, song_link, number)
+    request = request.Approve()
+    result = SrPageScrapper.Process(request)
+
+    if result.IsSuccess:
         ParentHandler.send_stream_message(
             ScriptSettings.OnSuccessSongRequestMessage
+            .format(data_wrapper.user_name)
         )
-
+    else:
+        ParentHandler.send_stream_message(
+            ScriptSettings.OnFailureSongRequestMessage
+            .format(data_wrapper.user_name, result.Description)
+        )

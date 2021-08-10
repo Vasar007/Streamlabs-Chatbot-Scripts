@@ -4,7 +4,7 @@ import threading
 
 import song_request_helpers as helpers
 
-from song_request import SongRequestState
+from Scripts.SongRequest.CSharp.Models.Requests import SongRequestState
 
 
 class SongRequestStorage(object):
@@ -48,11 +48,11 @@ class SongRequestStorage(object):
             found_request = self._first_or_default_by_id(
                 self.storage_by_state.values(), processed_request
             )
-            if found_request is not None:
-                prev_list = self.storage_by_state[found_request.state]
+            if found_request:
+                prev_list = self.storage_by_state[found_request.State]
                 prev_list.remove(found_request)
 
-            list_by_state = self.storage_by_state[processed_request.state]
+            list_by_state = self.storage_by_state[processed_request.State]
             list_by_state.append(processed_request)
 
             # Update requests in storage by state.
@@ -67,7 +67,7 @@ class SongRequestStorage(object):
         self._update_by_user_id(new_song_request)
 
         # We create lists for all states. No check required.
-        list_by_state = self.storage_by_state[new_song_request.state]
+        list_by_state = self.storage_by_state[new_song_request.State]
         list_by_state.append(new_song_request)
 
     def clear(self):
@@ -82,33 +82,33 @@ class SongRequestStorage(object):
         self.storage_by_state[SongRequestState.Cancelled] = list()
 
     def _update_by_user_id(self, song_request):
-        list_by_id = self.storage_by_user_id.get(song_request.user_id)
+        list_by_id = self.storage_by_user_id.get(song_request.UserId)
 
-        if list_by_id is None:
+        if not list_by_id:
             self.logger.info(
                 "No requests found for user ID {0}."
-                .format(song_request.user_id)
+                .format(song_request.UserId)
             )
             list_by_id = list()
             list_by_id.append(song_request)
-            self.storage_by_user_id[song_request.user_id] = list_by_id
+            self.storage_by_user_id[song_request.UserId] = list_by_id
         else:
             self.logger.info(
                 "Some requests found for user ID {0}."
-                .format(song_request.user_id)
+                .format(song_request.UserId)
             )
             found_request = self._first_or_default_by_id(
                 list_by_id, song_request
             )
-            if found_request is not None:
+            if found_request:
                 list_by_id.remove(found_request)
 
             list_by_id.append(song_request)
-            self.storage_by_user_id[song_request.user_id] = list_by_id
+            self.storage_by_user_id[song_request.UserId] = list_by_id
 
     def _first_or_default_by_id(self, collection, song_request):
         return helpers.first_or_default(
             collection,
             default=None,
-            pred=lambda x: x.id == song_request.id
+            pred=lambda x: x.RequestId == song_request.RequestId
         )

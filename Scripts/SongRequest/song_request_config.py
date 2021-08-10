@@ -57,10 +57,10 @@ OperaDriver = "Opera"
 SelectedBrowserDriver = EdgeDriver
 ElementIdOfNewSongTextField = "newSong"
 ElementIdOfAddSongButton = "playerAddSong"
-ClassNameOfNotificationIcon = "ui-pnotify-icon"
+ClassNameOfNotificationIcon = "ui-pnotify-icon "
 ClassNameOfSuccessNotificationIcon = "brighttheme-icon-success"
 ClassNameOfErrorNotificationIcon = "brighttheme-icon-error"
-ClassNameOfNotificationDescription = "ui-pnotify-text"
+ClassNameOfNotificationDescription = "ui-pnotify-text "
 
 # [Required] Script Information.
 ScriptName = "SongRequest Script"
@@ -100,6 +100,7 @@ PermissionOnApproveRejectGetSongRequest = Moderator
 PermissionInfoOnApproveRejectGetSongRequest = ""
 
 PermissionDeniedMessage = "Permission denied: You have to be a {0} to use {1} command!"
-OnSuccessSongRequestMessage = "{0}, your song request approved and added!"
 InvalidCommandCallMessage = "Invalid {0} command call. Usage: {1}"
 TimeRemainingMessage = "Command {0} is on cooldown. Time remaining: {1} (seconds)."
+OnSuccessSongRequestMessage = "{0}, your song request approved and added!"
+OnFailureSongRequestMessage = "{0}, your song request finihsed with error: {1}"

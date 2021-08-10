@@ -11,6 +11,10 @@ from datetime import datetime
 
 from song_request_log_wrapper import SongRequestLoggerFactory as LoggerFactory
 
+from Scripts.SongRequest.CSharp.Core.Models import UserName
+from Scripts.SongRequest.CSharp.Core.Models import UserId
+from Scripts.SongRequest.CSharp.Core.Models import HttpLink
+
 
 def get_current_day_formatted_date():
     """
@@ -239,3 +243,24 @@ def lazy_property(fn):
         return getattr(self, attr_name)
 
     return _lazy_property
+
+
+def wrap_user_name(raw_value):
+    """
+    Returns wrapped user name record for C# part of the script.
+    """
+    return UserName(raw_value)
+
+
+def wrap_user_id(raw_value):
+    """
+    Returns wrapped user ID record for C# part of the script.
+    """
+    return UserId(raw_value)
+    
+
+def wrap_http_link(raw_value):
+    """
+    Returns wrapped HTTP link record for C# part of the script.
+    """
+    return HttpLink(raw_value)

@@ -7,6 +7,8 @@ from logging.handlers import RotatingFileHandler
 import song_request_config as config
 import song_request_helpers as helpers
 
+from Scripts.SongRequest.CSharp.Logging import IScriptLogger
+
 
 class SongRequestScriptLogHandler(logging.Handler):
 
@@ -190,3 +192,33 @@ class SongRequestLoggerFactory(object):
         formatter = cls.create_formatter()
         handler.setFormatter(formatter)
         return handler
+
+
+class SongRequestCSharpLogWrapper(IScriptLogger):
+    """
+    Log helper for C# part (for logging into Script Logs of the Chatbot).
+    """
+
+    def __init__(self, logger):
+        self.logger = logger
+
+    def Log(self, logLevel, message):
+        self.logger.log(logLevel, message)
+
+    def Debug(self, message):
+        self.logger.debug(message)
+
+    def Info(self, message):
+        self.logger.info(message)
+
+    def Warning(self, message):
+        self.logger.warning(message)
+
+    def Error(self, message):
+        self.logger.error(message)
+
+    def Critical(self, message):
+        self.logger.critical(message)
+
+    def Exception(self, ex, message):
+        self.logger.exception(ex, message)
