@@ -1,4 +1,5 @@
-﻿using Scripts.SongRequest.CSharp.Logging;
+﻿using Scripts.SongRequest.CSharp.Core.Models;
+using Scripts.SongRequest.CSharp.Logging;
 
 namespace Scripts.SongRequest.CSharp.Models.Settings
 {
@@ -24,13 +25,15 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         string CommandUseWhisperSongRequest { get; }
         int CommandUseWhisperSongRequestCooldown { get; }
 
-        string HttpPageLinkToParse { get; }
+        HttpLink HttpPageLinkToParse { get; }
         int NumberOfSongRequestsToAdd { get; }
         bool UseWhisperMessagesToControlSongRequests { get; }
         int DispatchTimeoutInSeconds { get; }
+        int TimeoutToWaitInMilliseconds { get; }
 
-        string BrowserDriverPath { get; }
-        string SelectedBrowserDriver { get; }
+        FilePath BrowserDriverPath { get; }
+        FileName BrowserDriverExecutableName { get; }
+        WebDriverType SelectedBrowserDriver { get; }
         string ElementIdOfNewSongTextField { get; }
         string ElementIdOfAddSongButton { get; }
         string ClassNameOfNotificationIcon { get; }
@@ -62,6 +65,7 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
 
         ScriptLogLevel LoggingLevel { get; }
         bool AllowLoggingToFile { get; }
+        bool EnableWebDriverDebug { get; }
 
         #endregion
     }

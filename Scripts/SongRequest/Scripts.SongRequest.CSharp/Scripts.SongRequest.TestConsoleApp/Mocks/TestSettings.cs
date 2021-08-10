@@ -10,7 +10,13 @@ namespace Scripts.SongRequest.TestConsoleApp.Mocks
         {
             var mock = new Mock<ISongRequestScriptSettings>();
 
-            mock.Setup(x => x.HttpPageLinkToParse).Returns(httpPageLink.Link);
+            mock.Setup(x => x.EnableWebDriverDebug).Returns(TestConfig.EnableWebDriverDebug);
+            mock.Setup(x => x.BrowserDriverPath).Returns(TestConfig.BrowserDriverPath);
+            mock.Setup(x => x.BrowserDriverExecutableName).Returns(TestConfig.BrowserDriverExecutableName);
+            mock.Setup(x => x.SelectedBrowserDriver).Returns(TestConfig.SelectedBrowserDriver);
+            mock.Setup(x => x.HttpPageLinkToParse).Returns(httpPageLink);
+            mock.Setup(x => x.TimeoutToWaitInMilliseconds).Returns(TestConfig.TimeoutToWaitInMilliseconds);
+
             mock.Setup(x => x.ElementIdOfNewSongTextField).Returns(TestConfig.ElementIdOfNewSongTextField);
             mock.Setup(x => x.ElementIdOfAddSongButton).Returns(TestConfig.ElementIdOfAddSongButton);
             mock.Setup(x => x.ClassNameOfNotificationIcon).Returns(TestConfig.ClassNameOfNotificationIcon);

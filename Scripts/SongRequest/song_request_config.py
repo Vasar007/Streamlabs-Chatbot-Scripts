@@ -49,7 +49,11 @@ PermissionHierarchy = (Everyone, Subscriber, UserSpecific, Moderator, Editor)
 CommandAddSongRequestUsage = "{0} {1}"
 ExampleYouTubeLinkToSong = "[YouTube link]"
 
+EnableWebDriverDebug = False
+
 BrowserDriverPath = "C:\\Program Files\\Common Files\\Webdrivers"
+BrowserDriverExecutableName = "MicrosoftWebDriver.exe"
+
 EdgeDriver = "Edge"
 ChromeDriver = "Chromium/Chrome"
 FirefoxDriver = "Firefox"
@@ -57,10 +61,10 @@ OperaDriver = "Opera"
 SelectedBrowserDriver = EdgeDriver
 ElementIdOfNewSongTextField = "newSong"
 ElementIdOfAddSongButton = "playerAddSong"
-ClassNameOfNotificationIcon = "ui-pnotify-icon "
+ClassNameOfNotificationIcon = "ui-pnotify-icon"
 ClassNameOfSuccessNotificationIcon = "brighttheme-icon-success"
 ClassNameOfErrorNotificationIcon = "brighttheme-icon-error"
-ClassNameOfNotificationDescription = "ui-pnotify-text "
+ClassNameOfNotificationDescription = "ui-pnotify-text"
 
 # [Required] Script Information.
 ScriptName = "SongRequest Script"
@@ -88,6 +92,7 @@ HttpPageLinkToParse = ""
 NumberOfSongRequestsToAdd = 3
 UseWhisperMessagesToControlSongRequests = True
 DispatchTimeoutInSeconds = 10
+TimeoutToWaitInMilliseconds = 3000
 
 # Values: everyone, moderator, subscriber, user_specific, editor.
 PermissionOnAddCancelSongRequest = Subscriber

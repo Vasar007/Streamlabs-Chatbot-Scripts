@@ -9,6 +9,7 @@ import song_request_helpers as helpers
 from song_request_event_emitter import SongRequestEventEmitter as EventEmitter 
 
 from Scripts.SongRequest.CSharp.Models.Settings import ISongRequestScriptSettings
+from Scripts.SongRequest.CSharp.Models.Settings import WebDriverType
 
 
 class SongRequestSettings(object):
@@ -87,7 +88,9 @@ class SongRequestSettings(object):
         self.NumberOfSongRequestsToAdd = config.NumberOfSongRequestsToAdd
         self.UseWhisperMessagesToControlSongRequests = config.UseWhisperMessagesToControlSongRequests
         self.DispatchTimeoutInSeconds = config.DispatchTimeoutInSeconds
+        self.TimeoutToWaitInMilliseconds = config.TimeoutToWaitInMilliseconds
         self.BrowserDriverPath = config.BrowserDriverPath
+        self.BrowserDriverExecutableName = config.BrowserDriverExecutableName
         self.SelectedBrowserDriver = config.SelectedBrowserDriver
         self.ElementIdOfNewSongTextField = config.ElementIdOfNewSongTextField
         self.ElementIdOfAddSongButton = config.ElementIdOfAddSongButton
@@ -112,6 +115,7 @@ class SongRequestSettings(object):
         # Debugging group.
         self.LoggingLevel = config.LoggingLevel
         self.AllowLoggingToFile = config.AllowLoggingToFile
+        self.EnableWebDriverDebug = config.EnableWebDriverDebug
 
 
 class SongRequestCSharpSettings(ISongRequestScriptSettings):
@@ -172,7 +176,7 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
 
     @property
     def HttpPageLinkToParse(self):
-        return self.settings.HttpPageLinkToParse
+        return helpers.wrap_http_link(self.settings.HttpPageLinkToParse)
 
     @property
     def NumberOfSongRequestsToAdd(self):
@@ -187,12 +191,20 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
         return self.settings.DispatchTimeoutInSeconds
 
     @property
+    def TimeoutToWaitInMilliseconds(self):
+        return self.settings.TimeoutToWaitInMilliseconds
+
+    @property
     def BrowserDriverPath(self):
-        return self.settings.BrowserDriverPath
+        return helpers.wrap_file_path(self.settings.BrowserDriverPath)
+
+    @property
+    def BrowserDriverExecutableName(self):
+        return helpers.wrap_file_name(self.settings.BrowserDriverExecutableName)
 
     @property
     def SelectedBrowserDriver(self):
-        return self.settings.SelectedBrowserDriver
+        return WebDriverType.Wrap(self.settings.SelectedBrowserDriver)
 
     @property
     def ElementIdOfNewSongTextField(self):
@@ -260,3 +272,7 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
     @property
     def AllowLoggingToFile(self):
         return self.settings.AllowLoggingToFile
+
+    @property
+    def EnableWebDriverDebug(self):
+        return self.settings.EnableWebDriverDebug

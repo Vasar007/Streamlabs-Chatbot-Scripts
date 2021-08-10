@@ -26,7 +26,7 @@ sys.path.append(os.path.join(ScriptDir, LibraryDirName))
 
 # Import C# external dll.
 clr.AddReferenceToFileAndPath(os.path.join(AbsoluteScriptDir, ReferencesDirName, "Scripts.SongRequest.CSharp.dll"))
-from Scripts.SongRequest.CSharp.Web import HttpWebScrapperFactory
+from Scripts.SongRequest.CSharp.Web.Scrapper import HttpWebScrapperFactory
 from Scripts.SongRequest.CSharp.Models.Requests import SongRequestModel
 
 import song_request_config as config
@@ -102,9 +102,7 @@ def Init():
     global SrPageScrapper
     SrPageScrapper = HttpWebScrapperFactory.Create(
         CSharpSettings(ScriptSettings),
-        CSharpLogWrapper(Logger()),
-        ScriptSettings.BrowserDriverPath,
-        ScriptSettings.SelectedBrowserDriver
+        CSharpLogWrapper(Logger())
     )
     SrPageScrapper.OpenUrl()
 

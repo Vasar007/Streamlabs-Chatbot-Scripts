@@ -1,12 +1,14 @@
 ﻿using System;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
+using Scripts.SongRequest.CSharp.Core.Models;
 using Scripts.SongRequest.CSharp.Logging;
 using Scripts.SongRequest.CSharp.Models.Requests;
 using Scripts.SongRequest.CSharp.Models.Settings;
 
-namespace Scripts.SongRequest.CSharp.Web
+namespace Scripts.SongRequest.CSharp.Web.Scrapper
 {
-    public sealed class HttpWebScrapper : IDisposable
+    internal sealed class HttpWebScrapper : IHttpWebScrapper
     {
         private readonly ISongRequestScriptSettings _settings;
         private readonly IScriptLogger _logger;
@@ -17,6 +19,8 @@ namespace Scripts.SongRequest.CSharp.Web
 
         private readonly Lazy<IWebElement> _addSongButtonLazy;
         private IWebElement AddSongButton => _addSongButtonLazy.Value;
+
+        private TimeSpan TimeoutToWait => TimeSpan.FromMilliseconds(_settings.TimeoutToWaitInMilliseconds);
 
 
         internal HttpWebScrapper(
@@ -60,11 +64,13 @@ namespace Scripts.SongRequest.CSharp.Web
 
         #endregion
 
+        #region IHttpWebScrapper Implementation
+
         public void OpenUrl()
         {
-            string httpPageLinkToParse = _settings.HttpPageLinkToParse;
+            HttpLink httpPageLinkToParse = _settings.HttpPageLinkToParse;
 
-            if (string.IsNullOrWhiteSpace(httpPageLinkToParse))
+            if (!httpPageLinkToParse.HasValue)
             {
                 throw new ArgumentException("Failed to open empty link.", nameof(_settings));
             }
@@ -75,8 +81,8 @@ namespace Scripts.SongRequest.CSharp.Web
                 return;
             }
 
-            _logger.Info($"Openning URL: '{httpPageLinkToParse}'.");
-            _webDriver.Navigate().GoToUrl(httpPageLinkToParse);
+            _logger.Info($"Openning URL: '{httpPageLinkToParse.Value}'.");
+            _webDriver.Navigate().GoToUrl(httpPageLinkToParse.Value);
         }
 
         public void Refresh()
@@ -104,11 +110,23 @@ namespace Scripts.SongRequest.CSharp.Web
             return ProcessResult(songRequest);
         }
 
+        #endregion
+
         private void AddNewSong(SongRequestModel songRequest)
         {
+            // Page can be loaded to quickly, need that UI will be available.
+            var waiter = new WebDriverWait(_webDriver, TimeoutToWait);
+            waiter.IgnoreExceptionTypes(typeof(ElementClickInterceptedException));
+
+            waiter.Until(_ => NewSongTextField.Enabled);
             NewSongTextField.Clear();
-            NewSongTextField.SendKeys(songRequest.SongLink.Link);
-            AddSongButton.Click();
+            NewSongTextField.SendKeys(songRequest.SongLink.Value);
+
+            waiter.Until(_ =>
+            {
+                AddSongButton.Click();
+                return true;
+            });
         }
 
         private SongRequestResult ProcessResult(SongRequestModel songRequest)
@@ -118,32 +136,29 @@ namespace Scripts.SongRequest.CSharp.Web
                  "processing result."
             );
 
-            var frame = _webDriver.SwitchTo().Frame(0);
-            _logger.Info("Switched to frame 0.");
+            // Page can be loaded to quickly, need that notification will be enabled.
+            var waiter = new WebDriverWait(_webDriver, TimeoutToWait);
 
-            var notification = frame.FindElement(
-                By.XPath($"//div[@class='{_settings.ClassNameOfNotificationIcon}']")
+            var notification = waiter.Until(
+                driver => driver.FindElement(By.ClassName(_settings.ClassNameOfNotificationIcon))
             );
-            _logger.Info("Found notification icon.");
+            _logger.Debug("Found notification icon.");
 
             var success = notification.FindElements(
                 By.ClassName(_settings.ClassNameOfSuccessNotificationIcon)
             );
-            _logger.Info("Tried to find susccess notification icon.");
+            _logger.Debug("Tried to find susccess notification icon.");
 
             var failure = notification.FindElements(
                 By.ClassName(_settings.ClassNameOfErrorNotificationIcon)
             );
-            _logger.Info("Tried to find error notification icon.");
+            _logger.Debug("Tried to find error notification icon.");
 
-            var description = notification.FindElement(
-                By.XPath($"//div[@class='{_settings.ClassNameOfNotificationDescription}']")
+            var description = _webDriver.FindElement(
+                By.ClassName(_settings.ClassNameOfNotificationDescription)
             );
             var descriptionText = description.Text;
-            _logger.Info($"Found notification description: [{descriptionText}].");
-
-            _webDriver.SwitchTo().DefaultContent();
-            _logger.Info("Switched back to default content.");
+            _logger.Debug($"Found notification description: [{descriptionText}].");
 
             // Success.
             if (success.Count > 0 && failure.Count == 0)

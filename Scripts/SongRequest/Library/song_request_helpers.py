@@ -14,6 +14,8 @@ from song_request_log_wrapper import SongRequestLoggerFactory as LoggerFactory
 from Scripts.SongRequest.CSharp.Core.Models import UserName
 from Scripts.SongRequest.CSharp.Core.Models import UserId
 from Scripts.SongRequest.CSharp.Core.Models import HttpLink
+from Scripts.SongRequest.CSharp.Core.Models import FileName
+from Scripts.SongRequest.CSharp.Core.Models import FilePath
 
 
 def get_current_day_formatted_date():
@@ -264,3 +266,17 @@ def wrap_http_link(raw_value):
     Returns wrapped HTTP link record for C# part of the script.
     """
     return HttpLink(raw_value)
+
+
+def wrap_file_path(raw_value):
+    """
+    Returns wrapped file path record for C# part of the script.
+    """
+    return FilePath(raw_value)
+
+
+def wrap_file_name(raw_value):
+    """
+    Returns wrapped file name record for C# part of the script.
+    """
+    return FileName(raw_value)

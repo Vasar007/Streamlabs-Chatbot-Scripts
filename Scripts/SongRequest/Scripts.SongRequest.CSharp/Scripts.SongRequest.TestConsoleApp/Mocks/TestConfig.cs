@@ -1,18 +1,26 @@
-﻿namespace Scripts.SongRequest.TestConsoleApp.Mocks
+﻿using Scripts.SongRequest.CSharp.Core.Models;
+using Scripts.SongRequest.CSharp.Models.Settings;
+
+namespace Scripts.SongRequest.TestConsoleApp.Mocks
 {
     internal static class TestConfig
     {
-        public const string BrowserDriverPath = "C:\\Program Files\\Common Files\\Webdrivers";
-        public const string EdgeDriver = "Edge";
-        public const string ChromeDriver = "Chromium/Chrome";
-        public const string FirefoxDriver = "Firefox";
-        public const string OperaDriver = "Opera";
-        public const string SelectedBrowserDriver = EdgeDriver;
+        public const int TimeoutToWaitInMilliseconds = 3000;
+
+        public static readonly FilePath BrowserDriverPath = new("C:\\Program Files\\Common Files\\Webdrivers");
+        public static readonly FileName BrowserDriverExecutableName = new("MicrosoftWebDriver.exe");
+
+        public static readonly WebDriverType SelectedBrowserDriver = WebDriverType.EdgeDriver;
+
+        public const bool EnableWebDriverDebug = false;
+
         public const string ElementIdOfNewSongTextField = "newSong";
         public const string ElementIdOfAddSongButton = "playerAddSong";
-        public const string ClassNameOfNotificationIcon = "ui-pnotify-icon ";
+        public const string ClassNameOfNotificationIcon = "ui-pnotify-icon";
         public const string ClassNameOfSuccessNotificationIcon = "brighttheme-icon-success";
         public const string ClassNameOfErrorNotificationIcon = "brighttheme-icon-error";
-        public const string ClassNameOfNotificationDescription = "ui-pnotify-text ";
+        public const string ClassNameOfNotificationDescription = "ui-pnotify-text";
+
+        public static readonly HttpLink SongLink = new("https://www.youtube.com/watch?v=CAEUnn0HNLM");
     }
 }

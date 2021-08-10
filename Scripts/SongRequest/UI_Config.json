@@ -117,6 +117,13 @@
         "tooltip": "Dispatch timeout for song requests (in seconds).",
         "group": "Setup"
     },
+    "TimeoutToWaitInMilliseconds": {
+        "type": "numberbox",
+        "value": 3000,
+        "label": "Timeout For Waiting Song Requests (In Milliseconds)",
+        "tooltip": "Timeout for waiting song requests processing (in milliseconds).",
+        "group": "Setup"
+    },
     "SelectedBrowserDriver": {
         "type": "dropdown",
         "value": "Edge",
@@ -127,9 +134,16 @@
     },
     "BrowserDriverPath": {
         "type": "textbox",
-        "value": "Services/Scripts/SongRequest/External/edgedriver_win64/msedgedriver.exe",
-        "label": "Browser Driver Executable Path",
+        "value": "C:\\Program Files\\Common Files\\Webdrivers",
+        "label": "Browser Driver Path",
         "tooltip": "Browser driver path to use.",
+        "group": "Setup"
+    },
+    "BrowserDriverExecutableName": {
+        "type": "textbox",
+        "value": "MicrosoftWebDriver.exe",
+        "label": "Browser Driver Executable Name",
+        "tooltip": "Browser driver executable name in driver path.",
         "group": "Setup"
     },
     "ElementIdOfNewSongTextField": {
@@ -255,6 +269,13 @@
         "value": false,
         "label": "Allow Logging To File",
         "tooltip": "Allow script to log to file in script folder.",
+        "group": "Debugging"
+    },
+    "EnableWebDriverDebug": {
+        "type": "checkbox",
+        "value": false,
+        "label": "Enable Web Driver Debug",
+        "tooltip": "Enable debug mode for web driver.",
         "group": "Debugging"
     }
 }

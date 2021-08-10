@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using Acolyte.Common;
 using Scripts.SongRequest.CSharp.Core.Models;
 using Scripts.SongRequest.CSharp.Logging;
-using Scripts.SongRequest.CSharp.Web;
+using Scripts.SongRequest.CSharp.Models.Requests;
+using Scripts.SongRequest.CSharp.Web.Scrapper;
 using Scripts.SongRequest.TestConsoleApp.Logging;
 using Scripts.SongRequest.TestConsoleApp.Mocks;
 
@@ -17,6 +18,7 @@ namespace Scripts.SongRequest.TestConsoleApp
         {
             try
             {
+                ConsoleHelper.SetupUnicodeEncoding();
                 Console.WriteLine("Console application started.");
 
                 TestMethod(args);
@@ -51,11 +53,25 @@ namespace Scripts.SongRequest.TestConsoleApp
             var httpLink = new HttpLink(args[0]);
 
             var settings = TestSettings.MockSettings(httpLink);
-            using var scrapper = HttpWebScrapperFactory.Create(
-                settings, Logger, TestConfig.BrowserDriverPath, TestConfig.SelectedBrowserDriver
-            );
+            using var scrapper = HttpWebScrapperFactory.Create(settings, Logger);
 
             scrapper.OpenUrl();
+
+            var userId = new UserId("TestUserId");
+            const int number = 1;
+
+            var request = SongRequestModel.CreateNew(userId, TestConfig.SongLink, number);
+            request = request.Approve();
+            var result = scrapper.Process(request);
+
+            if (result.IsSuccess)
+            {
+                Logger.Info("Song request processed successfully!");
+            }
+            else
+            {
+                Logger.Error($"Failed to process song request: {result.Description}");
+            }
         }
     }
 }
