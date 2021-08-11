@@ -11,6 +11,7 @@ Documentation for script version: `1.0.3`
 - Remove Streamlabs points freely from user (Streamlabs allow to do it only for editor by default).
 - Set Streamlabs points freely for user (any valid amount).
 - Setup taxes on transfer.
+- Setup command cooldowns.
 
 ## How to install script
 
@@ -57,15 +58,15 @@ So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
 - Description: "Command that (typically) moderators will use when they want to add points
 - Usage: !add TargetUserNameOrId Amount
 - Permissions: Moderator
-- Can have optional text: No
+- Can have optional text: Yes
 - Arguments:
   - TargetUserNameOrId: string — the target user name or ID to transfer points (if name will be specified, script sends additional request to find target user name), `@` symbol at the beginning is allowed
   - Amount: integer — points amount to transfer (should be greater than 0)
 - Samples:
   - `!add Vasar 42`
-  - `!add vasar 42`
+  - `!add vasar 42 SomeText`
   - `!add @Vasar 42`
-  - `!add Mark 123`
+  - `!add Mark 123 Kappa`
   - `!add John all`
 
 ### !remove
@@ -74,7 +75,7 @@ So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
 - Description: Command that (typically) moderators will use when they want to remove points
 - Usage: !remove TargetUserNameOrId Amount
 - Permissions: Moderator
-- Can have optional text: No
+- Can have optional text: Yes
 - Arguments:
   - TargetUserNameOrId: string — the target user name or ID to transfer points (if name will be specified, script sends additional request to find target user name), `@` symbol at the beginning is allowed
   - Amount: integer — points amount to transfer (should be greater than 0)
@@ -83,9 +84,9 @@ So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
     - `all` — will be replaced by target user current amount of points.
 - Samples:
   - `!remove Vasar 42`
-  - `!remove vasar 42`
+  - `!remove vasar 42 SomeText`
   - `!remove @Vasar 42`
-  - `!remove Mark 123`
+  - `!remove Mark 123 Kappa`
   - `!remove John all`
 
 ### !set
@@ -94,7 +95,7 @@ So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
 - Description: "Command that (typically) moderators will use when they want to set points value to certain amount
 - Usage: !set TargetUserNameOrId Amount
 - Permissions: Moderator
-- Can have optional text: No
+- Can have optional text: Yes
 - Arguments:
   - TargetUserNameOrId: string — the target user name or ID to transfer points (if name will be specified, script sends additional request to find target user name), `@` symbol at the beginning is allowed
   - Amount: integer — points amount to transfer (should be greater than 0)

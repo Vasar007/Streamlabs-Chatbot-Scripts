@@ -301,7 +301,8 @@ def TryProcessCommand(command, data_wrapper):
             required_permission,
             permission_info
         )
-        is_valid_call = param_count == 3
+        # Add command call can have optional text.
+        is_valid_call = param_count >= 3
 
         usage_example = (
             config.CommandTransferUsage
@@ -323,7 +324,8 @@ def TryProcessCommand(command, data_wrapper):
             required_permission,
             permission_info
         )
-        is_valid_call = param_count == 3
+        # Remove command call can have optional text.
+        is_valid_call = param_count >= 3
 
         usage_example = (
             config.CommandTransferUsage
@@ -345,7 +347,8 @@ def TryProcessCommand(command, data_wrapper):
             required_permission,
             permission_info
         )
-        is_valid_call = param_count == 3
+        # Set command call can have optional text.
+        is_valid_call = param_count >= 3
 
         usage_example = (
             config.CommandTransferUsage
@@ -377,10 +380,10 @@ def TryProcessCommand(command, data_wrapper):
 
 def ProcessAnyTransferCurrencyCommand(command, data_wrapper):
     # Input example: !give Vasar 42 <Anything>
-    # Input example: !add Vasar 42
-    # Input example: !remove Vasar 42
-    # Input example: !set Vasar 42
-    # Command <@>TargetUserNameOrId Amount
+    # Input example: !add Vasar 42 <Anything>
+    # Input example: !remove Vasar 42 <Anything>
+    # Input example: !set Vasar 42 <Anything>
+    # Command <@>TargetUserNameOrId Amount <Anything>
     request = transfer_broker.create_request_from(
         data_wrapper, command, ParentHandler, ScriptSettings
     )

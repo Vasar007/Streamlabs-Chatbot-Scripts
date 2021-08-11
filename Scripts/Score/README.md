@@ -12,6 +12,7 @@ Documentation for script version: `1.0.2`
 - Retrieve current score.
 - Delete current score.
 - Append optional score description.
+- Setup command cooldowns.
 
 ## How to install script
 
