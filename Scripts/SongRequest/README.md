@@ -1,12 +1,12 @@
-# SongRequest Script
+# Song Request Script
 
-Basic boilerplate script to play with.
+Custom song request script.
 
 Documentation for script version: `1.0.0`
 
 ## Available features
 
-- Send responses on trigger message.
+- TODO
 
 ## How to install script
 
@@ -27,10 +27,26 @@ So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
 
 **Note:** documentation contains default command names and permissions but you can change script settings.
 
-### !ping
+### !score
 
-- Label: Command
-- Description: The command that will be responded to
-- Usage: !ping
+- Label: Get Command
+- Description: The command to show current score
+- Usage: !score
 - Permissions: Everyone
 - Can have optional text: Yes
+
+### !create_score
+
+- Label: Create Command
+- Description: The command to create new score
+- Usage: !create_score Player1 Player2
+- Permissions: Moderator or higher
+- Can have optional text: No (note: all text after required parameters will be converted to description value)
+- Arguments:
+  - Player1: string — the first player name
+  - Player1: string — the second player name
+  - Description: string — optional score description
+- Samples:
+  - `!create_score Foo Bar`
+  - `!create_score USeR BeasT`
+  - `!create_score USeR BeasT The rest of params will be description`

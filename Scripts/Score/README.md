@@ -2,7 +2,7 @@
 
 Score script adds score counter between two opponents.
 
-Documentation for script version: `1.0.1`
+Documentation for script version: `1.0.2`
 
 ## Available features
 
@@ -87,4 +87,4 @@ So, if bot doesn't send response, check "Logs" or "Errors" tab in SL Chatbot UI.
 - Description: The command to delete current score
 - Usage: !delete_score
 - Permissions: Moderator or higher
-- Can have optional text: nNoo
+- Can have optional text: No

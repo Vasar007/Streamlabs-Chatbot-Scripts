@@ -70,7 +70,7 @@ ClassNameOfErrorNotificationIcon = "brighttheme-icon-error"
 ClassNameOfNotificationDescription = "ui-pnotify-text"
 
 # [Required] Script Information.
-ScriptName = "SongRequest Script"
+ScriptName = "Song Request Script"
 Website = "https://github.com/Vasar007/Streamlabs-Chatbot-Scripts"
 Description = "Custom song request script."
 Creator = "Vasar007"

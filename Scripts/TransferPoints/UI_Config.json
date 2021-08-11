@@ -5,7 +5,7 @@
         "type": "textbox",
         "value": "!give",
         "label": "Give Command",
-        "tooltip": "Command that users will use when they want to transfer currency.",
+        "tooltip": "Command that users will use when they want to transfer points.",
         "group": "Setup"
     },
     "CommandGiveCooldown": {
@@ -22,7 +22,7 @@
         "type": "textbox",
         "value": "!add",
         "label": "Add Command",
-        "tooltip": "Command that (typically) moderators will use when they want to add currency.",
+        "tooltip": "Command that (typically) moderators will use when they want to add points.",
         "group": "Setup"
     },
     "CommandAddCooldown": {
@@ -39,7 +39,7 @@
         "type": "textbox",
         "value": "!remove",
         "label": "Remove Command",
-        "tooltip": "Command that (typically) moderators will use when they want to remove currency.",
+        "tooltip": "Command that (typically) moderators will use when they want to remove points.",
         "group": "Setup"
     },
     "CommandRemoveCooldown": {
@@ -56,7 +56,7 @@
         "type": "textbox",
         "value": "!set",
         "label": "Set Command",
-        "tooltip": "Command that (typically) moderators will use when they want to set currency value to certain amount.",
+        "tooltip": "Command that (typically) moderators will use when they want to set points value to certain amount.",
         "group": "Setup"
     },
     "CommandSetCooldown": {
@@ -90,7 +90,7 @@
         "type": "textbox",
         "value": "all",
         "label": "Parameter All",
-        "tooltip": "Command parameter that allow to use all currency amount to transfer.",
+        "tooltip": "Command parameter that allow to use all points amount to transfer.",
         "group": "Setup"
     },
     "GiveTaxPercent": {
@@ -100,21 +100,21 @@
         "max": 100,
         "ticks": 1,
         "label": "Tax Percent For Give Command",
-        "tooltip": "Tax percent that will use take into account when users transfer currency.",
+        "tooltip": "Tax percent that will use take into account when users transfer points.",
         "group": "Setup"
     },
     "MinGiveAmount": {
         "type": "numberbox",
         "value": 10,
         "label": "Minimum Give Command Amount",
-        "tooltip": "Minimum amount of currency to transfer.",
+        "tooltip": "Minimum amount of points to transfer.",
         "group": "Setup"
     },
     "MaxGiveAmount": {
         "type": "numberbox",
         "value": 100000,
         "label": "Maximum Give Command Amount",
-        "tooltip": "Maximum amount of currency to transfer.",
+        "tooltip": "Maximum amount of points to transfer.",
         "group": "Setup"
     },
     "AllowToTransferToYourself": {
@@ -130,7 +130,7 @@
         "value": "everyone",
         "items": ["everyone", "subscriber", "user_specific", "moderator", "editor"],
         "label": "Permission On Give And Get Tax Commands",
-        "tooltip": "Who is able to use the commands to give currency and get tax percent.",
+        "tooltip": "Who is able to use the commands to give points and get tax percent.",
         "group": "Permission"
     },
     "PermissionInfoOnGiveGetTax": {
@@ -145,7 +145,7 @@
         "value": "moderator",
         "items": ["everyone", "subscriber", "user_specific", "moderator", "editor"],
         "label": "Permission On Add, Remove and Set Commands",
-        "tooltip": "Who is able to use the commands to add, remove or set currency.",
+        "tooltip": "Who is able to use the commands to add, remove or set points.",
         "group": "Permission"
     },
     "PermissionInfoOnAddRemoveSet": {
@@ -188,42 +188,42 @@
         "type": "textbox",
         "value": "{0} has successfully transferred {1} {2} to {3} (tax: {4}).",
         "label": "Transfer Success Message",
-        "tooltip": "Chat message will be sent on successful transfer of currency. 0 — user, 1 — amount, 2 — currency name, 3 — target, 4 — tax amount.",
+        "tooltip": "Chat message will be sent on successful transfer of points. 0 — user, 1 — amount, 2 — points name, 3 — target, 4 — tax amount.",
         "group": "Chat Messages"
     },
     "SuccessfulAddingMessage": {
         "type": "textbox",
         "value": "{0} has successfully added {1} {2} to {3}.",
-        "label": "Adding Currency Success Message",
-        "tooltip": "Chat message will be sent on successful adding of currency. 0 — user, 1 — amount, 2 — currency name, 3 — target.",
+        "label": "Adding Points Success Message",
+        "tooltip": "Chat message will be sent on successful adding of points. 0 — user, 1 — amount, 2 — points name, 3 — target.",
         "group": "Chat Messages"
     },
     "SuccessfulRemovingMessage": {
         "type": "textbox",
         "value": "{0} has successfully removed {1} {2} from {3}.",
-        "label": "Removing Currency Success Message",
-        "tooltip": "Chat message will be sent on successful removing of currency. 0 — user, 1 — amount, 2 — currency name, 3 — target.",
+        "label": "Removing Points Success Message",
+        "tooltip": "Chat message will be sent on successful removing of points. 0 — user, 1 — amount, 2 — points name, 3 — target.",
         "group": "Chat Messages"
     },
     "SuccessfulSettingMessage": {
         "type": "textbox",
         "value": "{0} has successfully set {1} {2} for {3}.",
-        "label": "Setting Currency Success Message",
-        "tooltip": "Chat message will be sent on successful setting of currency. 0 — user, 1 — amount, 2 — currency name, 3 — target.",
+        "label": "Setting Points Success Message",
+        "tooltip": "Chat message will be sent on successful setting of points. 0 — user, 1 — amount, 2 — points name, 3 — target.",
         "group": "Chat Messages"
     },
     "NotEnoughFundsToTransferMessage": {
         "type": "textbox",
         "value": "Sorry {0}, you don't have enough {1} (you have: {2}, required: {3}).",
         "label": "Not Enough Funds To Transfer Message",
-        "tooltip": "Chat message will be sent if user doesn't have enough funds to transfer. 0 — user, 1 — currency name.",
+        "tooltip": "Chat message will be sent if user doesn't have enough funds to transfer. 0 — user, 1 — points name.",
         "group": "Chat Messages"
     },
     "NotEnoughFundsToRemoveMessage": {
         "type": "textbox",
         "value": "Sorry {0}, {1} doesn't have enough {2} ({1} has: {3}, required: {4}).",
         "label": "Not Enough Funds To Remove Message",
-        "tooltip": "Chat message will be sent if user doesn't have enough funds to remove. 0 — user, 1 — target, 2 — currency name.",
+        "tooltip": "Chat message will be sent if user doesn't have enough funds to remove. 0 — user, 1 — target, 2 — points name.",
         "group": "Chat Messages"
     },
     "InvalidAmountMessage": {
@@ -237,7 +237,7 @@
         "type": "textbox",
         "value": "Sorry {0}, but you didn't say who to send the {1} to.",
         "label": "No Target Message",
-        "tooltip": "Chat message will be sent if user doesn't specify a target. 0 — user, 1 — currency name.",
+        "tooltip": "Chat message will be sent if user doesn't specify a target. 0 — user, 1 — points name.",
         "group": "Chat Messages"
     },
     "InvalidTargetMessage": {
@@ -251,7 +251,7 @@
         "type": "textbox",
         "value": "Sorry {0}, but you cannot transfer {1} to yourself.",
         "label": "Transfer To Yourself Message",
-        "tooltip": "Chat message will be sent if user tries to transfer to yourself. 0 — user, 1 — currency name.",
+        "tooltip": "Chat message will be sent if user tries to transfer to yourself. 0 — user, 1 — points name.",
         "group": "Chat Messages"
     },
     "CurrentTaxPercentMessage": {

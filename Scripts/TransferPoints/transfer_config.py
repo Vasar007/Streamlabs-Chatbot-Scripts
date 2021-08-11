@@ -53,11 +53,11 @@ ExampleAmountValidRange = "[1–∞]"
 ExampleAmountSetRange = "[0–∞]"
 
 # [Required] Script Information.
-ScriptName = "Transfer Currency Script"
+ScriptName = "Transfer Points Script"
 Website = "https://github.com/Vasar007/Streamlabs-Chatbot-Scripts"
-Description = "Allows viewers to transfer Streamlabs currency between eachother."
+Description = "Allows viewers to transfer Streamlabs points between eachother."
 Creator = "Vasar007"
-Version = "1.0.2"
+Version = "1.0.3"
 
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).
