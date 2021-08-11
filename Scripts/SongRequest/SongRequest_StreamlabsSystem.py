@@ -306,7 +306,7 @@ def TryProcessCommand(command, data_wrapper):
         required_permission = ScriptSettings.PermissionOnAddCancelSongRequest
         permission_info = ScriptSettings.PermissionInfoOnAddCancelSongRequest
         func = GetFuncToProcessIfHasPermission(
-            ProcessSongRequestCommand,
+            ProcessAddSongRequestCommand,
             ScriptSettings.CommandAddSongRequestCooldown,
             data_wrapper.user_id,
             required_permission,
@@ -322,12 +322,63 @@ def TryProcessCommand(command, data_wrapper):
             )
         )
 
+    # !sr_approve
+    elif command == ScriptSettings.CommandApproveSongRequest:
+        required_permission = ScriptSettings.PermissionOnApproveRejectGetSongRequest
+        permission_info = ScriptSettings.PermissionInfoOnApproveRejectGetSongRequest
+        func = GetFuncToProcessIfHasPermission(
+            ProcessApproveSongRequestCommand,
+            ScriptSettings.CommandApproveSongRequestCooldown,
+            data_wrapper.user_id,
+            required_permission,
+            permission_info
+        )
+        is_valid_call = 2 <= param_count <= 3
+
+        usage_example = (
+            config.CommandApproveRejectSongRequestUsage
+            .format(
+                ScriptSettings.CommandApproveSongRequest,
+                config.ExampleUserIdOrName,
+                GetRequestNumberRange()
+            )
+        )
+
+    # !sr_reject
+    elif command == ScriptSettings.CommandRejectSongRequest:
+        required_permission = ScriptSettings.PermissionOnApproveRejectGetSongRequest
+        permission_info = ScriptSettings.PermissionInfoOnApproveRejectGetSongRequest
+        func = GetFuncToProcessIfHasPermission(
+            ProcessRejectSongRequestCommand,
+            ScriptSettings.CommandRejectSongRequestCooldown,
+            data_wrapper.user_id,
+            required_permission,
+            permission_info
+        )
+        is_valid_call = 2 <= param_count <= 3
+
+        usage_example = (
+            config.CommandApproveRejectSongRequestUsage
+            .format(
+                ScriptSettings.CommandRejectSongRequest,
+                config.ExampleUserIdOrName,
+                GetRequestNumberRange()
+            )
+        )
+
     return CommandWrapper(
         command, func, required_permission, is_valid_call, usage_example
     )
 
 
-def ProcessSongRequestCommand(command, data_wrapper):
+def GetRequestNumberRange():
+    return (
+        config.ExampleRequestNumberValidRange
+        .format(ScriptSettings.MaxNumberOfSongRequestsToAdd)
+    )
+
+
+def ProcessAddSongRequestCommand(command, data_wrapper):
     # Input example: !sr https://www.youtube.com/watch?v=CAEUnn0HNLM
     # Command <YouTube link>
     song_link = helpers.wrap_http_link(data_wrapper.get_param(1))
@@ -338,13 +389,32 @@ def ProcessSongRequestCommand(command, data_wrapper):
     request = request.Approve()
     result = SrPageScrapper.Process(request)
 
+    message = None
     if result.IsSuccess:
-        ParentHandler.send_stream_message(
+        message = (
             ScriptSettings.OnSuccessSongRequestMessage
             .format(data_wrapper.user_name)
         )
     else:
-        ParentHandler.send_stream_message(
+        message = (
             ScriptSettings.OnFailureSongRequestMessage
             .format(data_wrapper.user_name, result.Description)
         )
+
+    ParentHandler.send_stream_message(message)
+
+
+def ProcessApproveSongRequestCommand(command, data_wrapper):
+    # Input example: !sr_approve Vasar
+    # Input example: !sr_approve Vasar 1
+    # Input example: !sr_approve Vasar 3
+    # Command <@>TargetUserNameOrId <RequestNumber>
+    ...
+
+
+def ProcessRejectSongRequestCommand(command, data_wrapper):
+    # Input example: !sr_reject Vasar
+    # Input example: !sr_reject Vasar 1
+    # Input example: !sr_reject Vasar 3
+    # Command <@>TargetUserNameOrId <RequestNumber>
+    ...

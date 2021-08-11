@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-class TransferUserData(object):
+class SongRequestUserData(object):
 
     def __init__(self, user_id, user_name):
         self.id = user_id
@@ -18,7 +18,7 @@ class TransferUserData(object):
 
     @staticmethod
     def empty():
-        return TransferUserData(None, None)
+        return SongRequestUserData(None, None)
 
     def __bool__(self):
         return not self.is_empty()
@@ -31,7 +31,7 @@ class TransferUserData(object):
 
     def __eq__(self, other):
         return (
-            isinstance(other, TransferUserData) and
+            isinstance(other, SongRequestUserData) and
             self.id == other.id
         )
 

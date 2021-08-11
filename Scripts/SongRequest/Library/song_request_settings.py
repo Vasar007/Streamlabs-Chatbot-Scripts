@@ -85,7 +85,7 @@ class SongRequestSettings(object):
         self.CommandUseWhisperSongRequest = config.CommandUseWhisperSongRequest
         self.CommandUseWhisperSongRequestCooldown = config.CommandUseWhisperSongRequestCooldown
         self.HttpPageLinkToParse = config.HttpPageLinkToParse
-        self.NumberOfSongRequestsToAdd = config.NumberOfSongRequestsToAdd
+        self.MaxNumberOfSongRequestsToAdd = config.MaxNumberOfSongRequestsToAdd
         self.UseWhisperMessagesToControlSongRequests = config.UseWhisperMessagesToControlSongRequests
         self.DispatchTimeoutInSeconds = config.DispatchTimeoutInSeconds
         self.TimeoutToWaitInMilliseconds = config.TimeoutToWaitInMilliseconds

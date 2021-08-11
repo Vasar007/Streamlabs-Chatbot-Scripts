@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 
 import os
 import logging
@@ -47,6 +47,9 @@ Editor = "editor"
 PermissionHierarchy = (Everyone, Subscriber, UserSpecific, Moderator, Editor)
 
 CommandAddSongRequestUsage = "{0} {1}"
+CommandApproveRejectSongRequestUsage = "{0} {1} [{2}]"
+ExampleUserIdOrName = "[UserIdOrName]"
+ExampleRequestNumberValidRange = "[1–{0}]"
 ExampleYouTubeLinkToSong = "[YouTube link]"
 
 EnableWebDriverDebug = False
@@ -89,7 +92,7 @@ CommandUseWhisperSongRequest = "!sr_whisper"
 CommandUseWhisperSongRequestCooldown = 1
 
 HttpPageLinkToParse = ""
-NumberOfSongRequestsToAdd = 3
+MaxNumberOfSongRequestsToAdd = 3
 UseWhisperMessagesToControlSongRequests = True
 DispatchTimeoutInSeconds = 10
 TimeoutToWaitInMilliseconds = 3000

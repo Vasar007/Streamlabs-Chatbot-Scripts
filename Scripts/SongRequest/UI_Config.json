@@ -93,13 +93,13 @@
         "tooltip": "HTTP page of song request site with player. This page will be parsed and used in script logic.",
         "group": "Setup"
     },
-    "NumberOfSongRequestsToAdd": {
+    "MaxNumberOfSongRequestsToAdd": {
         "type": "slider",
         "value": 3,
         "min": 1,
         "max": 10,
         "ticks": 1,
-        "label": "Number of song requests for each user to add",
+        "label": "Maximum Number Of Song Requests",
         "tooltip": "How many song requests users can add per stream.",
         "group": "Setup"
     },

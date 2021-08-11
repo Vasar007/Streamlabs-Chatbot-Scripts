@@ -2,10 +2,10 @@
 
 import logging
 
-from transfer_user_data import TransferUserData as UserData
+from song_request_user_data import SongRequestUserData as UserData
 
 
-class TransferUserSearcher(object):
+class SongRequestUserSearcher(object):
 
     def __init__(self, parent_wrapper, logger):
         self.parent_wrapper = parent_wrapper
@@ -31,7 +31,7 @@ class TransferUserSearcher(object):
 
         # Try to find target user by original parameter.
         result = self._find_by_supposed_id(user_id_or_name_low, viewer_ids)
-        if result is not None:
+        if result:
             return result
 
         # Use another method to retrieve viewers data.
@@ -47,7 +47,7 @@ class TransferUserSearcher(object):
         result = self._find_by_supposed_id(
             user_id_or_name_low, active_users_ids
         )
-        if result is not None:
+        if result:
             return result
 
         self.logger.debug(

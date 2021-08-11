@@ -2,7 +2,7 @@
 
 import transfer_helpers as helpers
 
-from transfer_searcher import TransferUserSearcher as UserSearcher
+from transfer_user_searcher import TransferUserSearcher as UserSearcher
 from transfer_tax_collector import TransferTaxCollector as TaxCollector
 from transfer_user_data import TransferUserData as UserData
 
