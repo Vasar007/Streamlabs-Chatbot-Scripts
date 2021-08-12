@@ -82,8 +82,8 @@ class SongRequestSettings(object):
         self.CommandRejectSongRequestCooldown = config.CommandRejectSongRequestCooldown
         self.CommandGetSongRequest = config.CommandGetSongRequest
         self.CommandGetSongRequestCooldown = config.CommandGetSongRequestCooldown
-        self.CommandUseWhisperSongRequest = config.CommandUseWhisperSongRequest
-        self.CommandUseWhisperSongRequestCooldown = config.CommandUseWhisperSongRequestCooldown
+        self.CommandSettingsSongRequest = config.CommandSettingsSongRequest
+        self.CommandSettingsSongRequestCooldown = config.CommandSettingsSongRequestCooldown
         self.HttpPageLinkToParse = config.HttpPageLinkToParse
         self.MaxNumberOfSongRequestsToAdd = config.MaxNumberOfSongRequestsToAdd
         self.UseWhisperMessagesToControlSongRequests = config.UseWhisperMessagesToControlSongRequests
@@ -113,10 +113,12 @@ class SongRequestSettings(object):
         self.InvalidTargetMessage = config.InvalidTargetMessage
         self.NoSongRequestsMessage = config.NoSongRequestsMessage
         self.NonExistentSongRequestNumberMessage = config.NonExistentSongRequestNumberMessage
+        self.SongRequestDecisionReasonMessage = config.SongRequestDecisionReasonMessage
         self.SongRequestAddedMessage = config.SongRequestAddedMessage
         self.SongRequestToApproveMessage = config.SongRequestToApproveMessage
         self.SongRequestApprovedMessage = config.SongRequestApprovedMessage
         self.OnSuccessSongRequestMessage = config.OnSuccessSongRequestMessage
+        self.OnSuccessSongRequestDefaultResultMessage = config.OnSuccessSongRequestDefaultResultMessage
         self.OnFailureSongRequestDefaultErrorMessage = config.OnFailureSongRequestDefaultErrorMessage
         self.OnFailureSongRequestMessage = config.OnFailureSongRequestMessage
         self.SongRequestRejectedMessage = config.SongRequestRejectedMessage
@@ -178,12 +180,12 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
         return self.settings.CommandGetSongRequestCooldown
 
     @property
-    def CommandUseWhisperSongRequest(self):
-        return self.settings.CommandUseWhisperSongRequest
+    def CommandSettingsSongRequest(self):
+        return self.settings.CommandSettingsSongRequest
 
     @property
-    def CommandUseWhisperSongRequestCooldown(self):
-        return self.settings.CommandUseWhisperSongRequestCooldown
+    def CommandSettingsSongRequestCooldown(self):
+        return self.settings.CommandSettingsSongRequestCooldown
 
     @property
     def HttpPageLinkToParse(self):
@@ -288,6 +290,10 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
         return self.settings.NonExistentSongRequestNumberMessage
 
     @property
+    def SongRequestDecisionReasonMessage(self):
+        return self.settings.SongRequestDecisionReasonMessage
+
+    @property
     def SongRequestAddedMessage(self):
         return self.settings.SongRequestAddedMessage
 
@@ -302,6 +308,10 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
     @property
     def OnSuccessSongRequestMessage(self):
         return self.settings.OnSuccessSongRequestMessage
+
+    @property
+    def OnSuccessSongRequestDefaultResultMessage(self):
+        return self.settings.OnSuccessSongRequestDefaultResultMessage
 
     @property
     def OnFailureSongRequestMessage(self):

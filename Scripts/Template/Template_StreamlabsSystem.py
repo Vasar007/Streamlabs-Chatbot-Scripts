@@ -80,7 +80,7 @@ def Init():
     global ScriptSettings
     SettingsFile = os.path.join(ScriptDir, SettingsDirName, SettingsFileName)
     ScriptSettings = TemplateSettings(SettingsFile)
-    ScriptSettings.Response = "Overwritten pong! ^_^"
+    ScriptSettings.ResponseMessage = "Overwritten pong! ^_^"
 
     helpers.init_logging(ParentHandler, ScriptSettings)
     Logger().info("Script successfully initialized.")
@@ -288,9 +288,9 @@ def TryProcessCommand(command, data_wrapper):
     )
 
 
-def ProcessPingCommand(data_wrapper):
+def ProcessPingCommand(command, data_wrapper):
     # Input example: !ping
     # Command <Anything>
     ParentHandler.broadcast_ws_event("EVENT_MINE", "{'show':false}")
     # Send your message to chat.
-    ParentHandler.send_stream_message(ScriptSettings.Response)
+    ParentHandler.send_stream_message(ScriptSettings.ResponseMessage)

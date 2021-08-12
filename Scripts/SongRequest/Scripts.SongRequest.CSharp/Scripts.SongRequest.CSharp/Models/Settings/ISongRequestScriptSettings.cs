@@ -22,8 +22,8 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         string CommandGetSongRequest { get; }
         int CommandGetSongRequestCooldown { get; }
 
-        string CommandUseWhisperSongRequest { get; }
-        int CommandUseWhisperSongRequestCooldown { get; }
+        string CommandSettingsSongRequest { get; }
+        int CommandSettingsSongRequestCooldown { get; }
 
         HttpLink HttpPageLinkToParse { get; }
         int NumberOfSongRequestsToAdd { get; }
@@ -61,10 +61,12 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         string InvalidTargetMessage { get; }
         string NoSongRequestsMessage { get; }
         string NonExistentSongRequestNumberMessage { get; }
+        string SongRequestDecisionReasonMessage { get; }
         string SongRequestAddedMessage { get; }
         string SongRequestToApproveMessage { get; }
         string SongRequestApprovedMessage { get; }
         string OnSuccessSongRequestMessage { get; }
+        string OnSuccessSongRequestDefaultResultMessage { get; }
         string OnFailureSongRequestMessage { get; }
         string OnFailureSongRequestDefaultErrorMessage { get; }
         string SongRequestRejectedMessage { get; }

@@ -29,7 +29,6 @@ sys.path.append(os.path.join(ScriptDir, LibraryDirName))
 clr.AddReferenceToFileAndPath(os.path.join(AbsoluteScriptDir, ReferencesDirName, "Scripts.SongRequest.CSharp.dll"))
 from Scripts.SongRequest.CSharp.Web.Scrapper import HttpWebScrapperFactory
 from Scripts.SongRequest.CSharp.Models.Requests import SongRequestModel
-from Scripts.SongRequest.CSharp.Models.Requests import SongRequestDecision
 from Scripts.SongRequest.CSharp.Models.Requests import SongRequestNumber
 
 import song_request_config as config
@@ -76,7 +75,7 @@ ScriptSettings = SongRequestSettings()
 Manager = None  # Song request manager instance.
 PageScrapper = None  # Song request page scrapper instance.
 LastDispatchTime = datetime.now()
-
+DidPageOpenned = False
 
 def Init():
     """
@@ -110,8 +109,6 @@ def Init():
     Manager = song_request_manager.create_manager(
         ParentHandler, ScriptSettings, Logger(), PageScrapper
     )
-
-    PageScrapper.OpenUrl()
 
     Logger().info("Script successfully initialized.")
 
@@ -170,6 +167,8 @@ def Tick():
     there is no incoming data).
     """
     global LastDispatchTime
+    global DidPageOpenned
+
     current_time = datetime.now()
     delta = timedelta(seconds=ScriptSettings.DispatchTimeoutInSeconds)
 
@@ -177,6 +176,11 @@ def Tick():
         return
 
     LastDispatchTime = current_time
+
+    if not DidPageOpenned:
+        DidPageOpenned = True
+        PageScrapper.OpenUrl()
+
     Manager.run_dispatch()
 
 
@@ -343,7 +347,7 @@ def TryProcessCommand(command, data_wrapper):
         required_permission = ScriptSettings.PermissionOnApproveRejectGetSongRequest
         permission_info = ScriptSettings.PermissionInfoOnApproveRejectGetSongRequest
         func = GetFuncToProcessIfHasPermission(
-            ProcessApproveSongRequestCommand,
+            ProcessApproveRejectSongRequestCommand,
             ScriptSettings.CommandApproveSongRequestCooldown,
             data_wrapper.user_id,
             required_permission,
@@ -366,7 +370,7 @@ def TryProcessCommand(command, data_wrapper):
         required_permission = ScriptSettings.PermissionOnApproveRejectGetSongRequest
         permission_info = ScriptSettings.PermissionInfoOnApproveRejectGetSongRequest
         func = GetFuncToProcessIfHasPermission(
-            ProcessRejectSongRequestCommand,
+            ProcessApproveRejectSongRequestCommand,
             ScriptSettings.CommandRejectSongRequestCooldown,
             data_wrapper.user_id,
             required_permission,
@@ -407,36 +411,11 @@ def ProcessAddSongRequestCommand(command, data_wrapper):
     Manager.add_request(user_data, song_link)
 
 
-def ProcessApproveSongRequestCommand(command, data_wrapper):
-    # Input example: !sr_approve Vasar <Anything>
-    # Input example: !sr_approve Vasar all <Anything>
-    # Input example: !sr_approve Vasar 3 <Anything>
+def ProcessApproveRejectSongRequestCommand(command, data_wrapper):
+    # Input example: !sr_approve/!sr_reject Vasar <Anything>
+    # Input example: !sr_approve/!sr_reject Vasar all <Anything>
+    # Input example: !sr_approve/!sr_reject Vasar 3 <Anything>
     # Command <@>TargetUserNameOrId <RequestNumber> <Anything>
-    user_data = helpers.wrap_user_data(
-        data_wrapper.user_id, data_wrapper.user_name
+    song_request_manager.approve_or_reject_request(
+        command, data_wrapper, ScriptSettings, Manager
     )
-
-    raw_target_user_id_or_name = data_wrapper.get_param(1)
-    target_user_id_or_name = helpers.wrap_user_id_or_name(
-        raw_target_user_id_or_name
-    )
-
-    request_number = SongRequestNumber.All
-    if data_wrapper.get_param_count() > 1:
-        raw_request_number = data_wrapper.get_param(2)
-        request_number = SongRequestNumber.TryParse(
-            raw_request_number, SongRequestNumber.All
-        )
-
-    request_decision = SongRequestDecision(
-        user_data, target_user_id_or_name, request_number
-    )
-    Manager.approve_request(request_decision)
-
-
-def ProcessRejectSongRequestCommand(command, data_wrapper):
-    # Input example: !sr_reject Vasar <Reason>
-    # Input example: !sr_reject Vasar all <Reason>
-    # Input example: !sr_reject Vasar 3 <Reason>
-    # Command <@>TargetUserNameOrId <RequestNumber> <Reason>
-    return

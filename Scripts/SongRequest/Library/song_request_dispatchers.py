@@ -2,6 +2,8 @@
 
 from abc import ABCMeta, abstractmethod
 
+import song_request_config as config
+
 from Scripts.SongRequest.CSharp.Models.Requests import SongRequestState
 from Scripts.SongRequest.CSharp.Models.Requests import SongRequestResult
 
@@ -67,7 +69,7 @@ class PendingSongRequestDispatcher(BaseSongRequestDispatcher):
             error = str(ex)
             self.logger.exception(
                 "Failed to process request {0}: {1}"
-                .format(request.Id, error)
+                .format(request.RequestId, error)
             )
             result = SongRequestResult.Fail(request, error)
 
@@ -79,13 +81,14 @@ class PendingSongRequestDispatcher(BaseSongRequestDispatcher):
         user_name = result.SongRequest.UserData.Name.Value
         description = result.Description
         song_request_with_number = format_song_request(
-            result.SongLink.Value, request.RequestNumber.Value
+            result.SongRequest.SongLink.Value,
+            result.SongRequest.RequestNumber.Value
         )
 
         message = None
         if result.IsSuccess:
-            if description:
-                description = " {0}".format(result.Description)
+            if not description:
+                description = self.settings.OnSuccessSongRequestDefaultResultMessage
 
             message = (
                 self.settings.OnSuccessSongRequestMessage
