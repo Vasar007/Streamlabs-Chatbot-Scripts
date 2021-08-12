@@ -125,5 +125,5 @@ class DeniedSongRequestDispatcher(BaseSongRequestDispatcher):
             storage.remove_request(request)
             self.logger.info(
                 "Denied request {0} was removed from storage."
-                .format(request.Id)
+                .format(request.RequestId)
             )

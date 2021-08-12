@@ -72,6 +72,8 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         string SongRequestRejectedMessage { get; }
         string SongRequestDefaultRejectReason { get; }
         string SongRequestCancelMessage { get; }
+        string GotUserSongRequestsMessage { get; }
+        string NoUserSongRequestsMessage { get; }
 
         #endregion
 

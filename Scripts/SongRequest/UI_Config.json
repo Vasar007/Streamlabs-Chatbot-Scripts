@@ -363,6 +363,20 @@
         "tooltip": "The message that will be sent to chat when user's song request was cancelled. 0 — user name, 1 — song request.",
         "group": "Chat Messages"
     },
+    "GotUserSongRequestsMessage": {
+        "type": "textbox",
+        "value": "{0} has {1} song request(-s): {2}",
+        "label": "On Get User Song Requests Message",
+        "tooltip": "The message that will be sent to chat when user gets song requests list of someone. 0 — target user name, 1 — number of song requests, 2 — song requests list.",
+        "group": "Chat Messages"
+    },
+    "NoUserSongRequestsMessage": {
+        "type": "textbox",
+        "value": "{0} has no song requests.",
+        "label": "On Get No User Song Requests Message",
+        "tooltip": "The message that will be sent to chat when user tries to get song requests list of someone who doesn't have any requests. 0 — target user name.",
+        "group": "Chat Messages"
+    },
 
     "LoggingLevel": {
         "type": "dropdown",

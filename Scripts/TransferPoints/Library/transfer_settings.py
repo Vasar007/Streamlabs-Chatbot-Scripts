@@ -17,15 +17,14 @@ class TransferSettings(object):
         """
         Load in saved settings file if available or else set default values.
         """
-        self.encoding = encoding
         if settingsfile is None:
             self._set_default()
         else:
             try:
                 if os.path.isfile(settingsfile):
-                    with codecs.open(settingsfile, encoding=self.encoding,
+                    with codecs.open(settingsfile, encoding=encoding,
                                      mode="r") as f:
-                        self.__dict__ = json.load(f, encoding=self.encoding)
+                        self.__dict__ = json.load(f, encoding=encoding)
                 else:
                     self._set_default()
             except Exception as ex:
@@ -34,27 +33,27 @@ class TransferSettings(object):
                 )
                 self._set_default()
 
-    def reload(self, jsondata):
+    def reload(self, jsondata, encoding="utf-8"):
         """
         Reload settings from Chatbot user interface by given json data.
         """
-        self.__dict__ = json.loads(jsondata, encoding=self.encoding)
+        self.__dict__ = json.loads(jsondata, encoding=encoding)
 
         TransferSettings._reload_event.emit(
             config.SettingsReloadEventName, self
         )
 
-    def save(self, settingsfile):
+    def save(self, settingsfile, encoding="utf-8"):
         """
         Save settings contained within to .json and .js settings files.
         """
         helpers.save_json(self.__dict__, settingsfile)
 
         with codecs.open(settingsfile.replace("json", "js"),
-                         encoding=self.encoding, mode="w+") as f:
+                         encoding=encoding, mode="w+") as f:
             content = (
                 "var settings = {0};".format(
-                    json.dumps(self.__dict__, encoding=self.encoding)
+                    json.dumps(self.__dict__, encoding=encoding)
                 )
             )
             f.write(content)

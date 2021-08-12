@@ -335,7 +335,7 @@ def TryProcessCommand(command, data_wrapper):
         is_valid_call = param_count >= 2
 
         usage_example = (
-            config.CommandAddSongRequestUsage
+            config.CommandAddGetSongRequestUsage
             .format(
                 ScriptSettings.CommandAddSongRequest,
                 config.ExampleYouTubeLinkToSong
@@ -388,6 +388,28 @@ def TryProcessCommand(command, data_wrapper):
             )
         )
 
+    # !sr_get
+    elif command == ScriptSettings.CommandGetSongRequest:
+        required_permission = ScriptSettings.PermissionOnApproveRejectGetSongRequest
+        permission_info = ScriptSettings.PermissionInfoOnApproveRejectGetSongRequest
+        func = GetFuncToProcessIfHasPermission(
+            ProcessGetSongRequestsCommand,
+            ScriptSettings.CommandGetSongRequestCooldown,
+            data_wrapper.user_id,
+            required_permission,
+            permission_info
+        )
+        # Get command call can have optional text.
+        is_valid_call = param_count >= 2
+
+        usage_example = (
+            config.CommandAddGetSongRequestUsage
+            .format(
+                ScriptSettings.CommandGetSongRequest,
+                config.ExampleUserIdOrName
+            )
+        )
+
     return CommandWrapper(
         command, func, required_permission, is_valid_call, usage_example
     )
@@ -418,4 +440,12 @@ def ProcessApproveRejectSongRequestCommand(command, data_wrapper):
     # Command <@>TargetUserNameOrId <RequestNumber> <Anything>
     song_request_manager.approve_or_reject_request(
         command, data_wrapper, ScriptSettings, Manager
+    )
+
+
+def ProcessGetSongRequestsCommand(command, data_wrapper):
+    # Input example: !st_get Vasar <Anything>
+    # Command <@>TargetUserNameOrId <Anything>
+    song_request_manager.get_all_user_requests(
+        data_wrapper, ParentHandler, ScriptSettings, Logger(), Manager
     )
