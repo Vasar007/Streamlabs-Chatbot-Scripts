@@ -142,3 +142,4 @@ cython_debug/
 obj
 bin
 launchSettings.json
+.idea
