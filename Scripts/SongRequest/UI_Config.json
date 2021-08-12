@@ -280,7 +280,7 @@
         "type": "textbox",
         "value": "There is a new song request {0} by {1}. Please, approve or reject it.",
         "label": "Song Request To Approve Message",
-        "tooltip": "The message that will be sent to chat when user's song request was approved. 0— song request, 2 — user name who added song request.",
+        "tooltip": "The message that will be sent to chat when user's song request was approved. 0 — song request, 1 — user name who added song request.",
         "group": "Chat Messages"
     },
     "SongRequestApprovedMessage": {
@@ -292,16 +292,16 @@
     },
     "OnSuccessSongRequestMessage": {
         "type": "textbox",
-        "value": "{0}, your song request approved and added!{1}",
+        "value": "{0}, your song request {1} was added to playlist!{2}",
         "label": "On Success Song Request Message",
-        "tooltip": "The message that will be sent to chat when user's song request was added to playlist. 0 — user name, 1 — optional description.",
+        "tooltip": "The message that will be sent to chat when user's song request was added to playlist. 0 — user name, 1 — song request, 2 — optional description.",
         "group": "Chat Messages"
     },
     "OnFailureSongRequestMessage": {
         "type": "textbox",
-        "value": "{0}, your song request finihsed with error: {1}",
+        "value": "{0}, your song request {1} cannot be added. Error: {2}.",
         "label": "On Failure Song Request Message",
-        "tooltip": "The message that will be sent to chat when user's song request cannot be added to playlist. 0 — user name, 1 — error description.",
+        "tooltip": "The message that will be sent to chat when user's song request cannot be added to playlist. 0 — user name, 1 — song request, 2 — error description.",
         "group": "Chat Messages"
     },
     "OnFailureSongRequestDefaultErrorMessage": {

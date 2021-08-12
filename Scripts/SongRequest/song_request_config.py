@@ -46,6 +46,7 @@ Editor = "editor"
 
 PermissionHierarchy = (Everyone, Subscriber, UserSpecific, Moderator, Editor)
 
+SongRequestNumberAndLinkFormat = "#{0} ({1})"
 CommandAddSongRequestUsage = "{0} {1}"
 CommandApproveRejectSongRequestUsage = "{0} {1} [{2}]"
 ExampleUserIdOrName = "[UserIdOrName]"
@@ -114,12 +115,13 @@ MaxLimitOfSongRequestsIsExceededMessage = "Sorry {0}, max allowed limit of song 
 InvalidTargetMessage = "Sorry {0}, but {1} doesn't exist."
 NoSongRequestsMessage = "{0}, user {1} doesn't have any active song requests."
 NonExistentSongRequestNumberMessage = "{0}, non-existent request number {1} for target user {2}."
+SongRequestDecisionReasonMessage = " Reason: {0}."
 SongRequestAddedMessage = "{0}, your song request {1} was added and will be processing later."
 SongRequestToApproveMessage = "There is a new song request {0} by {1}. Please, approve or reject it."
 SongRequestApprovedMessage = "{0}, your song request {1} was approved by {2} and will be added to playlist later."
-OnSuccessSongRequestMessage = "{0}, your song request was added to playlist!{1}"
+OnSuccessSongRequestMessage = "{0}, your song request {1} was added to playlist!{2}"
 OnFailureSongRequestMessage = "{0}, your song request {1} cannot be added. Error: {2}."
 OnFailureSongRequestDefaultErrorMessage = "Unknown error occurred"
-SongRequestRejectedMessage = "{0}, your song request {1} was rejected by {2}. Reason: {3}."
+SongRequestRejectedMessage = "{0}, your song request {1} was rejected by {2}."
 SongRequestDefaultRejectReason = "song didn't pass moderation"
 SongRequestCancelMessage = "{0}, your song request {1} was cancelled."

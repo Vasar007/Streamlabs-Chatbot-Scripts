@@ -206,18 +206,19 @@ def HandleNoPermission(required_permission, command):
     ParentHandler.send_stream_message(message)
 
 
-def WrapCommand(process_command):
+def WrapCommand(process_command, command_cooldown):
     @wraps(process_command)
-    def ProcessCommandWrapper(command, data_wrapper, manager):
+    def ProcessCommandWrapper(command, data_wrapper):
         try:
+            is_on_cooldown = ParentHandler.is_on_cooldown(ScriptName, command)
             is_on_user_cooldown = ParentHandler.is_on_user_cooldown(
                 ScriptName, command, data_wrapper.user_id
             )
 
             # Check cooldown.
-            if is_on_user_cooldown:
-                cooldown = ParentHandler.get_user_cooldown_duration(
-                    ScriptName, command, data_wrapper.user_id
+            if is_on_cooldown:
+                cooldown = ParentHandler.get_cooldown_duration(
+                    ScriptName, command
                 )
 
                 # If command is on cooldown, send message.
@@ -226,9 +227,26 @@ def WrapCommand(process_command):
                     .format(command, cooldown)
                 )
                 ParentHandler.send_stream_message(message)
+            elif is_on_user_cooldown:
+                cooldown = ParentHandler.get_user_cooldown_duration(
+                    ScriptName, command, data_wrapper.user_id
+                )
+
+                # If command is on cooldown for user, send message.
+                message = (
+                    ScriptSettings.TimeRemainingMessage
+                    .format(command, cooldown)
+                )
+                ParentHandler.send_stream_message(message)
             else:
                 # If not, process command.
-                process_command(command, data_wrapper, manager)
+                process_command(command, data_wrapper)
+                # Put the command on cooldown.
+                ParentHandler.add_cooldown(
+                    ScriptName,
+                    command,
+                    command_cooldown
+                )
         except Exception as ex:
             Logger().exception(
                 "Failed to process command {0}: {1}".format(command, str(ex))
@@ -237,12 +255,12 @@ def WrapCommand(process_command):
     return ProcessCommandWrapper
 
 
-def GetFuncToProcessIfHasPermission(process_command, cooldown, user_id,
+def GetFuncToProcessIfHasPermission(process_command, command_cooldown, user_id,
                                     required_permission, permission_info):
     has_permission = ParentHandler.has_permission(
         user_id, required_permission, permission_info
     )
-    return WrapCommand(process_command, cooldown) if has_permission else None
+    return WrapCommand(process_command, command_cooldown) if has_permission else None
 
 
 def TryProcessCommand(command, data_wrapper):
@@ -257,7 +275,7 @@ def TryProcessCommand(command, data_wrapper):
         permission_info = ScriptSettings.PermissionInfoOnPing
         func = GetFuncToProcessIfHasPermission(
             ProcessPingCommand,
-            ScriptSettings.CommandPingCoolown,
+            ScriptSettings.CommandPingCooldown,
             data_wrapper.user_id,
             required_permission,
             permission_info

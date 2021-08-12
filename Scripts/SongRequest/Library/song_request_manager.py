@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import song_request_config as config
+
 from song_request_storage import SongRequestStorage as Storage
 from song_request_user_searcher import SongRequestUserSearcher as UserSearcher
 
+from song_request_dispatchers import format_song_request
 from song_request_dispatchers import PendingSongRequestDispatcher
 from song_request_dispatchers import DeniedSongRequestDispatcher
 
@@ -32,6 +35,8 @@ class SongRequestManager(object):
             .format(user_data, song_link)
         )
 
+        # Here we should have only processed or pending requests.
+        # Nor rejected neither cancelled requets should be here.
         user_requests = self.storage.get_user_requests(user_data.Id)
         number_of_requests = len(user_requests)
         if number_of_requests >= self.settings.MaxNumberOfSongRequestsToAdd:
@@ -42,8 +47,11 @@ class SongRequestManager(object):
         request = SongRequestModel.CreateNew(user_data, song_link, number)
         self.storage.add_request(request)
 
-        self._handle_request_added(user_data.Name.Value, song_link.Value)
-        self._handle_request_to_approve(user_data.Name.Value, song_link.Value)
+        song_request_with_number = format_song_request(
+            song_link.Value, number.Value
+        )
+        self._handle_request_added(user_data.Name.Value, song_request_with_number)
+        self._handle_request_to_approve(user_data.Name.Value, song_request_with_number)
         return True
 
     def cancel_request(self):
@@ -55,6 +63,72 @@ class SongRequestManager(object):
             .format(request_decision)
         )
 
+        target_user_requests_to_use = self._get_target_requests_to_use(
+            request_decision
+        )
+
+        for i in range(len(target_user_requests_to_use)):
+            request = target_user_requests_to_use[i]
+            if request.IsWaitingForApproval:
+                target_user_requests_to_use[i] = request.Approve()
+
+                song_request_with_number = format_song_request(
+                    request.SongLink.Value, request.RequestNumber.Value
+                )
+                self._handle_request_approved(
+                    request_decision.UserData.Name.Value,
+                    request_decision.TargetUserIdOrName.Value,
+                    song_request_with_number,
+                    request_decision.reason
+                )
+
+        self.storage.update_states(target_user_requests_to_use)
+        return True
+
+    def reject_request(self, request_decision):
+        self.logger.debug(
+            "Rejecting request with decision [{0}]."
+            .format(request_decision)
+        )
+
+        target_user_requests_to_use = self._get_target_requests_to_use(
+            request_decision
+        )
+
+        for i in range(len(target_user_requests_to_use)):
+            request = target_user_requests_to_use[i]
+            if request.IsWaitingForApproval:
+                target_user_requests_to_use[i] = request.Reject()
+
+                song_request_with_number = format_song_request(
+                    request.SongLink.Value, request.RequestNumber.Value
+                )
+                self._handle_request_rejected(
+                    request_decision.UserData.Name.Value,
+                    request_decision.TargetUserIdOrName.Value,
+                    song_request_with_number,
+                    request_decision.reason
+                )
+
+        self.storage.update_states(target_user_requests_to_use)
+        return True
+
+    def _prepare_target_data(self, request_decision):
+        # Retrive data about user.
+        target_data = self.searcher.find_user_data(
+            request_decision.TargetUserIdOrName.Value
+        )
+        if not target_data.HasValue:
+            self._handle_invalid_target(
+                request_decision.UserData.Name.Value,
+                request_decision.TargetUserIdOrName.Value
+            )
+            # "target_data" == UserData.Empty here.
+            return target_data
+
+        return target_data
+
+    def _get_target_requests_to_use(self, request_decision):
         target_data = self._prepare_target_data(request_decision)
         if not target_data.HasValue:
             self.logger.debug(
@@ -84,39 +158,7 @@ class SongRequestManager(object):
             index_to_use = request_decision.RequestNumber.Value - 1
             target_user_requests_to_use = [target_user_requests[index_to_use]]
 
-        for i in range(len(target_user_requests_to_use)):
-            request = target_user_requests_to_use[i]
-            if request.IsWaitingForApproval:
-                target_user_requests_to_use[i] = request.Approve()
-                self._handle_request_approved(
-                    request_decision.UserData.Name.Value,
-                    request_decision.TargetUserIdOrName.Value,
-                    request.SongLink.Value
-                )
-
-        self.storage.update_states(target_user_requests_to_use)
-        return True
-
-    def reject_request(self):
-        return
-
-    def request_processed(self, is_success):
-        return
-
-    def _prepare_target_data(self, request_decision):
-        # Retrive data about user.
-        target_data = self.searcher.find_user_data(
-            request_decision.TargetUserIdOrName.Value
-        )
-        if not target_data.HasValue:
-            self._handle_invalid_target(
-                request_decision.UserData.Name.Value,
-                request_decision.TargetUserIdOrName.Value
-            )
-            # "target_data" == UserData.Empty here.
-            return target_data
-
-        return target_data
+        return target_user_requests_to_use
 
     def _handle_limit_exceeded(self, user_name):
         message = (
@@ -171,6 +213,15 @@ class SongRequestManager(object):
         message = (
             self.settings.SongRequestApprovedMessage
             .format(target, song_request, user_name)
+        )
+        self.logger.info(message)
+        self.parent_wrapper.send_stream_message(message)
+
+    def _handle_request_rejected(self, user_name, target, song_request,
+                                 reason):
+        message = (
+            self.settings.SongRequestRejectedMessage
+            .format(target, song_request, user_name, reason)
         )
         self.logger.info(message)
         self.parent_wrapper.send_stream_message(message)

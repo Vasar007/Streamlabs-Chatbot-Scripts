@@ -6,6 +6,12 @@ from Scripts.SongRequest.CSharp.Models.Requests import SongRequestState
 from Scripts.SongRequest.CSharp.Models.Requests import SongRequestResult
 
 
+def format_song_request(song_link, request_number):
+    return config.SongRequestNumberAndLinkFormat.format(
+        request_number, song_link
+    )
+
+
 class BaseSongRequestDispatcher(object):
 
     __metaclass__ = ABCMeta
@@ -70,16 +76,20 @@ class PendingSongRequestDispatcher(BaseSongRequestDispatcher):
     def _handle_result(self, result):
         self.logger.info("Processing request result [{0}].".format(result))
 
-        message = None
         user_name = result.SongRequest.UserData.Name.Value
         description = result.Description
+        song_request_with_number = format_song_request(
+            result.SongLink.Value, request.RequestNumber.Value
+        )
+
+        message = None
         if result.IsSuccess:
             if description:
                 description = " {0}".format(result.Description)
 
             message = (
                 self.settings.OnSuccessSongRequestMessage
-                .format(user_name, description)
+                .format(user_name, song_request_with_number, description)
             )
         else:
             if not description:
@@ -87,7 +97,7 @@ class PendingSongRequestDispatcher(BaseSongRequestDispatcher):
 
             message = (
                 self.settings.OnFailureSongRequestMessage
-                .format(user_name, description)
+                .format(user_name, song_request_with_number, description)
             )
 
         self.logger.info(message)
