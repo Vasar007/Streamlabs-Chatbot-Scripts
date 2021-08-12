@@ -95,11 +95,11 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
         {
             _logger.Info($"Processing song request [{songRequest}].");
 
-            if (songRequest.State != SongRequestState.ApprovedAndPending)
+            if (!songRequest.IsApprovedAndProcessing)
             {
                 string errorMessage = (
                     "Invalid song request to process. Expected " +
-                    $"state {nameof(SongRequestState.ApprovedAndPending)}, " +
+                    $"state {nameof(SongRequestState.ApprovedAndProcessing)}, " +
                     $"actual state {songRequest.State.ToString()}."
                 );
                 throw new ArgumentException(errorMessage, nameof(songRequest));
@@ -167,7 +167,7 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
                     $"Song request '{songRequest.RequestId.ToString()}' processed successfully. " +
                     $"Result: {descriptionText}"
                 );
-                return SongRequestResult.Success(songRequest);
+                return SongRequestResult.Success(songRequest, descriptionText);
             }
 
             // Failure.

@@ -13,6 +13,8 @@ from song_request_log_wrapper import SongRequestLoggerFactory as LoggerFactory
 
 from Scripts.SongRequest.CSharp.Core.Models import UserName
 from Scripts.SongRequest.CSharp.Core.Models import UserId
+from Scripts.SongRequest.CSharp.Core.Models import UserIdOrName
+from Scripts.SongRequest.CSharp.Core.Models import UserData
 from Scripts.SongRequest.CSharp.Core.Models import HttpLink
 from Scripts.SongRequest.CSharp.Core.Models import FileName
 from Scripts.SongRequest.CSharp.Core.Models import FilePath
@@ -229,7 +231,8 @@ def first_or_default(iterable, default=False, pred=None):
     """
     # first_or_default([a, b, c], x) --> a or b or c or x
     # first_or_default([a, b], x, f) --> a if f(a) else b if f(b) else x
-    return next(filter(pred, iterable), default)
+    iterable_internal = iter(filter(pred, iterable))
+    return next(iterable_internal, default)
 
 
 def lazy_property(fn):
@@ -259,7 +262,21 @@ def wrap_user_id(raw_value):
     Returns wrapped user ID record for C# part of the script.
     """
     return UserId(raw_value)
-    
+
+
+def wrap_user_id_or_name(raw_value):
+    """
+    Returns wrapped user ID or name record for C# part of the script.
+    """
+    return UserIdOrName(raw_value)
+
+
+def wrap_user_data(raw_user_id, raw_user_name):
+    """
+    Returns wrapped user data record for C# part of the script.
+    """
+    return UserData.Create(raw_user_id, raw_user_name)
+
 
 def wrap_http_link(raw_value):
     """

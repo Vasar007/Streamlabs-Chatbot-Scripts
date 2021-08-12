@@ -57,11 +57,12 @@ namespace Scripts.SongRequest.TestConsoleApp
 
             scrapper.OpenUrl();
 
-            var userId = new UserId("TestUserId");
-            const int number = 1;
+            var userData = UserData.Create("TestUserId", "TestUserName");
+            var number = SongRequestNumber.All;
 
-            var request = SongRequestModel.CreateNew(userId, TestConfig.SongLink, number);
+            var request = SongRequestModel.CreateNew(userData, TestConfig.SongLink, number);
             request = request.Approve();
+            request = request.StartProcessing();
             var result = scrapper.Process(request);
 
             if (result.IsSuccess)

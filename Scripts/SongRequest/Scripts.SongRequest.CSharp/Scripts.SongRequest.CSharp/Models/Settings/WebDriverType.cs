@@ -7,16 +7,16 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
     public sealed record WebDriverType
     {
         public const string RawEdgeDriver = "Edge";
-        public static WebDriverType EdgeDriver = new(RawEdgeDriver);
+        public static WebDriverType EdgeDriver { get; } = new(RawEdgeDriver);
 
         public const string RawChromeDriver = "Chromium/Chrome";
-        public static WebDriverType ChromeDriver = new(RawChromeDriver);
+        public static WebDriverType ChromeDriver { get; } = new(RawChromeDriver);
 
         public const string RawFirefoxDriver = "Firefox";
-        public static WebDriverType FirefoxDriver = new(RawFirefoxDriver);
+        public static WebDriverType FirefoxDriver { get; } = new(RawFirefoxDriver);
 
         public const string RawOperaDriver = "Opera";
-        public static WebDriverType OperaDriver = new(RawOperaDriver);
+        public static WebDriverType OperaDriver { get; } = new(RawOperaDriver);
 
         private static readonly IReadOnlyList<string> _validDriverTypes = new List<string>
         {

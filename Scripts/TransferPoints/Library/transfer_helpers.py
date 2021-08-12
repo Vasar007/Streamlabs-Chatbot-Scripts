@@ -223,7 +223,8 @@ def first_or_default(iterable, default=False, pred=None):
     """
     # first_or_default([a, b, c], x) --> a or b or c or x
     # first_or_default([a, b], x, f) --> a if f(a) else b if f(b) else x
-    return next(filter(pred, iterable), default)
+    iterable_internal = iter(filter(pred, iterable))
+    return next(iterable_internal, default)
 
 
 def lazy_property(fn):

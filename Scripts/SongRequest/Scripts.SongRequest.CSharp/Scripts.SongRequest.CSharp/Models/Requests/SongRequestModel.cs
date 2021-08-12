@@ -6,34 +6,42 @@ namespace Scripts.SongRequest.CSharp.Models.Requests
     public sealed record SongRequestModel
     {
         public Guid RequestId { get; init; }
-        public UserId UserId { get; init; }
+        public UserData UserData { get; init; }
         public HttpLink SongLink { get; init; }
-        public int RequestNumber { get; init; }
+        public SongRequestNumber RequestNumber { get; init; }
         public SongRequestState State { get; init; }
+
+        public bool IsWaitingForApproval => State == SongRequestState.WaitingForApproval;
+        public bool IsApprovedAndPending => State == SongRequestState.ApprovedAndPending;
+        public bool IsApprovedAndProcessing => State == SongRequestState.ApprovedAndProcessing;
+        public bool IsApprovedAndAddedSuccessfully => State == SongRequestState.ApprovedAndAddedSuccessfully;
+        public bool IsApprovedButAddedFailure => State == SongRequestState.ApprovedButAddedFailure;
+        public bool IsRejected => State == SongRequestState.Rejected;
+        public bool IsCancelled => State == SongRequestState.Cancelled;
 
 
         public SongRequestModel(
             Guid requestId,
-            UserId userId,
+            UserData userData,
             HttpLink songLink,
-            int requestNumber,
+            SongRequestNumber requestNumber,
             SongRequestState state)
         {
             RequestId = requestId;
-            UserId = userId ?? throw new ArgumentNullException(nameof(userId));
+            UserData = userData ?? throw new ArgumentNullException(nameof(userData));
             SongLink = songLink ?? throw new ArgumentNullException(nameof(songLink));
-            RequestNumber = requestNumber;
+            RequestNumber = requestNumber ?? throw new ArgumentNullException(nameof(requestNumber));
             State = state;
         }
 
         public static SongRequestModel CreateNew(
-            UserId userId,
+            UserData userData,
             HttpLink songLink,
-            int requestNumber)
+            SongRequestNumber requestNumber)
         {
             return new SongRequestModel(
                 requestId: Guid.NewGuid(),
-                userId: userId,
+                userData: userData,
                 songLink: songLink,
                 requestNumber: requestNumber,
                 state: SongRequestState.WaitingForApproval
@@ -48,7 +56,15 @@ namespace Scripts.SongRequest.CSharp.Models.Requests
             };
         }
 
-        public SongRequestModel AddToQueue()
+        public SongRequestModel StartProcessing()
+        {
+            return this with
+            {
+                State = SongRequestState.ApprovedAndProcessing
+            };
+        }
+
+        public SongRequestModel AddToPlaylist()
         {
             return this with
             {

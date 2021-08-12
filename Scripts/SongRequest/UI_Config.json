@@ -241,18 +241,95 @@
         "tooltip": "Chat message will be sent if user tries to call command which is on cooldown now. 0 — command which is on cooldown, 1 — time remaining.",
         "group": "Chat Messages"
     },
+    "MaxLimitOfSongRequestsIsExceededMessage": {
+        "type": "textbox",
+        "value": "Sorry {0}, you have exceeded max allowed limit of song requests per stream ({1}).",
+        "label": "Max Limit Of Song Requests Is Exceeded",
+        "tooltip": "Chat message will be sent if user will try to add song requests above limit. 0 — user, 1 — max allowed song requests limit.",
+        "group": "Chat Messages"
+    },
+    "InvalidTargetMessage": {
+        "type": "textbox",
+        "value": "Sorry {0}, but {1} doesn't exist.",
+        "label": "Invalid Target Message",
+        "tooltip": "Chat message will be sent if user specifies an invalid target. 0 — user, 1 — target.",
+        "group": "Chat Messages"
+    },
+    "NoSongRequestsMessage": {
+        "type": "textbox",
+        "value": "{0}, user {1} doesn't have any active song requests.",
+        "label": "No Song Requests Message",
+        "tooltip": "Chat message will be sent if user specifies a target user without active song requests. 0 — user, 1 — target user.",
+        "group": "Chat Messages"
+    },
+    "NonExistentSongRequestNumberMessage": {
+        "type": "textbox",
+        "value": "{0}, non-existent request number {1} for target user {2}.",
+        "label": "Invalid Song Request Number Message",
+        "tooltip": "Chat message will be sent if user specifies a song request number which does not exist for target user. 0 — user, 1 — invalid song request number, 2 — target user.",
+        "group": "Chat Messages"
+    },
+    "SongRequestAddedMessage": {
+        "type": "textbox",
+        "value": "{0}, your song request {1} was added and will be processing later.",
+        "label": "On Song Request Added Message",
+        "tooltip": "The message that will be sent to chat when user's song request was added. 0 — user name, 1 — song request.",
+        "group": "Chat Messages"
+    },
+    "SongRequestToApproveMessage": {
+        "type": "textbox",
+        "value": "There is a new song request {0} by {1}. Please, approve or reject it.",
+        "label": "Song Request To Approve Message",
+        "tooltip": "The message that will be sent to chat when user's song request was approved. 0— song request, 2 — user name who added song request.",
+        "group": "Chat Messages"
+    },
+    "SongRequestApprovedMessage": {
+        "type": "textbox",
+        "value": "{0}, your song request {1} was approved by {2} and will be added to playlist later.",
+        "label": "On Song Request Approved Message",
+        "tooltip": "The message that will be sent to chat when user's song request was approved. 0 — user name, 1 — song request, 2 — user name who approved song requests.",
+        "group": "Chat Messages"
+    },
     "OnSuccessSongRequestMessage": {
         "type": "textbox",
-        "value": "{0}, your song request approved and added!",
+        "value": "{0}, your song request approved and added!{1}",
         "label": "On Success Song Request Message",
-        "tooltip": "The message that will be sent to chat when user's song request approved and added to playlist. 0 — user name.",
+        "tooltip": "The message that will be sent to chat when user's song request was added to playlist. 0 — user name, 1 — optional description.",
         "group": "Chat Messages"
     },
     "OnFailureSongRequestMessage": {
         "type": "textbox",
         "value": "{0}, your song request finihsed with error: {1}",
         "label": "On Failure Song Request Message",
-        "tooltip": "The message that will be sent to chat when user's song request approved but couldn't be added to playlist. 0 — user name, 1 — error description.",
+        "tooltip": "The message that will be sent to chat when user's song request cannot be added to playlist. 0 — user name, 1 — error description.",
+        "group": "Chat Messages"
+    },
+    "OnFailureSongRequestDefaultErrorMessage": {
+        "type": "textbox",
+        "value": "Unknown error",
+        "label": "On Failure Song Request Default Error Message",
+        "tooltip": "The message that will be sent to chat when user's song request cannot be added to playlist and no error description is available.",
+        "group": "Chat Messages"
+    },
+    "SongRequestRejectedMessage": {
+        "type": "textbox",
+        "value": "{0}, your song request {1} was rejected by {2}. Reason: {3}.",
+        "label": "On Song Request Rejected Message",
+        "tooltip": "The message that will be sent to chat when user's song request was rejected. 0 — user name, 1 — song request, 2 — user name who rejected song request, 3 — reject reason.",
+        "group": "Chat Messages"
+    },
+    "SongRequestDefaultRejectReason": {
+        "type": "textbox",
+        "value": "song didn't pass moderation",
+        "label": "Song Request Default Reject Reason",
+        "tooltip": "Default reject reason which will be used when calling reject command without reason parameter.",
+        "group": "Chat Messages"
+    },
+    "SongRequestCancelMessage": {
+        "type": "textbox",
+        "value": "{0}, your song request {1} was cancelled.",
+        "label": "On Song Request Cancelled Message",
+        "tooltip": "The message that will be sent to chat when user's song request was cancelled. 0 — user name, 1 — song request.",
         "group": "Chat Messages"
     },
 

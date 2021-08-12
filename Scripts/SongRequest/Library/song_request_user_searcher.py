@@ -2,7 +2,7 @@
 
 import logging
 
-from song_request_user_data import SongRequestUserData as UserData
+from Scripts.SongRequest.CSharp.Core.Models import UserData
 
 
 class SongRequestUserSearcher(object):
@@ -16,7 +16,7 @@ class SongRequestUserSearcher(object):
             self.logger.debug(
                 "Invalid argument to find user ID: " + user_id_or_name
             )
-            return UserData.empty()
+            return UserData.Empty
 
         self.logger.debug(
             "Trying to find user ID for value: " + user_id_or_name
@@ -31,7 +31,7 @@ class SongRequestUserSearcher(object):
 
         # Try to find target user by original parameter.
         result = self._find_by_supposed_id(user_id_or_name_low, viewer_ids)
-        if result:
+        if result.HasValue:
             return result
 
         # Use another method to retrieve viewers data.
@@ -47,7 +47,7 @@ class SongRequestUserSearcher(object):
         result = self._find_by_supposed_id(
             user_id_or_name_low, active_users_ids
         )
-        if result:
+        if result.HasValue:
             return result
 
         self.logger.debug(
@@ -73,27 +73,27 @@ class SongRequestUserSearcher(object):
             supposed_name = self.parent_wrapper.get_display_name(
                 supposed_user_id
             )
-            result = UserData(supposed_user_id, supposed_name)
+            result = UserData.Create(supposed_user_id, supposed_name)
             self.logger.debug("Found user data (#1): " + str(result))
             return result
 
-        return UserData.empty()
+        return UserData.Empty
 
     def _find_among_all_users(self, user_id_or_name, viewers):
         user_id_or_name_low = user_id_or_name.lower()
 
         for user_id, user_name in viewers.iteritems():
             if user_id_or_name == user_name:
-                result = UserData(user_id, user_name)
+                result = UserData.Create(user_id, user_name)
                 self.logger.debug("Found user data (#2): " + str(result))
                 return result
             if user_id_or_name_low == user_name:
-                result = UserData(user_id, user_name)
+                result = UserData.Create(user_id, user_name)
                 self.logger.debug("Found user data (#3): " + str(result))
                 return result
 
         self.logger.debug("Cannot find user ID for value: " + user_id_or_name)
-        return UserData.empty()
+        return UserData.Empty
 
     def _log_viewers(self, viewers):
         if not self.logger.isEnabledFor(logging.DEBUG):

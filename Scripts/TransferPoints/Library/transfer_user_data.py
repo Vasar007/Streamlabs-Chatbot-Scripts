@@ -13,15 +13,15 @@ class TransferUserData(object):
     def has_name(self):
         return bool(self.name)
 
-    def is_empty(self):
-        return not self.has_id() and not self.has_name()
+    def has_value(self):
+        return self.has_id() or self.has_name()
 
     @staticmethod
     def empty():
         return TransferUserData(None, None)
 
     def __bool__(self):
-        return not self.is_empty()
+        return self.has_value()
 
     def __str__(self):
         return "{0}: {1}".format(self.id, self.name)

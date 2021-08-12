@@ -2,19 +2,27 @@
 
 namespace Scripts.SongRequest.CSharp.Core.Models
 {
-    public sealed record UserName
+    public sealed record UserIdOrName
     {
-        public static UserName Empty { get; } = new(string.Empty);
-
         public string Value { get; init; }
 
         public bool HasValue => !string.IsNullOrWhiteSpace(Value);
 
 
-        public UserName(
+        public UserIdOrName(
             string value)
         {
             Value = value ?? throw new ArgumentNullException(nameof(value));
+        }
+
+        public UserId AsId()
+        {
+            return new UserId(Value);
+        }
+
+        public UserName AsName()
+        {
+            return new UserName(Value);
         }
     }
 }

@@ -53,11 +53,23 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
 
         #endregion
 
-        #region Permission Group
+        #region Chat Messages Group
 
         string InvalidCommandCallMessage { get; }
-        string OnSuccessSongRequestMessage { get; }
         string TimeRemainingMessage { get; }
+        string MaxLimitOfSongRequestsIsExceededMessage { get; }
+        string InvalidTargetMessage { get; }
+        string NoSongRequestsMessage { get; }
+        string NonExistentSongRequestNumberMessage { get; }
+        string SongRequestAddedMessage { get; }
+        string SongRequestToApproveMessage { get; }
+        string SongRequestApprovedMessage { get; }
+        string OnSuccessSongRequestMessage { get; }
+        string OnFailureSongRequestMessage { get; }
+        string OnFailureSongRequestDefaultErrorMessage { get; }
+        string SongRequestRejectedMessage { get; }
+        string SongRequestDefaultRejectReason { get; }
+        string SongRequestCancelMessage { get; }
 
         #endregion
 

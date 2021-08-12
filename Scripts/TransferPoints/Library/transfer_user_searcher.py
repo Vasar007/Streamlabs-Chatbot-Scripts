@@ -31,7 +31,7 @@ class TransferUserSearcher(object):
 
         # Try to find target user by original parameter.
         result = self._find_by_supposed_id(user_id_or_name_low, viewer_ids)
-        if result:
+        if result.has_value():
             return result
 
         # Use another method to retrieve viewers data.
@@ -47,7 +47,7 @@ class TransferUserSearcher(object):
         result = self._find_by_supposed_id(
             user_id_or_name_low, active_users_ids
         )
-        if result:
+        if result.has_value():
             return result
 
         self.logger.debug(

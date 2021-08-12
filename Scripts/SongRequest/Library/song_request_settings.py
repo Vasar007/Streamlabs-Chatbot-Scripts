@@ -109,8 +109,19 @@ class SongRequestSettings(object):
         # Chat Messages group.
         self.InvalidCommandCallMessage = config.InvalidCommandCallMessage
         self.TimeRemainingMessage = config.TimeRemainingMessage
+        self.MaxLimitOfSongRequestsIsExceededMessage = config.MaxLimitOfSongRequestsIsExceededMessage
+        self.InvalidTargetMessage = config.InvalidTargetMessage
+        self.NoSongRequestsMessage = config.NoSongRequestsMessage
+        self.NonExistentSongRequestNumberMessage = config.NonExistentSongRequestNumberMessage
+        self.SongRequestAddedMessage = config.SongRequestAddedMessage
+        self.SongRequestToApproveMessage = config.SongRequestToApproveMessage
+        self.SongRequestApprovedMessage = config.SongRequestApprovedMessage
         self.OnSuccessSongRequestMessage = config.OnSuccessSongRequestMessage
+        self.OnFailureSongRequestDefaultErrorMessage = config.OnFailureSongRequestDefaultErrorMessage
         self.OnFailureSongRequestMessage = config.OnFailureSongRequestMessage
+        self.SongRequestRejectedMessage = config.SongRequestRejectedMessage
+        self.SongRequestDefaultRejectReason = config.SongRequestDefaultRejectReason
+        self.SongRequestCancelMessage = config.SongRequestCancelMessage
 
         # Debugging group.
         self.LoggingLevel = config.LoggingLevel
@@ -257,12 +268,60 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
         return self.settings.InvalidCommandCallMessage
 
     @property
+    def TimeRemainingMessage(self):
+        return self.settings.TimeRemainingMessage
+
+    @property
+    def MaxLimitOfSongRequestsIsExceededMessage(self):
+        return self.settings.MaxLimitOfSongRequestsIsExceededMessage
+
+    @property
+    def InvalidTargetMessage(self):
+        return self.settings.InvalidTargetMessage
+
+    @property
+    def NoSongRequestsMessage(self):
+        return self.settings.NoSongRequestsMessage
+
+    @property
+    def NonExistentSongRequestNumberMessage(self):
+        return self.settings.NonExistentSongRequestNumberMessage
+
+    @property
+    def SongRequestAddedMessage(self):
+        return self.settings.SongRequestAddedMessage
+
+    @property
+    def SongRequestToApproveMessage(self):
+        return self.settings.SongRequestToApproveMessage
+
+    @property
+    def SongRequestApprovedMessage(self):
+        return self.settings.SongRequestApprovedMessage
+
+    @property
     def OnSuccessSongRequestMessage(self):
         return self.settings.OnSuccessSongRequestMessage
 
     @property
-    def TimeRemainingMessage(self):
-        return self.settings.TimeRemainingMessage
+    def OnFailureSongRequestMessage(self):
+        return self.settings.OnFailureSongRequestMessage
+
+    @property
+    def OnFailureSongRequestDefaultErrorMessage(self):
+        return self.settings.OnFailureSongRequestDefaultErrorMessage
+
+    @property
+    def SongRequestRejectedMessage(self):
+        return self.settings.SongRequestRejectedMessage
+
+    @property
+    def SongRequestDefaultRejectReason(self):
+        return self.settings.SongRequestDefaultRejectReason
+
+    @property
+    def SongRequestCancelMessage(self):
+        return self.settings.SongRequestCancelMessage
 
     # Debugging group.
     @property

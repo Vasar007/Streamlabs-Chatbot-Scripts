@@ -5,9 +5,10 @@
         Unknown = 0,
         WaitingForApproval = 1,
         ApprovedAndPending = 2,
-        ApprovedAndAddedSuccessfully = 3,
-        ApprovedButAddedFailure = 4,
-        Rejected = 5,
-        Cancelled = 6
+        ApprovedAndProcessing = 3,
+        ApprovedAndAddedSuccessfully = 4,
+        ApprovedButAddedFailure = 5,
+        Rejected = 6,
+        Cancelled = 7
     }
 }

@@ -25,7 +25,7 @@ class TransferBroker(object):
 
     def try_send_transfer(self, request):
         target_data = self._prepare_transfer(request)
-        if target_data.is_empty():
+        if not target_data.has_value():
             self.logger.debug("Target is invalid, interupt tranfer.")
             return False
 
@@ -81,7 +81,7 @@ class TransferBroker(object):
         target_data = self.searcher.find_user_data(
             request.target_id_or_name
         )
-        if target_data.is_empty():
+        if not target_data.has_value():
             if not request.target_id_or_name:
                 self._handle_no_target(
                     request.user_data.name, request.currency_name

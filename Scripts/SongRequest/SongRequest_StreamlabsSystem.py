@@ -5,6 +5,7 @@ import os
 import sys
 
 from functools import wraps
+from datetime import datetime, timedelta
 
 import clr
 clr.AddReference("IronPython.SQLite.dll")
@@ -28,6 +29,8 @@ sys.path.append(os.path.join(ScriptDir, LibraryDirName))
 clr.AddReferenceToFileAndPath(os.path.join(AbsoluteScriptDir, ReferencesDirName, "Scripts.SongRequest.CSharp.dll"))
 from Scripts.SongRequest.CSharp.Web.Scrapper import HttpWebScrapperFactory
 from Scripts.SongRequest.CSharp.Models.Requests import SongRequestModel
+from Scripts.SongRequest.CSharp.Models.Requests import SongRequestDecision
+from Scripts.SongRequest.CSharp.Models.Requests import SongRequestNumber
 
 import song_request_config as config
 import song_request_helpers as helpers  # pylint:disable=import-error
@@ -45,7 +48,7 @@ from song_request_settings import SongRequestCSharpSettings as CSharpSettings
 from song_request_command_wrapper import SongRequestCommandWrapper as CommandWrapper
 
 # pylint:disable=import-error
-from song_request_storage import SongRequestStorage
+import song_request_manager
 
 # Import your Settings class.
 from song_request_settings import SongRequestSettings  # pylint:disable=import-error
@@ -70,8 +73,9 @@ Version = config.Version
 ParentHandler = None  # Parent wrapper instance.
 SettingsFile = ""
 ScriptSettings = SongRequestSettings()
-SrStorage = None  # Song request storage instance.
-SrPageScrapper = None  # Song request page scrapper instance.
+Manager = None  # Song request manager instance.
+PageScrapper = None  # Song request page scrapper instance.
+LastDispatchTime = datetime.now()
 
 
 def Init():
@@ -96,15 +100,18 @@ def Init():
     # Initialize global variables.
     helpers.init_logging(ParentHandler, ScriptSettings)
 
-    global SrStorage
-    SrStorage = SongRequestStorage(Logger())
-
-    global SrPageScrapper
-    SrPageScrapper = HttpWebScrapperFactory.Create(
+    global PageScrapper
+    PageScrapper = HttpWebScrapperFactory.Create(
         CSharpSettings(ScriptSettings),
         CSharpLogWrapper(Logger())
     )
-    SrPageScrapper.OpenUrl()
+
+    global Manager
+    Manager = song_request_manager.create_manager(
+        ParentHandler, ScriptSettings, Logger(), PageScrapper
+    )
+
+    PageScrapper.OpenUrl()
 
     Logger().info("Script successfully initialized.")
 
@@ -162,7 +169,15 @@ def Tick():
     [Required] Tick method (Gets called during every iteration even when
     there is no incoming data).
     """
-    return
+    global LastDispatchTime
+    current_time = datetime.now()
+    delta = timedelta(seconds=ScriptSettings.DispatchTimeoutInSeconds)
+
+    if current_time < (LastDispatchTime + delta):
+        return
+
+    LastDispatchTime = current_time
+    Manager.run_dispatch()
 
 
 def Parse(parse_string, userid, username, targetid, targetname, message):
@@ -187,7 +202,7 @@ def ReloadSettings(jsondata):
         ScriptSettings.reload(jsondata)
         ScriptSettings.save(SettingsFile)
 
-        SrPageScrapper.OpenUrl()
+        PageScrapper.OpenUrl()
     except Exception as ex:
         Logger().exception(
             "Failed to save or reload settings to file: " + str(ex)
@@ -200,8 +215,8 @@ def Unload():
     the bot/cleanup stuff).
     """
     try:
-        if SrPageScrapper:
-            SrPageScrapper.Dispose()
+        if PageScrapper:
+            PageScrapper.Dispose()
 
         Logger().info("Script unloaded.")
     except Exception as ex:
@@ -312,7 +327,8 @@ def TryProcessCommand(command, data_wrapper):
             required_permission,
             permission_info
         )
-        is_valid_call = param_count == 2
+        # Add command call can have optional text.
+        is_valid_call = param_count >= 2
 
         usage_example = (
             config.CommandAddSongRequestUsage
@@ -333,7 +349,8 @@ def TryProcessCommand(command, data_wrapper):
             required_permission,
             permission_info
         )
-        is_valid_call = 2 <= param_count <= 3
+        # Approve command call can have optional text.
+        is_valid_call = param_count >= 2
 
         usage_example = (
             config.CommandApproveRejectSongRequestUsage
@@ -355,7 +372,8 @@ def TryProcessCommand(command, data_wrapper):
             required_permission,
             permission_info
         )
-        is_valid_call = 2 <= param_count <= 3
+        # Reject command call can have optional reason.
+        is_valid_call = param_count >= 2
 
         usage_example = (
             config.CommandApproveRejectSongRequestUsage
@@ -379,42 +397,46 @@ def GetRequestNumberRange():
 
 
 def ProcessAddSongRequestCommand(command, data_wrapper):
-    # Input example: !sr https://www.youtube.com/watch?v=CAEUnn0HNLM
-    # Command <YouTube link>
+    # Input example: !sr https://www.youtube.com/watch?v=CAEUnn0HNLM <Anything>
+    # Command <YouTube link> <Anything>
     song_link = helpers.wrap_http_link(data_wrapper.get_param(1))
-    user_id = helpers.wrap_user_id(data_wrapper.user_id)
-    number = 1
+    user_data = helpers.wrap_user_data(
+        data_wrapper.user_id, data_wrapper.user_name
+    )
 
-    request = SongRequestModel.CreateNew(user_id, song_link, number)
-    request = request.Approve()
-    result = SrPageScrapper.Process(request)
-
-    message = None
-    if result.IsSuccess:
-        message = (
-            ScriptSettings.OnSuccessSongRequestMessage
-            .format(data_wrapper.user_name)
-        )
-    else:
-        message = (
-            ScriptSettings.OnFailureSongRequestMessage
-            .format(data_wrapper.user_name, result.Description)
-        )
-
-    ParentHandler.send_stream_message(message)
+    Manager.add_request(user_data, song_link)
 
 
 def ProcessApproveSongRequestCommand(command, data_wrapper):
-    # Input example: !sr_approve Vasar
-    # Input example: !sr_approve Vasar 1
-    # Input example: !sr_approve Vasar 3
-    # Command <@>TargetUserNameOrId <RequestNumber>
-    ...
+    # Input example: !sr_approve Vasar <Anything>
+    # Input example: !sr_approve Vasar all <Anything>
+    # Input example: !sr_approve Vasar 3 <Anything>
+    # Command <@>TargetUserNameOrId <RequestNumber> <Anything>
+    user_data = helpers.wrap_user_data(
+        data_wrapper.user_id, data_wrapper.user_name
+    )
+
+    raw_target_user_id_or_name = data_wrapper.get_param(1)
+    target_user_id_or_name = helpers.wrap_user_id_or_name(
+        raw_target_user_id_or_name
+    )
+
+    request_number = SongRequestNumber.All
+    if data_wrapper.get_param_count() > 1:
+        raw_request_number = data_wrapper.get_param(2)
+        request_number = SongRequestNumber.TryParse(
+            raw_request_number, SongRequestNumber.All
+        )
+
+    request_decision = SongRequestDecision(
+        user_data, target_user_id_or_name, request_number
+    )
+    Manager.approve_request(request_decision)
 
 
 def ProcessRejectSongRequestCommand(command, data_wrapper):
-    # Input example: !sr_reject Vasar
-    # Input example: !sr_reject Vasar 1
-    # Input example: !sr_reject Vasar 3
-    # Command <@>TargetUserNameOrId <RequestNumber>
-    ...
+    # Input example: !sr_reject Vasar <Reason>
+    # Input example: !sr_reject Vasar all <Reason>
+    # Input example: !sr_reject Vasar 3 <Reason>
+    # Command <@>TargetUserNameOrId <RequestNumber> <Reason>
+    return

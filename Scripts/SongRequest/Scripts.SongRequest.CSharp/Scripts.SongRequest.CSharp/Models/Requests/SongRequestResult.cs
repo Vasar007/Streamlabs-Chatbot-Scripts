@@ -7,7 +7,7 @@ namespace Scripts.SongRequest.CSharp.Models.Requests
         public SongRequestModel SongRequest { get; init; }
         public string Description { get; init; }
 
-        public bool IsSuccess => SongRequest.State == SongRequestState.ApprovedAndAddedSuccessfully;
+        public bool IsSuccess => SongRequest.IsApprovedAndAddedSuccessfully;
 
 
         private SongRequestResult(
@@ -19,11 +19,12 @@ namespace Scripts.SongRequest.CSharp.Models.Requests
         }
 
         public static SongRequestResult Success(
-            SongRequestModel songRequest)
+            SongRequestModel songRequest,
+            string description)
         {
             return new SongRequestResult(
-                songRequest: songRequest.AddToQueue(),
-                description: string.Empty
+                songRequest: songRequest.AddToPlaylist(),
+                description: description
             );
         }
 
