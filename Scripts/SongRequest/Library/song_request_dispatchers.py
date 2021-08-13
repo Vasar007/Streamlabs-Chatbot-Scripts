@@ -53,9 +53,10 @@ class PendingSongRequestDispatcher(BaseSongRequestDispatcher):
 
         storage.update_states(pending_requests)
 
-        # Star real processing of requests.
-        for request in pending_requests:
-            self._process_request(request)
+        # Start real processing of requests.
+        for i in range (len(pending_requests)):
+            request = pending_requests[i]
+            pending_requests[i] = self._process_request(request)
 
         storage.update_states(pending_requests)
 
@@ -73,7 +74,7 @@ class PendingSongRequestDispatcher(BaseSongRequestDispatcher):
             )
             result = SongRequestResult.Fail(request, error)
 
-        self._handle_result(result)
+        return self._handle_result(result)
 
     def _handle_result(self, result):
         self.logger.info("Processing request result [{0}].".format(result))
@@ -106,6 +107,8 @@ class PendingSongRequestDispatcher(BaseSongRequestDispatcher):
         self.logger.info(message)
         self.parent_wrapper.send_stream_message(message)
 
+        return result.SongRequest
+
 
 class DeniedSongRequestDispatcher(BaseSongRequestDispatcher):
 
@@ -116,6 +119,7 @@ class DeniedSongRequestDispatcher(BaseSongRequestDispatcher):
 
     def dispatch(self, storage):
         denied_requests = storage.get_requests_with_states(
+            SongRequestState.ApprovedButAddedFailure,
             SongRequestState.Rejected,
             SongRequestState.Cancelled
         )
