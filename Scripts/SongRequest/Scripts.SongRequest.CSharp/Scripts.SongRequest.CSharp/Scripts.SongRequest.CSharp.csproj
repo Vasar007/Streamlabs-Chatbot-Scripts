@@ -17,7 +17,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
-    <PackageReference Include="Selenium.WebDriver.MSEdgeDriver" Version="92.0.902.62" />
   </ItemGroup>
 
 </Project>

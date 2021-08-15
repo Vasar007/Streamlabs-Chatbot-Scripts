@@ -9,6 +9,6 @@
         ApprovedAndAddedSuccessfully = 4,
         ApprovedButAddedFailure = 5,
         Rejected = 6,
-        Cancelled = 7
+        Canceled = 7
     }
 }

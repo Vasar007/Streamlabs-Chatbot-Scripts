@@ -86,27 +86,27 @@
         "tooltip": "How long the Get Song Request command should go on cooldown for.",
         "group": "Setup"
     },
-    "CommandSettingsSongRequest": {
+    "CommandOptionSongRequest": {
         "type": "textbox",
-        "value": "!sr_settings",
-        "label": "Change Settings For Song Request Command",
+        "value": "!sr_option",
+        "label": "Change Option For Song Request Command",
         "tooltip": "The command that will be used to change song requests settings in runtime.",
         "group": "Setup"
     },
-    "CommandSettingsSongRequestCooldown": {
+    "CommandOptionSongRequestCooldown": {
         "type": "slider",
         "value": 1,
         "min": 1,
         "max": 100,
         "ticks": 1,
-        "label": "Change Settings For Song Request Command Cooldown (seconds)",
-        "tooltip": "How long the Change Settings For Song Request command should go on cooldown for.",
+        "label": "Change Option For Song Request Command Cooldown (seconds)",
+        "tooltip": "How long the Change Option For Song Request command should go on cooldown for.",
         "group": "Setup"
     },
     "HttpPageLinkToParse": {
         "type": "textbox",
         "value": "",
-        "label": "HTTP page link to parse",
+        "label": "HTTP Page Link To Parse",
         "tooltip": "HTTP page of song request site with player. This page will be parsed and used in script logic.",
         "group": "Setup"
     },
@@ -120,11 +120,11 @@
         "tooltip": "How many song requests users can add per stream.",
         "group": "Setup"
     },
-    "UseWhisperMessagesToControlSongRequests": {
-        "type": "checkbox",
-        "value": true,
-        "label": "Use Whisper Messages To Control Song Requests",
-        "tooltip": "Allow bot to use whisper messages to control song requests. You can use this feature to decrease amount of messages in chat.",
+    "WaitingTimeoutForSongRequestsInSeconds": {
+        "type": "numberbox",
+        "value": 120,
+        "label": "Waiting Timeout For Song Requests Decision (In Seconds)",
+        "tooltip": "Dispatch timeout for song requests (in seconds).",
         "group": "Setup"
     },
     "DispatchTimeoutInSeconds": {
@@ -141,69 +141,84 @@
         "tooltip": "Timeout for waiting song requests processing (in milliseconds).",
         "group": "Setup"
     },
+    "UseWhisperMessagesToControlSongRequests": {
+        "type": "checkbox",
+        "value": true,
+        "label": "Use Whisper Messages To Control Song Requests",
+        "tooltip": "Allow script to use whisper messages to control song requests. You can use this feature to decrease amount of messages in chat.",
+        "group": "Setup"
+    },
+    "ModIdsToWhisper": {
+        "type": "textbox",
+        "value": "",
+        "label": "Moderators IDs to whisper",
+        "tooltip": "Moderators IDs which script will use in logic to send them messages about song requests (approve/reject).",
+        "group": "Setup"
+    },
+
     "SelectedBrowserDriver": {
         "type": "dropdown",
         "value": "Edge",
         "items": ["Edge", "Chromium/Chrome", "Firefox", "Opera"],
         "label": "Browser Driver Type To Use",
         "tooltip": "Browser driver type which will be used to process song request commands.",
-        "group": "Setup"
+        "group": "Parsing"
     },
     "BrowserDriverPath": {
         "type": "textbox",
         "value": "C:\\Program Files\\Common Files\\Webdrivers",
         "label": "Browser Driver Path",
         "tooltip": "Browser driver path to use.",
-        "group": "Setup"
+        "group": "Parsing"
     },
     "BrowserDriverExecutableName": {
         "type": "textbox",
         "value": "MicrosoftWebDriver.exe",
         "label": "Browser Driver Executable Name",
         "tooltip": "Browser driver executable name in driver path.",
-        "group": "Setup"
+        "group": "Parsing"
     },
     "ElementIdOfNewSongTextField": {
         "type": "textbox",
         "value": "newSong",
         "label": "Element ID Of New Song Text Field",
         "tooltip": "Element ID of new song text field on song request page.",
-        "group": "Setup"
+        "group": "Parsing"
     },
     "ElementIdOfAddSongButton": {
         "type": "textbox",
         "value": "newSong",
         "label": "Element ID Of Add Song Button",
         "tooltip": "Element ID of add song button on song request page.",
-        "group": "Setup"
+        "group": "Parsing"
     },
     "ClassNameOfNotificationIcon": {
         "type": "textbox",
         "value": "ui-pnotify-icon",
         "label": "Class Name Of Notification Item",
         "tooltip": "Class name of notification item on song request page to parse and process result.",
-        "group": "Setup"
+        "group": "Parsing"
     },
     "ClassNameOfSuccessNotificationIcon": {
         "type": "textbox",
         "value": "brighttheme-icon-success",
         "label": "Class Name Of Successful Notification Item",
         "tooltip": "Class name of successful notification item on song request page to parse and process result.",
-        "group": "Setup"
+        "group": "Parsing"
     },
     "ClassNameOfErrorNotificationIcon": {
         "type": "textbox",
         "value": "brighttheme-icon-errors",
         "label": "Class Name Of Error Notification Item",
         "tooltip": "Class name of error notification item on song request page to parse and process result.",
-        "group": "Setup"
+        "group": "Parsing"
     },
     "ClassNameOfNotificationDescription": {
         "type": "textbox",
         "value": "ui-pnotify-text",
         "label": "Class Name Of Notification Description",
         "tooltip": "Class name of notification description on song request page to parse and process result.",
-        "group": "Setup"
+        "group": "Parsing"
     },
 
     "PermissionOnAddCancelSongRequest": {
@@ -221,19 +236,19 @@
         "tooltip": "This field should only be filled when using the user_specific permission on Add or Cancel Song Request Commands.",
         "group": "Permission"
     },
-    "PermissionOnApproveRejectGetSongRequest": {
+    "PermissionOnManageSongRequest": {
         "type": "dropdown",
         "value": "moderator",
         "items": ["everyone", "subscriber", "user_specific", "moderator", "editor"],
-        "label": "Permission",
-        "tooltip": "Who is able to use the approve, deny or get song request commands.",
+        "label": "Permission On Manage Song Request",
+        "tooltip": "Who is able to use the approve, reject, option or get song request commands.",
         "group": "Permission"
     },
-    "PermissionInfoOnApproveRejectGetSongRequest": {
+    "PermissionInfoOnManageSongRequest": {
         "type": "textbox",
         "value": "",
-        "label": "Info",
-        "tooltip": "This field should only be filled when using the user_specific permission on Approve, Reject or Get Song Request Commands.",
+        "label": "Permission Info On Manage Song Request",
+        "tooltip": "This field should only be filled when using the user_specific permission on Approve, Reject, Option or Get Song Request Commands.",
         "group": "Permission"
     },
     "PermissionDeniedMessage": {
@@ -358,9 +373,9 @@
     },
     "SongRequestCancelMessage": {
         "type": "textbox",
-        "value": "{0}, your song request {1} was cancelled.",
-        "label": "On Song Request Cancelled Message",
-        "tooltip": "The message that will be sent to chat when user's song request was cancelled. 0 — user name, 1 — song request.",
+        "value": "{0}, your song request {1} was canceled.",
+        "label": "On Song Request Canceled Message",
+        "tooltip": "The message that will be sent to chat when user's song request was canceled. 0 — user name, 1 — song request.",
         "group": "Chat Messages"
     },
     "GotUserSongRequestsMessage": {
@@ -375,6 +390,27 @@
         "value": "{0} has no song requests.",
         "label": "On Get No User Song Requests Message",
         "tooltip": "The message that will be sent to chat when user tries to get song requests list of someone who doesn't have any requests. 0 — target user name.",
+        "group": "Chat Messages"
+    },
+    "OptionValueTheSameMessage": {
+        "type": "textbox",
+        "value": "Option {0} value cannot be changed to the same value {1}",
+        "label": "On Changing Option Value To The Same Message",
+        "tooltip": "The message that will be sent to chat when user tries to change option value to the same value. 0 — option name, 1 — current option value.",
+        "group": "Chat Messages"
+    },
+    "OptionValueChangedMessage": {
+        "type": "textbox",
+        "value": "Option {0} value has been changed from {1} to {2}",
+        "label": "On Changing Option Value To New Value Message",
+        "tooltip": "The message that will be sent to chat when user changes settings option. 0 — option name, 1 — old option value, 1 — new option value.",
+        "group": "Chat Messages"
+    },
+    "FailedToSetOptionMessage": {
+        "type": "textbox",
+        "value": "Failed to change option {0}: {1}",
+        "label": "On Failed To Change Option Value Message",
+        "tooltip": "The message that will be sent to chat when settings option cannot be changed. 0 — option name, 1 — error description.",
         "group": "Chat Messages"
     },
 

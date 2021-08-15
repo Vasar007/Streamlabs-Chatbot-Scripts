@@ -6,6 +6,7 @@ import song_request_helpers as helpers
 
 from Scripts.SongRequest.CSharp.Models.Requests import SongRequestStateHelper
 
+
 class SongRequestStorage(object):
 
     def __init__(self, logger):

@@ -69,6 +69,20 @@ class SongRequestSettings(object):
         """
         cls._reload_event.on(config.SettingsReloadEventName, reload_callback)
 
+    def parse_mod_ids(self, logger):
+        if not self.UseWhisperMessagesToControlSongRequests:
+            logger.info("Whisper option is turn off.")
+            return [""]
+
+        raw_mod_ids = self.ModIdsToWhisper
+        mod_ids = raw_mod_ids.split(config.DefaultDelimeter)
+        for i in range(len(mod_ids)):
+            temp_mod_id = mod_ids[i]
+            mod_ids[i] = temp_mod_id.strip()
+
+        logger.info("Using mod IDs to whisper: {0}".format(mod_ids))
+        return mod_ids
+
     def _set_default(self):
         # Setup group.
         self.CommandAddSongRequest = config.CommandAddSongRequest
@@ -81,16 +95,20 @@ class SongRequestSettings(object):
         self.CommandRejectSongRequestCooldown = config.CommandRejectSongRequestCooldown
         self.CommandGetSongRequest = config.CommandGetSongRequest
         self.CommandGetSongRequestCooldown = config.CommandGetSongRequestCooldown
-        self.CommandSettingsSongRequest = config.CommandSettingsSongRequest
-        self.CommandSettingsSongRequestCooldown = config.CommandSettingsSongRequestCooldown
+        self.CommandOptionSongRequest = config.CommandOptionSongRequest
+        self.CommandOptionSongRequestCooldown = config.CommandOptionSongRequestCooldown
         self.HttpPageLinkToParse = config.HttpPageLinkToParse
         self.MaxNumberOfSongRequestsToAdd = config.MaxNumberOfSongRequestsToAdd
-        self.UseWhisperMessagesToControlSongRequests = config.UseWhisperMessagesToControlSongRequests
+        self.WaitingTimeoutForSongRequestsInSeconds = config.WaitingTimeoutForSongRequestsInSeconds
         self.DispatchTimeoutInSeconds = config.DispatchTimeoutInSeconds
         self.TimeoutToWaitInMilliseconds = config.TimeoutToWaitInMilliseconds
+        self.UseWhisperMessagesToControlSongRequests = config.UseWhisperMessagesToControlSongRequests
+        self.ModIdsToWhisper = config.ModIdsToWhisper
+
+        # Parsing group.
+        self.SelectedBrowserDriver = config.SelectedBrowserDriver
         self.BrowserDriverPath = config.BrowserDriverPath
         self.BrowserDriverExecutableName = config.BrowserDriverExecutableName
-        self.SelectedBrowserDriver = config.SelectedBrowserDriver
         self.ElementIdOfNewSongTextField = config.ElementIdOfNewSongTextField
         self.ElementIdOfAddSongButton = config.ElementIdOfAddSongButton
         self.ClassNameOfNotificationIcon = config.ClassNameOfNotificationIcon
@@ -101,8 +119,8 @@ class SongRequestSettings(object):
         # Permission group.
         self.PermissionOnAddCancelSongRequest = config.PermissionOnAddCancelSongRequest
         self.PermissionInfoOnAddCancelSongRequest = config.PermissionInfoOnAddCancelSongRequest
-        self.PermissionOnApproveRejectGetSongRequest = config.PermissionOnApproveRejectGetSongRequest
-        self.PermissionInfoOnApproveRejectGetSongRequest = config.PermissionInfoOnApproveRejectGetSongRequest
+        self.PermissionOnManageSongRequest = config.PermissionOnManageSongRequest
+        self.PermissionInfoOnManageSongRequest = config.PermissionInfoOnManageSongRequest
         self.PermissionDeniedMessage = config.PermissionDeniedMessage
 
         # Chat Messages group.
@@ -125,6 +143,9 @@ class SongRequestSettings(object):
         self.SongRequestCancelMessage = config.SongRequestCancelMessage
         self.GotUserSongRequestsMessage = config.GotUserSongRequestsMessage
         self.NoUserSongRequestsMessage = config.NoUserSongRequestsMessage
+        self.OptionValueTheSameMessage = config.OptionValueTheSameMessage
+        self.OptionValueChangedMessage = config.OptionValueChangedMessage
+        self.FailedToSetOptionMessage = config.FailedToSetOptionMessage
 
         # Debugging group.
         self.LoggingLevel = config.LoggingLevel
@@ -181,12 +202,12 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
         return self.settings.CommandGetSongRequestCooldown
 
     @property
-    def CommandSettingsSongRequest(self):
-        return self.settings.CommandSettingsSongRequest
+    def CommandOptionSongRequest(self):
+        return self.settings.CommandOptionSongRequest
 
     @property
-    def CommandSettingsSongRequestCooldown(self):
-        return self.settings.CommandSettingsSongRequestCooldown
+    def CommandOptionSongRequestCooldown(self):
+        return self.settings.CommandOptionSongRequestCooldown
 
     @property
     def HttpPageLinkToParse(self):
@@ -197,8 +218,8 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
         return self.settings.NumberOfSongRequestsToAdd
 
     @property
-    def UseWhisperMessagesToControlSongRequests(self):
-        return self.settings.UseWhisperMessagesToControlSongRequests
+    def WaitingTimeoutForSongRequestsInSeconds(self):
+        return self.settings.WaitingTimeoutForSongRequestsInSeconds
 
     @property
     def DispatchTimeoutInSeconds(self):
@@ -209,16 +230,25 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
         return self.settings.TimeoutToWaitInMilliseconds
 
     @property
+    def UseWhisperMessagesToControlSongRequests(self):
+        return self.settings.UseWhisperMessagesToControlSongRequests
+
+    @property
+    def ModIdsToWhisper(self):
+        return self.settings.ModIdsToWhisper
+
+    # Parsing group.
+    @property
+    def SelectedBrowserDriver(self):
+        return WebDriverType.Wrap(self.settings.SelectedBrowserDriver)
+
+    @property
     def BrowserDriverPath(self):
         return helpers.wrap_file_path(self.settings.BrowserDriverPath)
 
     @property
     def BrowserDriverExecutableName(self):
         return helpers.wrap_file_name(self.settings.BrowserDriverExecutableName)
-
-    @property
-    def SelectedBrowserDriver(self):
-        return WebDriverType.Wrap(self.settings.SelectedBrowserDriver)
 
     @property
     def ElementIdOfNewSongTextField(self):
@@ -254,12 +284,12 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
         return self.settings.PermissionInfoOnAddCancelSongRequest
 
     @property
-    def PermissionOnApproveRejectGetSongRequest(self):
-        return self.settings.PermissionOnApproveRejectGetSongRequest
+    def PermissionOnManageSongRequest(self):
+        return self.settings.PermissionOnManageSongRequest
 
     @property
-    def PermissionInfoOnApproveRejectGetSongRequest(self):
-        return self.settings.PermissionInfoOnApproveRejectGetSongRequest
+    def PermissionInfoOnManageSongRequest(self):
+        return self.settings.PermissionInfoOnManageSongRequest
 
     @property
     def PermissionDeniedMessage(self):
@@ -341,6 +371,18 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
     @property
     def NoUserSongRequestsMessage(self):
         return self.settings.NoUserSongRequestsMessage
+
+    @property
+    def OptionValueTheSameMessage(self):
+        return self.settings.OptionValueTheSameMessage
+
+    @property
+    def OptionValueChangedMessage(self):
+        return self.settings.OptionValueChangedMessage
+
+    @property
+    def FailedToSetOptionMessage(self):
+        return self.settings.FailedToSetOptionMessage
 
     # Debugging group.
     @property

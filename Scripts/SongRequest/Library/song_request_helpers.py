@@ -189,6 +189,13 @@ def strip_command(message, command):
     return message.replace(command, "", 1).strip()
 
 
+def str_to_bool(value):
+    """
+    Converts string value to boolean.
+    """
+    return value.lower() in ("yes", "true", "t", "1")
+
+
 def safe_cast(val, to_type, default=None):
     """
     Provides safe cast to target type.
@@ -197,6 +204,23 @@ def safe_cast(val, to_type, default=None):
         return to_type(val)
     except (ValueError, TypeError):
         return default
+
+
+def safe_cast_with_guess(val, target_type, default=None):
+    """
+    Provides safe cast to target type with predefined type cast function.
+    Supported types: int, float, bool, str
+    """
+    if target_type == int:
+        return safe_cast(val, int, default)
+    elif target_type == float:
+        return safe_cast(val, float, default)
+    elif target_type == bool:
+        return str_to_bool(val)
+    elif target_type == str:
+        return safe_cast(val, str, default)
+    else:
+        raise ValueError("Unknown target type {0} to cast".format(target_type))
 
 
 def strip_at_symbol_for_name(user_name):

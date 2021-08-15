@@ -10,6 +10,7 @@ namespace Scripts.SongRequest.CSharp.Models.Requests
         public HttpLink SongLink { get; init; }
         public SongRequestNumber RequestNumber { get; init; }
         public SongRequestState State { get; init; }
+        public DateTime CreationTimeUtc { get; init; }
 
         public bool IsWaitingForApproval => State == SongRequestState.WaitingForApproval;
         public bool IsApprovedAndPending => State == SongRequestState.ApprovedAndPending;
@@ -17,7 +18,7 @@ namespace Scripts.SongRequest.CSharp.Models.Requests
         public bool IsApprovedAndAddedSuccessfully => State == SongRequestState.ApprovedAndAddedSuccessfully;
         public bool IsApprovedButAddedFailure => State == SongRequestState.ApprovedButAddedFailure;
         public bool IsRejected => State == SongRequestState.Rejected;
-        public bool IsCancelled => State == SongRequestState.Cancelled;
+        public bool IsCanceled => State == SongRequestState.Canceled;
 
 
         public SongRequestModel(
@@ -25,13 +26,15 @@ namespace Scripts.SongRequest.CSharp.Models.Requests
             UserData userData,
             HttpLink songLink,
             SongRequestNumber requestNumber,
-            SongRequestState state)
+            SongRequestState state,
+            DateTime creationTimeUtc)
         {
             RequestId = requestId;
             UserData = userData ?? throw new ArgumentNullException(nameof(userData));
             SongLink = songLink ?? throw new ArgumentNullException(nameof(songLink));
             RequestNumber = requestNumber ?? throw new ArgumentNullException(nameof(requestNumber));
             State = state;
+            CreationTimeUtc = creationTimeUtc;
         }
 
         public static SongRequestModel CreateNew(
@@ -44,7 +47,8 @@ namespace Scripts.SongRequest.CSharp.Models.Requests
                 userData: userData,
                 songLink: songLink,
                 requestNumber: requestNumber,
-                state: SongRequestState.WaitingForApproval
+                state: SongRequestState.WaitingForApproval,
+                creationTimeUtc: DateTime.UtcNow
             );
         }
 
@@ -92,7 +96,7 @@ namespace Scripts.SongRequest.CSharp.Models.Requests
         {
             return this with
             {
-                State = SongRequestState.Cancelled
+                State = SongRequestState.Canceled
             };
         }
     }

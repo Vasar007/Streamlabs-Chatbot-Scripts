@@ -4,6 +4,7 @@ from abc import ABCMeta, abstractmethod
 
 import song_request_config as config
 
+from System import DateTime
 from Scripts.SongRequest.CSharp.Models.Requests import SongRequestState
 from Scripts.SongRequest.CSharp.Models.Requests import SongRequestResult
 
@@ -26,6 +27,48 @@ class BaseSongRequestDispatcher(object):
     @abstractmethod
     def dispatch(self, storage):
         raise NotImplementedError()
+
+
+class WaitingSongRequestDispatcher(BaseSongRequestDispatcher):
+
+    def __init__(self, parent_wrapper, settings, logger):
+        super(WaitingSongRequestDispatcher, self).__init__(
+            parent_wrapper, settings, logger
+        )
+
+    def dispatch(self, storage):
+        waiting_requests = storage.get_requests_with_states(
+            SongRequestState.WaitingForApproval
+        )
+
+         # Update request's states if waiting timeout has passed.
+        for i in range (len(waiting_requests)):
+            request = waiting_requests[i]
+            request = self._process_request(request)
+            waiting_requests[i] = request
+
+        storage.update_states(waiting_requests)
+
+    def _process_request(self, request):
+        self.logger.debug("Waiting request [{0}].".format(request))
+
+        request_creation_time = request.CreationTimeUtc
+        current_time = DateTime.UtcNow
+        waiting_timeout_in_seconds = self.settings.WaitingTimeoutForSongRequestsInSeconds
+
+        if current_time < request_creation_time.AddSeconds(waiting_timeout_in_seconds):
+            self.logger.debug(
+                "Waiting timeout has not passed for request {0}."
+                .format(request.RequestId)
+            )
+            return request
+
+        self.logger.info(
+            "Waiting request {0} was approved because timeout has passed."
+            .format(request.RequestId)
+        )
+        return request.Approve()
+
 
 
 class PendingSongRequestDispatcher(BaseSongRequestDispatcher):
@@ -61,7 +104,7 @@ class PendingSongRequestDispatcher(BaseSongRequestDispatcher):
         storage.update_states(pending_requests)
 
     def _process_request(self, request):
-        self.logger.info("Processing request [{0}].".format(request))
+        self.logger.debug("Processing request [{0}].".format(request))
 
         result = None
         try:
@@ -121,13 +164,17 @@ class DeniedSongRequestDispatcher(BaseSongRequestDispatcher):
         denied_requests = storage.get_requests_with_states(
             SongRequestState.ApprovedButAddedFailure,
             SongRequestState.Rejected,
-            SongRequestState.Cancelled
+            SongRequestState.Canceled
         )
 
         for request in denied_requests:
-            self.logger.info("Denied request [{0}].".format(request))
-            storage.remove_request(request)
-            self.logger.info(
-                "Denied request {0} was removed from storage."
-                .format(request.RequestId)
-            )
+            self._process_request(rerequest, storage)
+
+    def _process_request(self, request, storage):
+        self.logger.debug("Denied request [{0}].".format(request))
+
+        storage.remove_request(request)
+        self.logger.info(
+            "Denied request {0} was removed from storage."
+            .format(request.RequestId)
+        )

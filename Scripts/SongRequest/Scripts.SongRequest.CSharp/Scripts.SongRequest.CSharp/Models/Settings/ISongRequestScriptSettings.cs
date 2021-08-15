@@ -22,18 +22,24 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         string CommandGetSongRequest { get; }
         int CommandGetSongRequestCooldown { get; }
 
-        string CommandSettingsSongRequest { get; }
-        int CommandSettingsSongRequestCooldown { get; }
+        string CommandOptionSongRequest { get; }
+        int CommandOptionSongRequestCooldown { get; }
 
         HttpLink HttpPageLinkToParse { get; }
         int NumberOfSongRequestsToAdd { get; }
-        bool UseWhisperMessagesToControlSongRequests { get; }
+        int WaitingTimeoutForSongRequestsInSeconds { get; }
         int DispatchTimeoutInSeconds { get; }
         int TimeoutToWaitInMilliseconds { get; }
+        bool UseWhisperMessagesToControlSongRequests { get; }
+        string ModIdsToWhisper { get; }
 
+        #endregion
+
+        #region Parsing Group
+
+        WebDriverType SelectedBrowserDriver { get; }
         FilePath BrowserDriverPath { get; }
         FileName BrowserDriverExecutableName { get; }
-        WebDriverType SelectedBrowserDriver { get; }
         string ElementIdOfNewSongTextField { get; }
         string ElementIdOfAddSongButton { get; }
         string ClassNameOfNotificationIcon { get; }
@@ -47,8 +53,10 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
 
         string PermissionOnAddCancelSongRequest { get; }
         string PermissionInfoOnAddCancelSongRequest { get; }
-        string PermissionOnApproveRejectGetSongRequest { get; }
-        string PermissionInfoOnApproveRejectGetSongRequest { get; }
+
+        string PermissionOnManageSongRequest { get; }
+        string PermissionInfoOnManageSongRequest { get; }
+
         string PermissionDeniedMessage { get; }
 
         #endregion
@@ -74,6 +82,9 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         string SongRequestCancelMessage { get; }
         string GotUserSongRequestsMessage { get; }
         string NoUserSongRequestsMessage { get; }
+        string OptionValueTheSameMessage { get; }
+        string OptionValueChangedMessage { get; }
+        string FailedToSetOptionMessage { get; }
 
         #endregion
 

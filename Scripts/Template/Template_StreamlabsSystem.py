@@ -91,6 +91,7 @@ def Execute(data):
     [Required] Execute Data/Process messages.
     """
     try:
+        # Script accepts only messages from chat.
         data_wrapper = DataWrapper(data)
         if not data_wrapper.is_chat_message():
             return

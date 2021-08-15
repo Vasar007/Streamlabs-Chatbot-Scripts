@@ -81,6 +81,7 @@ class TransferFileLogWrapper(object):
         self.logger.removeHandler(self.file_log_handler)
         self.enabled = False
         # Remove handler to free file lock.
+        self.file_log_handler.close()
         self.file_log_handler = None
 
     def _update_logging_setup(self, log_level=None):

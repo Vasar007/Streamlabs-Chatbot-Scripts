@@ -48,27 +48,14 @@ PermissionHierarchy = (Everyone, Subscriber, UserSpecific, Moderator, Editor)
 
 SongRequestNumberAndLinkFormat = "#{0} ({1})"
 CommandAddGetSongRequestUsage = "{0} {1}"
-CommandApproveRejectSongRequestUsage = "{0} {1} {2}"
+CommandManageSongRequestUsage = "{0} {1} {2}"
 ExampleUserIdOrName = "[UserIdOrName]"
 ExampleRequestNumberValidRange = "[1–{0}]"
 ExampleYouTubeLinkToSong = "[YouTube link]"
+ExampleOptionName = "[Option name]"
+ExampleOptionValue = "[New option value]"
 
-EnableWebDriverDebug = False
-
-BrowserDriverPath = "C:\\Program Files\\Common Files\\Webdrivers"
-BrowserDriverExecutableName = "MicrosoftWebDriver.exe"
-
-EdgeDriver = "Edge"
-ChromeDriver = "Chromium/Chrome"
-FirefoxDriver = "Firefox"
-OperaDriver = "Opera"
-SelectedBrowserDriver = EdgeDriver
-ElementIdOfNewSongTextField = "newSong"
-ElementIdOfAddSongButton = "playerAddSong"
-ClassNameOfNotificationIcon = "ui-pnotify-icon"
-ClassNameOfSuccessNotificationIcon = "brighttheme-icon-success"
-ClassNameOfErrorNotificationIcon = "brighttheme-icon-error"
-ClassNameOfNotificationDescription = "ui-pnotify-text"
+DefaultDelimeter = ","
 
 # [Required] Script Information.
 ScriptName = "Song Request Script"
@@ -89,14 +76,33 @@ CommandRejectSongRequest = "!sr_reject"
 CommandRejectSongRequestCooldown = 1
 CommandGetSongRequest = "!sr_get"
 CommandGetSongRequestCooldown = 1
-CommandSettingsSongRequest = "!sr_settings"
-CommandSettingsSongRequestCooldown = 1
+CommandOptionSongRequest = "!sr_option"
+CommandOptionSongRequestCooldown = 1
 
 HttpPageLinkToParse = ""
 MaxNumberOfSongRequestsToAdd = 3
-UseWhisperMessagesToControlSongRequests = True
+WaitingTimeoutForSongRequestsInSeconds = 120
 DispatchTimeoutInSeconds = 10
 TimeoutToWaitInMilliseconds = 3000
+UseWhisperMessagesToControlSongRequests = True
+ModIdsToWhisper = ""
+
+EnableWebDriverDebug = False
+
+BrowserDriverPath = "C:\\Program Files\\Common Files\\Webdrivers"
+BrowserDriverExecutableName = "chromedriver.exe"
+
+EdgeDriver = "Edge"
+ChromeDriver = "Chromium/Chrome"
+FirefoxDriver = "Firefox"
+OperaDriver = "Opera"
+SelectedBrowserDriver = ChromeDriver
+ElementIdOfNewSongTextField = "newSong"
+ElementIdOfAddSongButton = "playerAddSong"
+ClassNameOfNotificationIcon = "ui-pnotify-icon"
+ClassNameOfSuccessNotificationIcon = "brighttheme-icon-success"
+ClassNameOfErrorNotificationIcon = "brighttheme-icon-error"
+ClassNameOfNotificationDescription = "ui-pnotify-text"
 
 # Values: everyone, moderator, subscriber, user_specific, editor.
 PermissionOnAddCancelSongRequest = Subscriber
@@ -104,9 +110,9 @@ PermissionOnAddCancelSongRequest = Subscriber
 PermissionInfoOnAddCancelSongRequest = ""
 
 # Values: everyone, moderator, subscriber, user_specific, editor.
-PermissionOnApproveRejectGetSongRequest = Moderator
+PermissionOnManageSongRequest = Moderator
 # This field should only be filled when using the user_specific permission.
-PermissionInfoOnApproveRejectGetSongRequest = ""
+PermissionInfoOnManageSongRequest = ""
 
 PermissionDeniedMessage = "Permission denied: You have to be a {0} to use {1} command!"
 InvalidCommandCallMessage = "Invalid {0} command call. Usage: {1}"
@@ -125,6 +131,9 @@ OnFailureSongRequestMessage = "{0}, your song request {1} cannot be added. Error
 OnFailureSongRequestDefaultErrorMessage = "Unknown error occurred"
 SongRequestRejectedMessage = "{0}, your song request {1} was rejected by {2}."
 SongRequestDefaultRejectReason = "song didn't pass moderation"
-SongRequestCancelMessage = "{0}, your song request {1} was cancelled."
+SongRequestCancelMessage = "{0}, your song request {1} was canceled."
 GotUserSongRequestsMessage = "{0} has {1} song request(-s): {2}"
 NoUserSongRequestsMessage = "{0} has no song requests."
+OptionValueTheSameMessage = "Option {0} value cannot be changed to the same value {1}"
+OptionValueChangedMessage = "Option {0} value has been changed from {1} to {2}"
+FailedToSetOptionMessage = "Failed to change option {0}: {1}"

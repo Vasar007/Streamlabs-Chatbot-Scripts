@@ -46,8 +46,7 @@ from song_request_settings import SongRequestCSharpSettings as CSharpSettings
 # pylint:disable=import-error
 from song_request_command_wrapper import SongRequestCommandWrapper as CommandWrapper
 
-# pylint:disable=import-error
-import song_request_manager
+import song_request_manager  # pylint:disable=import-error
 
 # Import your Settings class.
 from song_request_settings import SongRequestSettings  # pylint:disable=import-error
@@ -72,10 +71,12 @@ Version = config.Version
 ParentHandler = None  # Parent wrapper instance.
 SettingsFile = ""
 ScriptSettings = SongRequestSettings()
-Manager = None  # Song request manager instance.
+MessengerHandler = None  # Script messenger instance.
 PageScrapper = None  # Song request page scrapper instance.
-LastDispatchTime = datetime.now()
+Manager = None  # Song request manager instance.
+LastDispatchTime = datetime.utcnow()
 DidPageOpenned = False
+
 
 def Init():
     """
@@ -118,9 +119,8 @@ def Execute(data):
     [Required] Execute Data/Process messages.
     """
     try:
+        # Script accepts all messages.
         data_wrapper = DataWrapper(data)
-        if not data_wrapper.is_chat_message():
-            return
 
         # Check if the propper command is used, the command is not on cooldown
         # and the user has permission to use the command.
@@ -169,7 +169,7 @@ def Tick():
     global LastDispatchTime
     global DidPageOpenned
 
-    current_time = datetime.now()
+    current_time = datetime.utcnow()
     delta = timedelta(seconds=ScriptSettings.DispatchTimeoutInSeconds)
 
     if current_time < (LastDispatchTime + delta):
@@ -344,8 +344,8 @@ def TryProcessCommand(command, data_wrapper):
 
     # !sr_approve
     elif command == ScriptSettings.CommandApproveSongRequest:
-        required_permission = ScriptSettings.PermissionOnApproveRejectGetSongRequest
-        permission_info = ScriptSettings.PermissionInfoOnApproveRejectGetSongRequest
+        required_permission = ScriptSettings.PermissionOnManageSongRequest
+        permission_info = ScriptSettings.PermissionInfoOnManageSongRequest
         func = GetFuncToProcessIfHasPermission(
             ProcessApproveRejectSongRequestCommand,
             ScriptSettings.CommandApproveSongRequestCooldown,
@@ -357,7 +357,7 @@ def TryProcessCommand(command, data_wrapper):
         is_valid_call = param_count >= 2
 
         usage_example = (
-            config.CommandApproveRejectSongRequestUsage
+            config.CommandManageSongRequestUsage
             .format(
                 ScriptSettings.CommandApproveSongRequest,
                 config.ExampleUserIdOrName,
@@ -367,8 +367,8 @@ def TryProcessCommand(command, data_wrapper):
 
     # !sr_reject
     elif command == ScriptSettings.CommandRejectSongRequest:
-        required_permission = ScriptSettings.PermissionOnApproveRejectGetSongRequest
-        permission_info = ScriptSettings.PermissionInfoOnApproveRejectGetSongRequest
+        required_permission = ScriptSettings.PermissionOnManageSongRequest
+        permission_info = ScriptSettings.PermissionInfoOnManageSongRequest
         func = GetFuncToProcessIfHasPermission(
             ProcessApproveRejectSongRequestCommand,
             ScriptSettings.CommandRejectSongRequestCooldown,
@@ -380,7 +380,7 @@ def TryProcessCommand(command, data_wrapper):
         is_valid_call = param_count >= 2
 
         usage_example = (
-            config.CommandApproveRejectSongRequestUsage
+            config.CommandManageSongRequestUsage
             .format(
                 ScriptSettings.CommandRejectSongRequest,
                 config.ExampleUserIdOrName,
@@ -390,8 +390,8 @@ def TryProcessCommand(command, data_wrapper):
 
     # !sr_get
     elif command == ScriptSettings.CommandGetSongRequest:
-        required_permission = ScriptSettings.PermissionOnApproveRejectGetSongRequest
-        permission_info = ScriptSettings.PermissionInfoOnApproveRejectGetSongRequest
+        required_permission = ScriptSettings.PermissionOnManageSongRequest
+        permission_info = ScriptSettings.PermissionInfoOnManageSongRequest
         func = GetFuncToProcessIfHasPermission(
             ProcessGetSongRequestsCommand,
             ScriptSettings.CommandGetSongRequestCooldown,
@@ -407,6 +407,30 @@ def TryProcessCommand(command, data_wrapper):
             .format(
                 ScriptSettings.CommandGetSongRequest,
                 config.ExampleUserIdOrName
+            )
+        )
+
+    # !sr_option
+    elif command == ScriptSettings.CommandOptionSongRequest:
+        required_permission = ScriptSettings.PermissionOnManageSongRequest
+        permission_info = ScriptSettings.PermissionInfoOnManageSongRequest
+        func = GetFuncToProcessIfHasPermission(
+            ProcessOptionSongRequestsCommand,
+            ScriptSettings.CommandOptionSongRequestCooldown,
+            data_wrapper.user_id,
+            required_permission,
+            permission_info
+        )
+        # Settings command call cannot have optional text
+        # but it will be considered as additional string value for settings.
+        is_valid_call = param_count >= 3
+
+        usage_example = (
+            config.CommandManageSongRequestUsage
+            .format(
+                ScriptSettings.CommandOptionSongRequest,
+                config.ExampleOptionName,
+                config.ExampleOptionValue
             )
         )
 
@@ -447,5 +471,51 @@ def ProcessGetSongRequestsCommand(command, data_wrapper):
     # Input example: !st_get Vasar <Anything>
     # Command <@>TargetUserNameOrId <Anything>
     song_request_manager.get_all_user_requests(
-        data_wrapper, ParentHandler, ScriptSettings, Logger(), Manager
+        data_wrapper, ScriptSettings, Logger(), Manager
     )
+
+def ProcessOptionSongRequestsCommand(command, data_wrapper):
+    # Input example: !sr_option Vasar <Anything>
+    # Command OptionName NewOptionValue
+    raw_user_id = data_wrapper.user_id
+    option_name = data_wrapper.get_param(1)
+
+    param_count = data_wrapper.get_param_count()
+
+    raw_new_value = ""
+    for i in range(2, param_count):
+        raw_new_value += " " + data_wrapper.get_param(i)
+    raw_new_value = raw_new_value.strip()
+
+    Logger().info(
+        "User {0} want to change option {1} to {2}"
+        .format(raw_user_id, option_name, raw_new_value)
+    )
+
+    message = None
+    try:
+        previous_value = ScriptSettings.__dict__[option_name]
+        new_value = helpers.safe_cast_with_guess(
+            raw_new_value, type(previous_value), previous_value
+        )
+
+        if previous_value == new_value:
+            message = (
+                ScriptSettings.OptionValueTheSameMessage
+                .format(option_name, previous_value, new_value)
+            )
+        else:
+            ScriptSettings.__dict__[option_name] = new_value
+            message = (
+                ScriptSettings.OptionValueChangedMessage
+                .format(option_name, previous_value, new_value)
+            )
+    except Exception as ex:
+        message = (
+            ScriptSettings.FailedToSetOptionMessage
+            .format(option_name, str(ex))
+        )
+        Logger().exception(message)
+
+    Logger().info(message)
+    Manager.get_messenger().send_message(raw_user_id, message)
