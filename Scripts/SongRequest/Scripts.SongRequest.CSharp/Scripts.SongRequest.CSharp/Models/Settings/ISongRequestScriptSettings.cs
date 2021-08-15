@@ -93,6 +93,8 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         string OptionValueTheSameMessage { get; }
         string OptionValueChangedMessage { get; }
         string FailedToSetOptionMessage { get; }
+        string FailedToSetOptionInvalidTypeMessage { get; }
+        string FailedToSetOptionInvalidNameMessage { get; }
         string FailedToValidateLinkMessage { get; }
         string CommandProcessingDisabledMessage { get; }
         string SkipAllSongRequestsMessage { get; }

@@ -153,6 +153,8 @@ class SongRequestSettings(object):
         self.OptionValueTheSameMessage = config.OptionValueTheSameMessage
         self.OptionValueChangedMessage = config.OptionValueChangedMessage
         self.FailedToSetOptionMessage = config.FailedToSetOptionMessage
+        self.FailedToSetOptionInvalidTypeMessage = config.FailedToSetOptionInvalidTypeMessage
+        self.FailedToSetOptionInvalidNameMessage = config.FailedToSetOptionInvalidNameMessage
         self.FailedToValidateLinkMessage = config.FailedToValidateLinkMessage
         self.CommandProcessingDisabledMessage = config.CommandProcessingDisabledMessage
         self.SkipAllSongRequestsMessage = config.SkipAllSongRequestsMessage
@@ -424,6 +426,14 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
     @property
     def FailedToSetOptionMessage(self):
         return self.settings.FailedToSetOptionMessage
+
+    @property
+    def FailedToSetOptionInvalidTypeMessage(self):
+        return self.settings.FailedToSetOptionInvalidTypeMessage
+
+    @property
+    def FailedToSetOptionInvalidNameMessage(self):
+        return self.settings.FailedToSetOptionInvalidNameMessage
 
     @property
     def FailedToValidateLinkMessage(self):

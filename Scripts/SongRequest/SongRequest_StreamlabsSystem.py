@@ -573,8 +573,9 @@ def ProcessOptionSongRequestsCommand(command, data_wrapper):
     # Input example: !sr_option Vasar <NewValue>
     # Command OptionName NewOptionValue
     raw_user_id = data_wrapper.user_id
-    option_name = data_wrapper.get_param(1)
+    raw_user_name = data_wrapper.user_name
 
+    option_name = data_wrapper.get_param(1)
     param_count = data_wrapper.get_param_count()
 
     raw_new_value = ""
@@ -590,27 +591,44 @@ def ProcessOptionSongRequestsCommand(command, data_wrapper):
     message = None
     try:
         previous_value = ScriptSettings.__dict__[option_name]
+        previous_value_type = type(previous_value)
         new_value = helpers.safe_cast_with_guess(
-            raw_new_value, type(previous_value), previous_value
+            raw_new_value, previous_value_type
         )
 
-        if previous_value == new_value:
+        if new_value is None:
+            submessage = (
+                ScriptSettings.FailedToSetOptionInvalidTypeMessage
+                .format(previous_value_type)
+            )
+            message = (
+                ScriptSettings.FailedToSetOptionMessage
+                .format(raw_user_name, option_name, submessage)
+            )
+        elif previous_value == new_value:
             message = (
                 ScriptSettings.OptionValueTheSameMessage
-                .format(option_name, previous_value, new_value)
+                .format(raw_user_name, option_name, previous_value, new_value)
             )
         else:
             ScriptSettings.__dict__[option_name] = new_value
             message = (
                 ScriptSettings.OptionValueChangedMessage
-                .format(option_name, previous_value, new_value)
+                .format(raw_user_name, option_name, previous_value, new_value)
             )
 
         ScriptSettings.save(SettingsFile)
+    except KeyError as key_error:
+        submessage = ScriptSettings.FailedToSetOptionInvalidNameMessage
+        message = (
+            ScriptSettings.FailedToSetOptionMessage
+            .format(raw_user_name, option_name, submessage)
+        )
+        Logger().exception(message)
     except Exception as ex:
         message = (
             ScriptSettings.FailedToSetOptionMessage
-            .format(option_name, str(ex))
+            .format(raw_user_name, option_name, str(ex))
         )
         Logger().exception(message)
 
