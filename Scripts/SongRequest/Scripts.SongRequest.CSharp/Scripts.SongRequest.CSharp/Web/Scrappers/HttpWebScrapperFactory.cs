@@ -87,6 +87,7 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
             if (!enableWebDriverDebug)
             {
                 options.AddArgument("headless");
+                options.AddArgument("mute-audio");
             }
 
             var driver = new ChromeDriver(driverService, options);
@@ -111,6 +112,7 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
             if (!enableWebDriverDebug)
             {
                 options.AddArgument("headless");
+                options.AddArgument("mute-audio");
             }
 
             var driver = new FirefoxDriver(driverService);
@@ -136,6 +138,7 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
             if (!enableWebDriverDebug)
             {
                 options.AddArgument("headless");
+                options.AddArgument("mute-audio");
             }
 
             var driver = new OperaDriver(driverService, options);

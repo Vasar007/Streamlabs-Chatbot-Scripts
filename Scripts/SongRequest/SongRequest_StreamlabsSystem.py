@@ -345,7 +345,7 @@ def TryProcessCommand(command, data_wrapper):
         is_valid_call = param_count >= 2
 
         usage_example = (
-            config.CommandAddGetSongRequestUsage
+            config.CommandAddGetSkipSongRequestUsage
             .format(
                 ScriptSettings.CommandAddSongRequest,
                 config.ExampleYouTubeLinkToSong
@@ -413,10 +413,32 @@ def TryProcessCommand(command, data_wrapper):
         is_valid_call = param_count >= 2
 
         usage_example = (
-            config.CommandAddGetSongRequestUsage
+            config.CommandAddGetSkipSongRequestUsage
             .format(
                 ScriptSettings.CommandGetSongRequest,
                 config.ExampleUserIdOrName
+            )
+        )
+
+    # !sr_skip
+    elif command == ScriptSettings.CommandSkipSongRequest:
+        required_permission = ScriptSettings.PermissionOnManageSongRequest
+        permission_info = ScriptSettings.PermissionInfoOnManageSongRequest
+        func = GetFuncToProcessIfHasPermission(
+            ProcessSkipSongRequestCommand,
+            ScriptSettings.CommandSkipSongRequestCooldown,
+            data_wrapper.user_id,
+            required_permission,
+            permission_info
+        )
+        # Skip command call can have optional text.
+        is_valid_call = param_count >= 1
+
+        usage_example = (
+            config.CommandAddGetSkipSongRequestUsage
+            .format(
+                ScriptSettings.CommandSkipSongRequest,
+                config.ExampleAllValue
             )
         )
 
@@ -517,6 +539,45 @@ def ProcessGetSongRequestsCommand(command, data_wrapper):
         data_wrapper, ScriptSettings, Logger(), Manager
     )
 
+
+def ProcessSkipSongRequestCommand(command, data_wrapper):
+    # Input example: !sr_skip <Anything>
+    # Input example: !sr_skip all <>Anything
+    # Command <all> <Anything>
+    if ShouldSkipCommandProcessing(data_wrapper):
+        return
+
+    raw_user_id = data_wrapper.user_id
+    raw_user_name = data_wrapper.user_name
+
+    potential_all = data_wrapper.get_param(1)
+    should_skip_all = (
+        potential_all.lower() == SongRequestNumber.RawAllValue.lower()
+    )
+    result = PageScrapper.Skip(should_skip_all)
+
+    message = None
+    if result.IsSuccess:
+        if should_skip_all:
+            message = (
+                ScriptSettings.SkipAllSongRequestsMessage
+                .format(raw_user_name)
+            )
+        else:
+            message = (
+                ScriptSettings.SkipCurrentSongRequestMessage
+                .format(raw_user_name)
+            )
+    else:
+        message = (
+            ScriptSettings.FailedToSkipSongRequestsMessage
+            .format(raw_user_name, result.Description)
+        )
+
+    Logger().info(message)
+    Manager.get_messenger().send_message(raw_user_id, message)
+
+
 def ProcessOptionSongRequestsCommand(command, data_wrapper):
     # Input example: !sr_option Vasar <NewValue>
     # Command OptionName NewOptionValue
@@ -553,6 +614,8 @@ def ProcessOptionSongRequestsCommand(command, data_wrapper):
                 ScriptSettings.OptionValueChangedMessage
                 .format(option_name, previous_value, new_value)
             )
+
+        ScriptSettings.save(SettingsFile)
     except Exception as ex:
         message = (
             ScriptSettings.FailedToSetOptionMessage

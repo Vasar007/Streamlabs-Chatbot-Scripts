@@ -23,6 +23,10 @@ namespace Scripts.SongRequest.TestConsoleApp.Mocks
             mock.Setup(x => x.ClassNameOfSuccessNotificationIcon).Returns(TestConfig.ClassNameOfSuccessNotificationIcon);
             mock.Setup(x => x.ClassNameOfErrorNotificationIcon).Returns(TestConfig.ClassNameOfErrorNotificationIcon);
             mock.Setup(x => x.ClassNameOfNotificationDescription).Returns(TestConfig.ClassNameOfNotificationDescription);
+            mock.Setup(x => x.ElementIdOfSkipSongButton).Returns(TestConfig.ElementIdOfSkipSongButton);
+            mock.Setup(x => x.ElementIdOfRemoveQueueSongButton).Returns(TestConfig.ElementIdOfRemoveQueueSongButton);
+
+            mock.Setup(x => x.NoSongRequestsToSkipMessage).Returns(TestConfig.NoSongRequestsToSkipMessage);
 
             return mock.Object;
         }

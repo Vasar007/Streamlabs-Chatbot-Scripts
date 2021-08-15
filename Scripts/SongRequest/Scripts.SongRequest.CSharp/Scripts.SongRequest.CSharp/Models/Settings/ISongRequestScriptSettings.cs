@@ -22,6 +22,9 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         string CommandGetSongRequest { get; }
         int CommandGetSongRequestCooldown { get; }
 
+        string CommandSkipSongRequest { get; }
+        int CommandSkipSongRequestCooldown { get; }
+
         string CommandOptionSongRequest { get; }
         int CommandOptionSongRequestCooldown { get; }
 
@@ -49,6 +52,8 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         string ClassNameOfSuccessNotificationIcon { get; }
         string ClassNameOfErrorNotificationIcon { get; }
         string ClassNameOfNotificationDescription { get; }
+        string ElementIdOfSkipSongButton { get; }
+        string ElementIdOfRemoveQueueSongButton { get; }
 
         #endregion
 
@@ -90,6 +95,10 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         string FailedToSetOptionMessage { get; }
         string FailedToValidateLinkMessage { get; }
         string CommandProcessingDisabledMessage { get; }
+        string SkipAllSongRequestsMessage { get; }
+        string SkipCurrentSongRequestMessage { get; }
+        string NoSongRequestsToSkipMessage { get; }
+        string FailedToSkipSongRequestsMessage { get; }
 
         #endregion
 

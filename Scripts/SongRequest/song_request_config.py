@@ -47,11 +47,12 @@ Editor = "editor"
 PermissionHierarchy = (Everyone, Subscriber, UserSpecific, Moderator, Editor)
 
 SongRequestNumberAndLinkFormat = "#{0} ({1})"
-CommandAddGetSongRequestUsage = "{0} {1}"
+CommandAddGetSkipSongRequestUsage = "{0} {1}"
 CommandManageSongRequestUsage = "{0} {1} {2}"
 ExampleUserIdOrName = "[UserIdOrName]"
 ExampleRequestNumberValidRange = "[1–{0}]"
 ExampleYouTubeLinkToSong = "[YouTube link]"
+ExampleAllValue = "[all]"
 ExampleOptionName = "[Option name]"
 ExampleOptionValue = "[New option value]"
 
@@ -60,9 +61,9 @@ DefaultDelimeter = ","
 # [Required] Script Information.
 ScriptName = "Song Request Script"
 Website = "https://github.com/Vasar007/Streamlabs-Chatbot-Scripts"
-Description = "Custom song request script."
+Description = "Extended song request script."
 Creator = "Vasar007"
-Version = "1.0.0"
+Version = "1.0.1"
 
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).
@@ -76,11 +77,13 @@ CommandRejectSongRequest = "!sr_reject"
 CommandRejectSongRequestCooldown = 1
 CommandGetSongRequest = "!sr_get"
 CommandGetSongRequestCooldown = 1
+CommandSkipSongRequest = "!sr_skip"
+CommandSkipSongRequestCooldown = 1
 CommandOptionSongRequest = "!sr_option"
 CommandOptionSongRequestCooldown = 1
 
 HttpPageLinkToParse = ""
-MaxNumberOfSongRequestsToAdd = 3
+MaxNumberOfSongRequestsToAdd = 1
 WaitingTimeoutForSongRequestsInSeconds = 120
 DispatchTimeoutInSeconds = 10
 TimeoutToWaitInMilliseconds = 3000
@@ -106,6 +109,8 @@ ClassNameOfNotificationIcon = "ui-pnotify-icon"
 ClassNameOfSuccessNotificationIcon = "brighttheme-icon-success"
 ClassNameOfErrorNotificationIcon = "brighttheme-icon-error"
 ClassNameOfNotificationDescription = "ui-pnotify-text"
+ElementIdOfSkipSongButton = "playerSkip"
+ElementIdOfRemoveQueueSongButton = "queueRemove"
 
 # Values: everyone, moderator, subscriber, user_specific, editor.
 PermissionOnAddCancelSongRequest = Subscriber
@@ -142,3 +147,7 @@ OptionValueChangedMessage = "Option {0} value has been changed from {1} to {2}"
 FailedToSetOptionMessage = "Failed to change option {0}: {1}"
 FailedToValidateLinkMessage = "{0}, failed to validate your link: {1}"
 CommandProcessingDisabledMessage = "{0}, command processing is disabled for this script."
+SkipAllSongRequestsMessage = "{0}, all song requests were skipped."
+SkipCurrentSongRequestMessage = "{0}, current song requests was skipped."
+NoSongRequestsToSkipMessage = "No songs in playlist available to skip."
+FailedToSkipSongRequestsMessage = "{0}, failed to skip song requests: {1}"

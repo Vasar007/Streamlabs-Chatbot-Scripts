@@ -20,6 +20,10 @@ namespace Scripts.SongRequest.TestConsoleApp.Mocks
         public const string ClassNameOfSuccessNotificationIcon = "brighttheme-icon-success";
         public const string ClassNameOfErrorNotificationIcon = "brighttheme-icon-error";
         public const string ClassNameOfNotificationDescription = "ui-pnotify-text";
+        public const string ElementIdOfSkipSongButton = "playerSkip";
+        public const string ElementIdOfRemoveQueueSongButton = "queueRemove";
+
+        public const string NoSongRequestsToSkipMessage = "No songs in playlist available to skip.";
 
         public static readonly HttpLink SongLink = new("https://www.youtube.com/watch?v=CAEUnn0HNLM");
     }

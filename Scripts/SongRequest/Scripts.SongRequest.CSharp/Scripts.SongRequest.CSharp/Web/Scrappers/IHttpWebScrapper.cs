@@ -8,5 +8,6 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
         void OpenUrl();
         void Refresh();
         SongRequestResult Process(SongRequestModel songRequest);
+        SongRequestSkipResult Skip(bool shouldSkipAll);
     }
 }

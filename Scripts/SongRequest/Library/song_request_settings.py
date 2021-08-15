@@ -95,6 +95,8 @@ class SongRequestSettings(object):
         self.CommandRejectSongRequestCooldown = config.CommandRejectSongRequestCooldown
         self.CommandGetSongRequest = config.CommandGetSongRequest
         self.CommandGetSongRequestCooldown = config.CommandGetSongRequestCooldown
+        self.CommandSkipSongRequest = config.CommandSkipSongRequest
+        self.CommandSkipSongRequestCooldown = config.CommandSkipSongRequestCooldown
         self.CommandOptionSongRequest = config.CommandOptionSongRequest
         self.CommandOptionSongRequestCooldown = config.CommandOptionSongRequestCooldown
         self.HttpPageLinkToParse = config.HttpPageLinkToParse
@@ -118,6 +120,8 @@ class SongRequestSettings(object):
         self.ClassNameOfSuccessNotificationIcon = config.ClassNameOfSuccessNotificationIcon
         self.ClassNameOfErrorNotificationIcon = config.ClassNameOfErrorNotificationIcon
         self.ClassNameOfNotificationDescription = config.ClassNameOfNotificationDescription
+        self.ElementIdOfSkipSongButton = config.ElementIdOfSkipSongButton
+        self.ElementIdOfRemoveQueueSongButton = config.ElementIdOfRemoveQueueSongButton
 
         # Permission group.
         self.PermissionOnAddCancelSongRequest = config.PermissionOnAddCancelSongRequest
@@ -151,6 +155,10 @@ class SongRequestSettings(object):
         self.FailedToSetOptionMessage = config.FailedToSetOptionMessage
         self.FailedToValidateLinkMessage = config.FailedToValidateLinkMessage
         self.CommandProcessingDisabledMessage = config.CommandProcessingDisabledMessage
+        self.SkipAllSongRequestsMessage = config.SkipAllSongRequestsMessage
+        self.SkipCurrentSongRequestMessage = config.SkipCurrentSongRequestMessage
+        self.NoSongRequestsToSkipMessage = config.NoSongRequestsToSkipMessage
+        self.FailedToSkipSongRequestsMessage = config.FailedToSkipSongRequestsMessage
 
         # Debugging group.
         self.LoggingLevel = config.LoggingLevel
@@ -205,6 +213,14 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
     @property
     def CommandGetSongRequestCooldown(self):
         return self.settings.CommandGetSongRequestCooldown
+
+    @property
+    def CommandSkipSongRequest(self):
+        return self.settings.CommandSkipSongRequest
+
+    @property
+    def CommandSkipSongRequestCooldown(self):
+        return self.settings.CommandSkipSongRequestCooldown
 
     @property
     def CommandOptionSongRequest(self):
@@ -290,6 +306,14 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
     @property
     def ClassNameOfNotificationDescription(self):
         return self.settings.ClassNameOfNotificationDescription
+
+    @property
+    def ElementIdOfSkipSongButton(self):
+        return self.settings.ElementIdOfSkipSongButton
+
+    @property
+    def ElementIdOfRemoveQueueSongButton(self):
+        return self.settings.ElementIdOfRemoveQueueSongButton
 
     # Permission group.
     @property
@@ -408,6 +432,22 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
     @property
     def CommandProcessingDisabledMessage(self):
         return self.settings.CommandProcessingDisabledMessage
+
+    @property
+    def SkipAllSongRequestsMessage(self):
+        return self.settings.SkipAllSongRequestsMessage
+
+    @property
+    def SkipCurrentSongRequestMessage(self):
+        return self.settings.SkipCurrentSongRequestMessage
+
+    @property
+    def NoSongRequestsToSkipMessage(self):
+        return self.settings.NoSongRequestsToSkipMessage
+
+    @property
+    def FailedToSkipSongRequestsMessage(self):
+        return self.settings.FailedToSkipSongRequestsMessage
 
     # Debugging group.
     @property

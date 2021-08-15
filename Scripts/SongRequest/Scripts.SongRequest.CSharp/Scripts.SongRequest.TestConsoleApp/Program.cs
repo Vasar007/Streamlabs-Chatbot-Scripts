@@ -21,7 +21,8 @@ namespace Scripts.SongRequest.TestConsoleApp
                 ConsoleHelper.SetupUnicodeEncoding();
                 Console.WriteLine("Console application started.");
 
-                TestMethod(args);
+                TestAddSongRequest(args);
+                TestSkipSongRequest(args);
                 Console.WriteLine("All tests were performed.");
 
                 return ExitCodes.Success;
@@ -42,15 +43,9 @@ namespace Scripts.SongRequest.TestConsoleApp
             }
         }
 
-        private static void TestMethod(IReadOnlyList<string> args)
+        private static void TestAddSongRequest(IReadOnlyList<string> args)
         {
-            if (args.Count != 1)
-            {
-                string message = $"Invalid number of arguments: {args.Count.ToString()}.";
-                throw new ArgumentException(message, nameof(args));
-            }
-
-            var httpLink = new HttpLink(args[0]);
+            var httpLink = ParseIntputLink(args);
 
             var settings = TestSettings.MockSettings(httpLink);
             using var scrapper = HttpWebScrapperFactory.Create(settings, Logger);
@@ -73,6 +68,39 @@ namespace Scripts.SongRequest.TestConsoleApp
             {
                 Logger.Error($"Failed to process song request: {result.Description}");
             }
+        }
+
+        private static void TestSkipSongRequest(IReadOnlyList<string> args)
+        {
+            HttpLink httpLink = ParseIntputLink(args);
+
+            var settings = TestSettings.MockSettings(httpLink);
+            using var scrapper = HttpWebScrapperFactory.Create(settings, Logger);
+
+            scrapper.OpenUrl();
+
+            var result = scrapper.Skip(shouldSkipAll: true);
+
+            if (result.IsSuccess)
+            {
+                Logger.Info("Song requests were skipped successfully!");
+            }
+            else
+            {
+                Logger.Error($"Failed to skip song requests: {result.Description}");
+            }
+        }
+
+        private static HttpLink ParseIntputLink(IReadOnlyList<string> args)
+        {
+            if (args.Count != 1)
+            {
+                string message = $"Invalid number of arguments: {args.Count.ToString()}.";
+                throw new ArgumentException(message, nameof(args));
+            }
+
+            var httpLink = new HttpLink(args[0]);
+            return httpLink;
         }
     }
 }
