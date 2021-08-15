@@ -143,7 +143,7 @@
     },
     "UseWhisperMessagesToControlSongRequests": {
         "type": "checkbox",
-        "value": true,
+        "value": false,
         "label": "Use Whisper Messages To Control Song Requests",
         "tooltip": "Allow script to use whisper messages to control song requests. You can use this feature to decrease amount of messages in chat.",
         "group": "Setup"
@@ -155,10 +155,31 @@
         "tooltip": "Moderators IDs which script will use in logic to send them messages about song requests (approve/reject).",
         "group": "Setup"
     },
+    "LowMessageMode": {
+        "type": "checkbox",
+        "value": true,
+        "label": "Use Low Messages Mode For Song Requests",
+        "tooltip": "The total amount of messages will be decreased for this script.",
+        "group": "Setup"
+    },
+    "EnableCommandProcessing": {
+        "type": "checkbox",
+        "value": true,
+        "label": "Enable Command Processing For Song Requests",
+        "tooltip": "Allows to enable/disable command processing from chat via Set Option command.",
+        "group": "Setup"
+    },
+    "EnableLinkValidation": {
+        "type": "checkbox",
+        "value": true,
+        "label": "Enable Link Validation For Song Request",
+        "tooltip": "Allows script to validate links in song requests.",
+        "group": "Setup"
+    },
 
     "SelectedBrowserDriver": {
         "type": "dropdown",
-        "value": "Edge",
+        "value": "Chromium/Chrome",
         "items": ["Edge", "Chromium/Chrome", "Firefox", "Opera"],
         "label": "Browser Driver Type To Use",
         "tooltip": "Browser driver type which will be used to process song request commands.",
@@ -173,7 +194,7 @@
     },
     "BrowserDriverExecutableName": {
         "type": "textbox",
-        "value": "MicrosoftWebDriver.exe",
+        "value": "chromedriver.exe",
         "label": "Browser Driver Executable Name",
         "tooltip": "Browser driver executable name in driver path.",
         "group": "Parsing"
@@ -411,6 +432,20 @@
         "value": "Failed to change option {0}: {1}",
         "label": "On Failed To Change Option Value Message",
         "tooltip": "The message that will be sent to chat when settings option cannot be changed. 0 — option name, 1 — error description.",
+        "group": "Chat Messages"
+    },
+    "FailedToValidateLinkMessage": {
+        "type": "textbox",
+        "value": "{0}, failed to validate your link: {1}",
+        "label": "On Failed To Validate Link Message",
+        "tooltip": "The message that will be sent to chat when validation cannot be done for link. 0 — user name, 1 — error link.",
+        "group": "Chat Messages"
+    },
+    "CommandProcessingDisabledMessage": {
+        "type": "textbox",
+        "value": "{0}, command processing is disabled for this script.",
+        "label": "Command Processing Disabled Message",
+        "tooltip": "The message that will be sent to chat when command processing is disabled. 0 — user name.",
         "group": "Chat Messages"
     },
 

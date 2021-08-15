@@ -84,8 +84,11 @@ MaxNumberOfSongRequestsToAdd = 3
 WaitingTimeoutForSongRequestsInSeconds = 120
 DispatchTimeoutInSeconds = 10
 TimeoutToWaitInMilliseconds = 3000
-UseWhisperMessagesToControlSongRequests = True
+UseWhisperMessagesToControlSongRequests = False
 ModIdsToWhisper = ""
+LowMessageMode = True
+EnableCommandProcessing = True
+EnableLinkValidation = True
 
 EnableWebDriverDebug = False
 
@@ -137,3 +140,5 @@ NoUserSongRequestsMessage = "{0} has no song requests."
 OptionValueTheSameMessage = "Option {0} value cannot be changed to the same value {1}"
 OptionValueChangedMessage = "Option {0} value has been changed from {1} to {2}"
 FailedToSetOptionMessage = "Failed to change option {0}: {1}"
+FailedToValidateLinkMessage = "{0}, failed to validate your link: {1}"
+CommandProcessingDisabledMessage = "{0}, command processing is disabled for this script."

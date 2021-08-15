@@ -28,7 +28,17 @@ class PublicSongRequestMessenger(BaseSongRequestMessenger):
         self.parent_wrapper.send_stream_message(message)
 
     def send_message_for_group(self, target_user_ids, message):
-        self.send_message(message)
+        users_to_mention = ""
+        if target_user_ids:
+            for target_user_id in target_user_ids:
+                if target_user_id:
+                    users_to_mention += target_user_id + " "
+
+        final_message = message
+        if users_to_mention:
+            final_message = users_to_mention + "," + message
+
+        self.parent_wrapper.send_stream_message(final_message)
 
 
 class WhisperSongRequestMessenger(BaseSongRequestMessenger):

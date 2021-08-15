@@ -210,6 +210,9 @@ class SongRequestManager(object):
         self.messenger.send_message(user_id, message)
 
     def _handle_request_to_approve(self, user_name, song_request):
+        if self.settings.LowMessageMode:
+            return
+
         message = (
             self.settings.SongRequestToApproveMessage
             .format(

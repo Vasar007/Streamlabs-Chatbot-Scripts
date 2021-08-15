@@ -96,7 +96,7 @@ def Execute(data):
         if not data_wrapper.is_chat_message():
             return
 
-        # Check if the propper command is used, the command is not on cooldown
+        # Check if the proper command is used, the command is not on cooldown
         # and the user has permission to use the command.
         command = data_wrapper.get_param(0).lower()
         parsed_command = TryProcessCommand(command, data_wrapper)

@@ -168,7 +168,7 @@ class DeniedSongRequestDispatcher(BaseSongRequestDispatcher):
         )
 
         for request in denied_requests:
-            self._process_request(rerequest, storage)
+            self._process_request(request, storage)
 
     def _process_request(self, request, storage):
         self.logger.debug("Denied request [{0}].".format(request))

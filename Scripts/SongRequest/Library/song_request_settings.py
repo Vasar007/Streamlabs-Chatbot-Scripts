@@ -104,6 +104,9 @@ class SongRequestSettings(object):
         self.TimeoutToWaitInMilliseconds = config.TimeoutToWaitInMilliseconds
         self.UseWhisperMessagesToControlSongRequests = config.UseWhisperMessagesToControlSongRequests
         self.ModIdsToWhisper = config.ModIdsToWhisper
+        self.LowMessageMode = config.LowMessageMode
+        self.EnableCommandProcessing = config.EnableCommandProcessing
+        self.EnableLinkValidation = config.EnableLinkValidation
 
         # Parsing group.
         self.SelectedBrowserDriver = config.SelectedBrowserDriver
@@ -146,6 +149,8 @@ class SongRequestSettings(object):
         self.OptionValueTheSameMessage = config.OptionValueTheSameMessage
         self.OptionValueChangedMessage = config.OptionValueChangedMessage
         self.FailedToSetOptionMessage = config.FailedToSetOptionMessage
+        self.FailedToValidateLinkMessage = config.FailedToValidateLinkMessage
+        self.CommandProcessingDisabledMessage = config.CommandProcessingDisabledMessage
 
         # Debugging group.
         self.LoggingLevel = config.LoggingLevel
@@ -236,6 +241,18 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
     @property
     def ModIdsToWhisper(self):
         return self.settings.ModIdsToWhisper
+
+    @property
+    def LowMessageMode(self):
+        return self.settings.LowMessageMode
+
+    @property
+    def EnableCommandProcessing(self):
+        return self.settings.EnableCommandProcessing
+
+    @property
+    def EnableLinkValidation(self):
+        return self.settings.EnableLinkValidation
 
     # Parsing group.
     @property
@@ -383,6 +400,14 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
     @property
     def FailedToSetOptionMessage(self):
         return self.settings.FailedToSetOptionMessage
+
+    @property
+    def FailedToValidateLinkMessage(self):
+        return self.settings.FailedToValidateLinkMessage
+
+    @property
+    def CommandProcessingDisabledMessage(self):
+        return self.settings.CommandProcessingDisabledMessage
 
     # Debugging group.
     @property

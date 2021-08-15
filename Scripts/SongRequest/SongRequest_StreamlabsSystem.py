@@ -3,6 +3,7 @@
 # Import Libraries.
 import os
 import sys
+import re
 
 from functools import wraps
 from datetime import datetime, timedelta
@@ -76,6 +77,7 @@ PageScrapper = None  # Song request page scrapper instance.
 Manager = None  # Song request manager instance.
 LastDispatchTime = datetime.utcnow()
 DidPageOpenned = False
+YouTubeLinkRe = re.compile("^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$")
 
 
 def Init():
@@ -122,7 +124,7 @@ def Execute(data):
         # Script accepts all messages.
         data_wrapper = DataWrapper(data)
 
-        # Check if the propper command is used, the command is not on cooldown
+        # Check if the proper command is used, the command is not on cooldown
         # and the user has permission to use the command.
         command = data_wrapper.get_param(0).lower()
         parsed_command = TryProcessCommand(command, data_wrapper)
@@ -136,7 +138,9 @@ def Execute(data):
             # If user doesn't have permission, write about it at first.
             if not parsed_command.has_func():
                 HandleNoPermission(
-                    parsed_command.required_permission, parsed_command.command
+                    parsed_command.required_permission,
+                    parsed_command.command,
+                    data_wrapper
                 )
                 return
 
@@ -153,7 +157,9 @@ def Execute(data):
             parsed_command.func(parsed_command.command, data_wrapper)
         else:
             HandleNoPermission(
-                parsed_command.required_permission, parsed_command.command
+                parsed_command.required_permission,
+                parsed_command.command,
+                data_wrapper
             )
     except Exception as ex:
         Logger().exception(
@@ -246,13 +252,13 @@ def Logger():
     return helpers.get_logger()
 
 
-def HandleNoPermission(required_permission, command):
+def HandleNoPermission(required_permission, command, data_wrapper):
     message = (
         ScriptSettings.PermissionDeniedMessage
         .format(required_permission, command)
     )
     Logger().info(message)
-    ParentHandler.send_stream_message(message)
+    Manager.get_messenger().send_message(data_wrapper.user_id, message)
 
 
 def WrapCommand(process_command, command_cooldown):
@@ -275,7 +281,9 @@ def WrapCommand(process_command, command_cooldown):
                     ScriptSettings.TimeRemainingMessage
                     .format(command, cooldown)
                 )
-                ParentHandler.send_stream_message(message)
+                Manager.get_messenger().send_message(
+                    data_wrapper.user_id, message
+                )
             elif is_on_user_cooldown:
                 cooldown = ParentHandler.get_user_cooldown_duration(
                     ScriptName, command, data_wrapper.user_id
@@ -286,7 +294,9 @@ def WrapCommand(process_command, command_cooldown):
                     ScriptSettings.TimeRemainingMessage
                     .format(command, cooldown)
                 )
-                ParentHandler.send_stream_message(message)
+                Manager.get_messenger().send_message(
+                    data_wrapper.user_id, message
+                )
             else:
                 # If not, process command.
                 process_command(command, data_wrapper)
@@ -446,13 +456,40 @@ def GetRequestNumberRange():
     )
 
 
+def ShouldSkipCommandProcessing(data_wrapper):
+    if ScriptSettings.EnableCommandProcessing:
+        return False
+
+    message = (
+        ScriptSettings.CommandProcessingDisabledMessage
+        .format(data_wrapper.user_name)
+    )
+    Logger().info(message)
+    Manager.get_messenger().send_message(data_wrapper.user_id, message)
+    return True
+
+
 def ProcessAddSongRequestCommand(command, data_wrapper):
     # Input example: !sr https://www.youtube.com/watch?v=CAEUnn0HNLM <Anything>
     # Command <YouTube link> <Anything>
+    if ShouldSkipCommandProcessing(data_wrapper):
+        return
+
+    raw_user_id = data_wrapper.user_id
+    raw_user_name = data_wrapper.user_name
     song_link = helpers.wrap_http_link(data_wrapper.get_param(1))
-    user_data = helpers.wrap_user_data(
-        data_wrapper.user_id, data_wrapper.user_name
-    )
+    if ScriptSettings.EnableLinkValidation:
+        validation_result = YouTubeLinkRe.match(song_link.Value)
+        if not validation_result:
+            message = (
+                ScriptSettings.FailedToValidateLinkMessage
+                .format(raw_user_name, song_link.Value)
+            )
+            Logger().info(message)
+            Manager.get_messenger().send_message(raw_user_id, message)
+            return
+
+    user_data = helpers.wrap_user_data(raw_user_id, raw_user_name)
 
     Manager.add_request(user_data, song_link)
 
@@ -462,6 +499,9 @@ def ProcessApproveRejectSongRequestCommand(command, data_wrapper):
     # Input example: !sr_approve/!sr_reject Vasar all <Anything>
     # Input example: !sr_approve/!sr_reject Vasar 3 <Anything>
     # Command <@>TargetUserNameOrId <RequestNumber> <Anything>
+    if ShouldSkipCommandProcessing(data_wrapper):
+        return
+
     song_request_manager.approve_or_reject_request(
         command, data_wrapper, ScriptSettings, Manager
     )
@@ -470,12 +510,15 @@ def ProcessApproveRejectSongRequestCommand(command, data_wrapper):
 def ProcessGetSongRequestsCommand(command, data_wrapper):
     # Input example: !st_get Vasar <Anything>
     # Command <@>TargetUserNameOrId <Anything>
+    if ShouldSkipCommandProcessing(data_wrapper):
+        return
+
     song_request_manager.get_all_user_requests(
         data_wrapper, ScriptSettings, Logger(), Manager
     )
 
 def ProcessOptionSongRequestsCommand(command, data_wrapper):
-    # Input example: !sr_option Vasar <Anything>
+    # Input example: !sr_option Vasar <NewValue>
     # Command OptionName NewOptionValue
     raw_user_id = data_wrapper.user_id
     option_name = data_wrapper.get_param(1)

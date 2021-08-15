@@ -32,6 +32,9 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         int TimeoutToWaitInMilliseconds { get; }
         bool UseWhisperMessagesToControlSongRequests { get; }
         string ModIdsToWhisper { get; }
+        bool LowMessageMode { get; }
+        bool EnableCommandProcessing { get; }
+        bool EnableLinkValidation { get; }
 
         #endregion
 
@@ -85,6 +88,8 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         string OptionValueTheSameMessage { get; }
         string OptionValueChangedMessage { get; }
         string FailedToSetOptionMessage { get; }
+        string FailedToValidateLinkMessage { get; }
+        string CommandProcessingDisabledMessage { get; }
 
         #endregion
 
