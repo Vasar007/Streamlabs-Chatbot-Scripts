@@ -521,9 +521,6 @@ def ProcessApproveRejectSongRequestCommand(command, data_wrapper):
     # Input example: !sr_approve/!sr_reject Vasar all <Anything>
     # Input example: !sr_approve/!sr_reject Vasar 3 <Anything>
     # Command <@>TargetUserNameOrId <RequestNumber> <Anything>
-    if ShouldSkipCommandProcessing(data_wrapper):
-        return
-
     song_request_manager.approve_or_reject_request(
         command, data_wrapper, ScriptSettings, Manager
     )
@@ -532,9 +529,6 @@ def ProcessApproveRejectSongRequestCommand(command, data_wrapper):
 def ProcessGetSongRequestsCommand(command, data_wrapper):
     # Input example: !st_get Vasar <Anything>
     # Command <@>TargetUserNameOrId <Anything>
-    if ShouldSkipCommandProcessing(data_wrapper):
-        return
-
     song_request_manager.get_all_user_requests(
         data_wrapper, ScriptSettings, Logger(), Manager
     )
@@ -544,9 +538,6 @@ def ProcessSkipSongRequestCommand(command, data_wrapper):
     # Input example: !sr_skip <Anything>
     # Input example: !sr_skip all <>Anything
     # Command <all> <Anything>
-    if ShouldSkipCommandProcessing(data_wrapper):
-        return
-
     raw_user_id = data_wrapper.user_id
     raw_user_name = data_wrapper.user_name
 
