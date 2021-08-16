@@ -9,9 +9,31 @@ from Scripts.SongRequest.CSharp.Models.Requests import SongRequestState
 from Scripts.SongRequest.CSharp.Models.Requests import SongRequestResult
 
 
-def format_song_request(song_link, request_number):
-    return config.SongRequestNumberAndLinkFormat.format(
-        request_number, song_link
+def format_song_request(settings, request):
+    return settings.SongRequestNumberAndLinkFormat.format(
+        request.RequestNumber.Value, request.SongLink.Value
+    )
+
+
+def format_processed_song_request(settings, request):
+    if request.ProcessedBy is None:
+        return format_song_request(settings, request)
+
+    submessage = (
+        "{0}, {1}"
+        .format(
+            request.ProcessedBy.UserData.Name.Value,
+            request.ProcessedBy.ProcessedTimeUtcAsString,
+        )
+    )
+    if request.ProcessedBy.Reason:
+            submessage += ", " + request.ProcessedBy.Reason
+
+    return settings.ProcessedSongRequestNumberAndLinkFormat.format(
+        request.RequestNumber.Value,
+        request.SongLink.Value,
+        request.State,
+        submessage
     )
 
 
@@ -67,7 +89,7 @@ class WaitingSongRequestDispatcher(BaseSongRequestDispatcher):
             "Waiting request {0} was approved because timeout has passed."
             .format(request.RequestId)
         )
-        return request.Approve()
+        return request.AutoApprove(self.settings.AutoApproveReason)
 
 
 
@@ -124,9 +146,9 @@ class PendingSongRequestDispatcher(BaseSongRequestDispatcher):
 
         user_name = result.SongRequest.UserData.Name.Value
         description = result.Description
-        song_request_with_number = format_song_request(
-            result.SongRequest.SongLink.Value,
-            result.SongRequest.RequestNumber.Value
+        song_request_with_number = format_processed_song_request(
+            self.settings,
+            result.SongRequest
         )
 
         message = None

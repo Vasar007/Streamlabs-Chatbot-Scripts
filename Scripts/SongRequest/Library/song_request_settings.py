@@ -135,8 +135,12 @@ class SongRequestSettings(object):
         self.TimeRemainingMessage = config.TimeRemainingMessage
         self.MaxLimitOfSongRequestsIsExceededMessage = config.MaxLimitOfSongRequestsIsExceededMessage
         self.InvalidTargetMessage = config.InvalidTargetMessage
+        self.SongRequestNumberAndLinkFormat = config.SongRequestNumberAndLinkFormat
+        self.ProcessedSongRequestNumberAndLinkFormat = config.ProcessedSongRequestNumberAndLinkFormat
+        self.AutoApproveReason = config.AutoApproveReason
         self.NoSongRequestsMessage = config.NoSongRequestsMessage
         self.NonExistentSongRequestNumberMessage = config.NonExistentSongRequestNumberMessage
+        self.AlreadyProcessedSongRequestMessage = config.AlreadyProcessedSongRequestMessage
         self.SongRequestDecisionReasonMessage = config.SongRequestDecisionReasonMessage
         self.SongRequestAddedMessage = config.SongRequestAddedMessage
         self.SongRequestToApproveMessage = config.SongRequestToApproveMessage
@@ -356,12 +360,28 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
         return self.settings.InvalidTargetMessage
 
     @property
+    def SongRequestNumberAndLinkFormat(self):
+        return self.settings.SongRequestNumberAndLinkFormat
+
+    @property
+    def ProcessedSongRequestNumberAndLinkFormat(self):
+        return self.settings.ProcessedSongRequestNumberAndLinkFormat
+
+    @property
+    def AutoApproveReason(self):
+        return self.settings.AutoApproveReason
+
+    @property
     def NoSongRequestsMessage(self):
         return self.settings.NoSongRequestsMessage
 
     @property
     def NonExistentSongRequestNumberMessage(self):
         return self.settings.NonExistentSongRequestNumberMessage
+
+    @property
+    def AlreadyProcessedSongRequestMessage(self):
+        return self.settings.AlreadyProcessedSongRequestMessage
 
     @property
     def SongRequestDecisionReasonMessage(self):

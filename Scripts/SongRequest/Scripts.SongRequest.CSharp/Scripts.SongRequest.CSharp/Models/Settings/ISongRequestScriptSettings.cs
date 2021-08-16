@@ -76,7 +76,11 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         string MaxLimitOfSongRequestsIsExceededMessage { get; }
         string InvalidTargetMessage { get; }
         string NoSongRequestsMessage { get; }
+        string SongRequestNumberAndLinkFormat { get; }
+        string ProcessedSongRequestNumberAndLinkFormat { get; }
+        string AutoApproveReason { get; }
         string NonExistentSongRequestNumberMessage { get; }
+        string AlreadyProcessedSongRequestMessage { get; }
         string SongRequestDecisionReasonMessage { get; }
         string SongRequestAddedMessage { get; }
         string SongRequestToApproveMessage { get; }

@@ -4,21 +4,17 @@ using Scripts.SongRequest.CSharp.Core.Models;
 
 namespace Scripts.SongRequest.CSharp.Models.Requests
 {
-    public sealed record SongRequestDecision
+    public sealed record SongRequestProcessedInfo
     {
         public UserData UserData { get; init; }
-        public UserIdOrName TargetUserIdOrName { get; init; }
-        public SongRequestNumber RequestNumber { get; init; }
         public DateTime ProcessedTimeUtc { get; init; }
         public string Reason { get; init; }
 
         public string ProcessedTimeUtcAsString => ProcessedTimeUtc.ToLocalSimpleString();
 
 
-        public SongRequestDecision(
+        public SongRequestProcessedInfo(
             UserData userData,
-            UserIdOrName targetUserIdOrName,
-            SongRequestNumber requestNumber,
             DateTime processedTimeUtc,
             string reason)
         {
@@ -29,24 +25,30 @@ namespace Scripts.SongRequest.CSharp.Models.Requests
             }
 
             UserData = userData ?? throw new ArgumentNullException(nameof(userData));
-            TargetUserIdOrName = targetUserIdOrName ?? throw new ArgumentNullException(nameof(targetUserIdOrName));
-            RequestNumber = requestNumber ?? throw new ArgumentNullException(nameof(requestNumber));
             ProcessedTimeUtc = processedTimeUtc;
             Reason = reason ?? throw new ArgumentNullException(nameof(reason));
         }
 
-        public static SongRequestDecision CreateWithUtcNow(
+        public static SongRequestProcessedInfo CreateWithUtcNow(
             UserData userData,
-            UserIdOrName targetUserIdOrName,
-            SongRequestNumber requestNumber,
             string reason)
         {
-            return new SongRequestDecision(
+            return new SongRequestProcessedInfo(
                 userData: userData,
-                targetUserIdOrName: targetUserIdOrName,
-                requestNumber: requestNumber,
                 processedTimeUtc: DateTime.UtcNow,
                 reason: reason
+            );
+        }
+
+        public static SongRequestProcessedInfo CreateWithDecision(
+            SongRequestDecision decision)
+        {
+            decision = decision ?? throw new ArgumentNullException(nameof(decision));
+
+            return new SongRequestProcessedInfo(
+                userData: decision.UserData,
+                processedTimeUtc: DateTime.UtcNow,
+                reason: decision.Reason
             );
         }
     }

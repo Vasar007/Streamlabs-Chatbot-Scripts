@@ -1,4 +1,5 @@
 ﻿using System;
+using Scripts.SongRequest.CSharp.Core.Helpers;
 using Scripts.SongRequest.CSharp.Core.Models;
 
 namespace Scripts.SongRequest.CSharp.Models.Requests
@@ -11,6 +12,7 @@ namespace Scripts.SongRequest.CSharp.Models.Requests
         public SongRequestNumber RequestNumber { get; init; }
         public SongRequestState State { get; init; }
         public DateTime CreationTimeUtc { get; init; }
+        public SongRequestProcessedInfo? ProcessedBy { get; init; }
 
         public bool IsWaitingForApproval => State == SongRequestState.WaitingForApproval;
         public bool IsApprovedAndPending => State == SongRequestState.ApprovedAndPending;
@@ -19,6 +21,8 @@ namespace Scripts.SongRequest.CSharp.Models.Requests
         public bool IsApprovedButAddedFailure => State == SongRequestState.ApprovedButAddedFailure;
         public bool IsRejected => State == SongRequestState.Rejected;
         public bool IsCanceled => State == SongRequestState.Canceled;
+
+        public string CreationTimeUtcAsString => CreationTimeUtc.ToLocalSimpleString();
 
 
         public SongRequestModel(
@@ -29,6 +33,12 @@ namespace Scripts.SongRequest.CSharp.Models.Requests
             SongRequestState state,
             DateTime creationTimeUtc)
         {
+            if (creationTimeUtc.Kind != DateTimeKind.Utc)
+            {
+                var message = $"Invalid date time kind: {creationTimeUtc.Kind.ToString()}, expected: Utc.";
+                throw new ArgumentException(message);
+            }
+
             RequestId = requestId;
             UserData = userData ?? throw new ArgumentNullException(nameof(userData));
             SongLink = songLink ?? throw new ArgumentNullException(nameof(songLink));
@@ -52,11 +62,25 @@ namespace Scripts.SongRequest.CSharp.Models.Requests
             );
         }
 
-        public SongRequestModel Approve()
+        public SongRequestModel Approve(SongRequestDecision decision)
         {
+            var processedBy = SongRequestProcessedInfo.CreateWithDecision(decision);
+
             return this with
             {
-                State = SongRequestState.ApprovedAndPending
+                State = SongRequestState.ApprovedAndPending,
+                ProcessedBy = processedBy
+            };
+        }
+
+        public SongRequestModel AutoApprove(string reason)
+        {
+            var processedBy = SongRequestProcessedInfo.CreateWithUtcNow(UserData, reason);
+
+            return this with
+            {
+                State = SongRequestState.ApprovedAndPending,
+                ProcessedBy = processedBy
             };
         }
 
@@ -84,19 +108,25 @@ namespace Scripts.SongRequest.CSharp.Models.Requests
             };
         }
 
-        public SongRequestModel Reject()
+        public SongRequestModel Reject(SongRequestDecision decision)
         {
+            var processedBy = SongRequestProcessedInfo.CreateWithDecision(decision);
+
             return this with
             {
-                State = SongRequestState.Rejected
+                State = SongRequestState.Rejected,
+                ProcessedBy = processedBy
             };
         }
 
-        public SongRequestModel Cancel()
+        public SongRequestModel Cancel(string reason)
         {
+            var processedBy = SongRequestProcessedInfo.CreateWithUtcNow(UserData, reason);
+
             return this with
             {
-                State = SongRequestState.Canceled
+                State = SongRequestState.Canceled,
+                ProcessedBy = processedBy
             };
         }
     }

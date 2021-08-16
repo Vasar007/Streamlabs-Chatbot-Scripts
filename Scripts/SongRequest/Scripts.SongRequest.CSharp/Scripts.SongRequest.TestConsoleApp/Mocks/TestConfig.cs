@@ -24,6 +24,7 @@ namespace Scripts.SongRequest.TestConsoleApp.Mocks
         public const string ElementIdOfRemoveQueueSongButton = "queueRemove";
 
         public const string NoSongRequestsToSkipMessage = "No songs in playlist available to skip.";
+        public const string AutoApproveReason = "Request has been auto-approved";
 
         public static readonly HttpLink SongLink = new("https://www.youtube.com/watch?v=CAEUnn0HNLM");
     }

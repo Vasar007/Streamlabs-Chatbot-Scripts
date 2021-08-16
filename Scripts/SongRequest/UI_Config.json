@@ -329,28 +329,56 @@
         "type": "textbox",
         "value": "Sorry {0}, you have exceeded max allowed limit of song requests for you per stream ({1}).",
         "label": "Max Limit Of Song Requests Is Exceeded",
-        "tooltip": "Chat message will be sent if user will try to add song requests above limit. 0 — user, 1 — max allowed song requests limit.",
+        "tooltip": "Chat message will be sent if user will try to add song requests above limit. 0 — user name, 1 — max allowed song requests limit.",
         "group": "Chat Messages"
     },
     "InvalidTargetMessage": {
         "type": "textbox",
         "value": "Sorry {0}, but {1} doesn't exist.",
         "label": "Invalid Target Message",
-        "tooltip": "Chat message will be sent if user specifies an invalid target. 0 — user, 1 — target.",
+        "tooltip": "Chat message will be sent if user specifies an invalid target. 0 — user name, 1 — target user name.",
+        "group": "Chat Messages"
+    },
+    "SongRequestNumberAndLinkFormat": {
+        "type": "textbox",
+        "value": "#{0} ({1})",
+        "label": "Song Request Format",
+        "tooltip": "Message format that will be used to fill data about song request. 0 — song request number, 1 — song request link.",
+        "group": "Chat Messages"
+    },
+    "ProcessedSongRequestNumberAndLinkFormat": {
+        "type": "textbox",
+        "value": "#{0} ({1}) [{2} by {3}]",
+        "label": "Processed Song Request Format",
+        "tooltip": "Message format that will be used to fill data about song request. 0 — song request number, 1 — song request link, 2 — song request state, 3 — user name which processed song request.",
+        "group": "Chat Messages"
+    },
+    "AutoApproveReason": {
+        "type": "textbox",
+        "value": "Request has been auto-approved",
+        "label": "Auto Approve Default Reason",
+        "tooltip": "Chat message will be used as reason when request will be auto-approved.",
         "group": "Chat Messages"
     },
     "NoSongRequestsMessage": {
         "type": "textbox",
         "value": "{0}, user {1} doesn't have any active song requests.",
         "label": "No Song Requests Message",
-        "tooltip": "Chat message will be sent if user specifies a target user without active song requests. 0 — user, 1 — target user.",
+        "tooltip": "Chat message will be sent if user specifies a target user without active song requests. 0 — user name, 1 — target user name.",
         "group": "Chat Messages"
     },
     "NonExistentSongRequestNumberMessage": {
         "type": "textbox",
         "value": "{0}, non-existent request number {1} for target user {2}.",
         "label": "Invalid Song Request Number Message",
-        "tooltip": "Chat message will be sent if user specifies a song request number which does not exist for target user. 0 — user, 1 — invalid song request number, 2 — target user.",
+        "tooltip": "Chat message will be sent if user specifies a song request number which does not exist for target user. 0 — user name, 1 — invalid song request number, 2 — target user name.",
+        "group": "Chat Messages"
+    },
+    "AlreadyProcessedSongRequestMessage": {
+        "type": "textbox",
+        "value": "{0}, {1}'s song request {2} has already been processed.",
+        "label": "Already Processed Song Request Message",
+        "tooltip": "Chat message will be sent if user tries to approve/reject a song request which has already been processed. 0 — user name, 1 —  target user name, 2 — song request.",
         "group": "Chat Messages"
     },
     "SongRequestDecisionReasonMessage": {
@@ -467,14 +495,14 @@
     },
     "FailedToSetOptionInvalidTypeMessage": {
         "type": "textbox",
-        "value": "invalid type (expected: {0})",
+        "value": "Invalid type (expected: {0})",
         "label": "On Failed To Change Option Due To Invalid Type Message",
         "tooltip": "The message that will be sent to chat when settings option cannot be changed due to invalid type. 0 — expected type.",
         "group": "Chat Messages"
     },
     "FailedToSetOptionInvalidNameMessage": {
         "type": "textbox",
-        "value": "invalid option name",
+        "value": "Invalid option name",
         "label": "On Failed To Change Option Due To Invalid Name Message",
         "tooltip": "The message that will be sent to chat when settings option cannot be changed due to invalid name.",
         "group": "Chat Messages"

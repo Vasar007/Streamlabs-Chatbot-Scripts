@@ -8,6 +8,7 @@ from song_request_user_searcher import SongRequestUserSearcher as UserSearcher
 from song_request_messenger import SongRequestMessengerHandler as MessengerHandler
 
 from song_request_dispatchers import format_song_request
+from song_request_dispatchers import format_processed_song_request
 from song_request_dispatchers import PendingSongRequestDispatcher
 from song_request_dispatchers import WaitingSongRequestDispatcher
 from song_request_dispatchers import DeniedSongRequestDispatcher
@@ -49,9 +50,9 @@ class SongRequestManager(object):
                 "Target user {0} is invalid, skip user requests processing."
                 .format(request_decision.TargetUserIdOrName.Value)
             )
-            return None
+            return (None, None)
 
-        return self._get_user_requests(target_data)
+        return (self._get_user_requests(target_data), target_data)
 
     def add_request(self, user_data, song_link):
         self.logger.debug(
@@ -72,7 +73,7 @@ class SongRequestManager(object):
         self.storage.add_request(request)
 
         song_request_with_number = format_song_request(
-            song_link.Value, number.Value
+            self.settings, request
         )
 
         self._handle_request_added(
@@ -95,7 +96,7 @@ class SongRequestManager(object):
 
         return self._internal_processing(
             request_decision,
-            lambda request: request.Approve(),
+            lambda request: request.Approve(request_decision),
             self._handle_request_approved
         )
 
@@ -106,7 +107,7 @@ class SongRequestManager(object):
 
         return self._internal_processing(
             request_decision,
-            lambda request: request.Reject(),
+            lambda request: request.Reject(request_decision),
             self._handle_request_rejected
         )
 
@@ -146,7 +147,7 @@ class SongRequestManager(object):
             self._handle_no_requests(
                 request_decision.UserData.Id.Value,
                 request_decision.UserData.Name.Value,
-                request_decision.TargetUserIdOrName.Value
+                target_data.Name.Value
             )
             return None
 
@@ -156,13 +157,23 @@ class SongRequestManager(object):
                 self._handle_nonexistent_request_number(
                     request_decision.UserData.Id.Value,
                     request_decision.UserData.Name.Value,
-                    request_decision.TargetUserIdOrName.Value,
+                    target_data.Name.Value,
                     request_decision.RequestNumber.Value
                 )
                 return None
 
             index_to_use = request_decision.RequestNumber.Value - 1
-            target_user_requests_to_use = [all_target_user_requests[index_to_use]]
+            selected_request = all_target_user_requests[index_to_use]
+            if not selected_request.IsWaitingForApproval:
+                self._handle_already_processed_request(
+                    request_decision.UserData.Id.Value,
+                    request_decision.UserData.Name.Value,
+                    target_data.Name.Value,
+                    selected_request
+                )
+                return None
+
+            target_user_requests_to_use = [selected_request]
 
         return target_user_requests_to_use
 
@@ -189,8 +200,10 @@ class SongRequestManager(object):
             if request.IsWaitingForApproval:
                 target_user_requests_to_use[i] = process_func(request)
 
+                # Here we have specific format, so, we do not need extended
+                # format for processed requests.
                 song_request_with_number = format_song_request(
-                    request.SongLink.Value, request.RequestNumber.Value
+                    self.settings, request
                 )
 
                 handle_func(
@@ -259,6 +272,18 @@ class SongRequestManager(object):
         message = (
             self.settings.NonExistentSongRequestNumberMessage
             .format(user_name, invalid_number, target_name)
+        )
+        self.logger.info(message)
+        self.messenger.send_message(user_id, message)
+
+    def _handle_already_processed_request(self, user_id, user_name,
+                                          target_name, selected_request):
+        submessage = format_processed_song_request(
+            self.settings, selected_request
+        )
+        message = (
+            self.settings.AlreadyProcessedSongRequestMessage
+            .format(user_name, target_name, submessage)
         )
         self.logger.info(message)
         self.messenger.send_message(user_id, message)
@@ -345,7 +370,7 @@ def approve_or_reject_request(command, data_wrapper, settings, manager):
         elif not is_request_number:
             reason = seems_like_request_number
 
-    request_decision = SongRequestDecision(
+    request_decision = SongRequestDecision.CreateWithUtcNow(
         user_data, target_user_id_or_name, request_number, reason
     )
 
@@ -367,14 +392,20 @@ def get_all_user_requests(data_wrapper, settings, logger, manager):
         raw_target_user_id_or_name
     )
 
-    user_requests = manager.get_user_requests_for(
+    (user_requests, target_data) = manager.get_user_requests_for(
         user_data, target_user_id_or_name
     )
 
+    target_user_name = None
+    if target_data:
+        target_user_name = target_data.Name.Value
+    else:
+        target_user_name = target_user_id_or_name.Value
+
     message = None
     if user_requests:
-        map_lambda = lambda request: format_song_request(
-            request.SongLink.Value, request.RequestNumber.Value
+        map_lambda = lambda request: format_processed_song_request(
+            settings, request
         )
         processed_requests = map(map_lambda, user_requests)
         formatted_requests = " ".join(processed_requests)
@@ -382,7 +413,7 @@ def get_all_user_requests(data_wrapper, settings, logger, manager):
         message = (
             settings.GotUserSongRequestsMessage
             .format(
-                target_user_id_or_name.Value,
+                target_user_name,
                 len(user_requests),
                 formatted_requests
             )
@@ -390,7 +421,7 @@ def get_all_user_requests(data_wrapper, settings, logger, manager):
     else:
         message = (
             settings.NoUserSongRequestsMessage
-            .format(target_user_id_or_name.Value)
+            .format(target_user_name)
         )
 
     logger.info(message)

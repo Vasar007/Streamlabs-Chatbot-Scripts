@@ -27,6 +27,7 @@ namespace Scripts.SongRequest.TestConsoleApp.Mocks
             mock.Setup(x => x.ElementIdOfRemoveQueueSongButton).Returns(TestConfig.ElementIdOfRemoveQueueSongButton);
 
             mock.Setup(x => x.NoSongRequestsToSkipMessage).Returns(TestConfig.NoSongRequestsToSkipMessage);
+            mock.Setup(x => x.AutoApproveReason).Returns(TestConfig.AutoApproveReason);
 
             return mock.Object;
         }

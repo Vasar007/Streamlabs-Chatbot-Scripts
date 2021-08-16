@@ -56,7 +56,7 @@ namespace Scripts.SongRequest.TestConsoleApp
             var number = SongRequestNumber.All;
 
             var request = SongRequestModel.CreateNew(userData, TestConfig.SongLink, number);
-            request = request.Approve();
+            request = request.AutoApprove(settings.AutoApproveReason);
             request = request.StartProcessing();
             var result = scrapper.Process(request);
 
