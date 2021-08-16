@@ -103,6 +103,7 @@ class SongRequestSettings(object):
         self.MaxNumberOfSongRequestsToAdd = config.MaxNumberOfSongRequestsToAdd
         self.WaitingTimeoutForSongRequestsInSeconds = config.WaitingTimeoutForSongRequestsInSeconds
         self.DispatchTimeoutInSeconds = config.DispatchTimeoutInSeconds
+        self.TimeoutToWaitBetweenSongRequestsInSeconds = config.TimeoutToWaitBetweenSongRequestsInSeconds
         self.TimeoutToWaitInMilliseconds = config.TimeoutToWaitInMilliseconds
         self.UseWhisperMessagesToControlSongRequests = config.UseWhisperMessagesToControlSongRequests
         self.ModIdsToWhisper = config.ModIdsToWhisper
@@ -251,6 +252,10 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
     @property
     def DispatchTimeoutInSeconds(self):
         return self.settings.DispatchTimeoutInSeconds
+
+    @property
+    def TimeoutToWaitBetweenSongRequestsInSeconds(self):
+        return self.settings.TimeoutToWaitBetweenSongRequestsInSeconds
 
     @property
     def TimeoutToWaitInMilliseconds(self):

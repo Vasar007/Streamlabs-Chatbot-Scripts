@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import time
+
 from abc import ABCMeta, abstractmethod
 
 import song_request_config as config
@@ -27,7 +29,7 @@ def format_processed_song_request(settings, request):
         )
     )
     if request.ProcessedBy.Reason:
-            submessage += ", " + request.ProcessedBy.Reason
+        submessage += ", " + request.ProcessedBy.Reason
 
     return settings.ProcessedSongRequestNumberAndLinkFormat.format(
         request.RequestNumber.Value,
@@ -111,7 +113,8 @@ class PendingSongRequestDispatcher(BaseSongRequestDispatcher):
             return
 
         # Update request's states to prevent double processing.
-        for i in range (len(pending_requests)):
+        len_pending_requests = len(pending_requests)
+        for i in range(len_pending_requests):
             request = pending_requests[i]
             request = request.StartProcessing()
             pending_requests[i] = request
@@ -119,9 +122,14 @@ class PendingSongRequestDispatcher(BaseSongRequestDispatcher):
         storage.update_states(pending_requests)
 
         # Start real processing of requests.
-        for i in range (len(pending_requests)):
+        for i in range(len_pending_requests):
             request = pending_requests[i]
             pending_requests[i] = self._process_request(request)
+
+            # Need to wait some time before new request processing.
+            if len_pending_requests > 1:
+                self.logger.debug("Waiting some time before new request.")
+                time.sleep(self.settings.TimeoutToWaitBetweenSongRequestsInSeconds)
 
         storage.update_states(pending_requests)
 

@@ -83,8 +83,9 @@ CommandOptionSongRequestCooldown = 1
 
 HttpPageLinkToParse = ""
 MaxNumberOfSongRequestsToAdd = 1
-WaitingTimeoutForSongRequestsInSeconds = 120
-DispatchTimeoutInSeconds = 10
+WaitingTimeoutForSongRequestsInSeconds = 60
+DispatchTimeoutInSeconds = 30
+TimeoutToWaitBetweenSongRequestsInSeconds = 5
 TimeoutToWaitInMilliseconds = 3000
 UseWhisperMessagesToControlSongRequests = False
 ModIdsToWhisper = ""

@@ -129,7 +129,7 @@
     },
     "MaxNumberOfSongRequestsToAdd": {
         "type": "slider",
-        "value": 3,
+        "value": 1,
         "min": 1,
         "max": 10,
         "ticks": 1,
@@ -139,16 +139,23 @@
     },
     "WaitingTimeoutForSongRequestsInSeconds": {
         "type": "numberbox",
-        "value": 120,
+        "value": 60,
         "label": "Waiting Timeout For Song Requests Decision (In Seconds)",
         "tooltip": "Dispatch timeout for song requests (in seconds).",
         "group": "Setup"
     },
     "DispatchTimeoutInSeconds": {
         "type": "numberbox",
-        "value": 10,
+        "value": 30,
         "label": "Dispatch Timeout For Song Requests (In Seconds)",
         "tooltip": "Dispatch timeout for song requests (in seconds).",
+        "group": "Setup"
+    },
+    "TimeoutToWaitBetweenSongRequestsInSeconds": {
+        "type": "numberbox",
+        "value": 5,
+        "label": "Timeout To Wait Between Song Requests (In Seconds)",
+        "tooltip": "Timeout to wait between song requests (in seconds). This allows to avoid any issues with parsing.",
         "group": "Setup"
     },
     "TimeoutToWaitInMilliseconds": {

@@ -32,6 +32,7 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         int NumberOfSongRequestsToAdd { get; }
         int WaitingTimeoutForSongRequestsInSeconds { get; }
         int DispatchTimeoutInSeconds { get; }
+        int TimeoutToWaitBetweenSongRequestsInSeconds { get; }
         int TimeoutToWaitInMilliseconds { get; }
         bool UseWhisperMessagesToControlSongRequests { get; }
         string ModIdsToWhisper { get; }
