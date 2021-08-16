@@ -342,7 +342,9 @@ def approve_or_reject_request(command, data_wrapper, settings, manager):
         data_wrapper.user_id, data_wrapper.user_name
     )
 
-    raw_target_user_id_or_name = data_wrapper.get_param(1)
+    raw_target_user_id_or_name = helpers.strip_at_symbol_for_name(
+        data_wrapper.get_param(1)
+    )
     target_user_id_or_name = helpers.wrap_user_id_or_name(
         raw_target_user_id_or_name
     )
@@ -387,7 +389,9 @@ def get_all_user_requests(data_wrapper, settings, logger, manager):
         data_wrapper.user_id, data_wrapper.user_name
     )
 
-    raw_target_user_id_or_name = data_wrapper.get_param(1)
+    raw_target_user_id_or_name = helpers.strip_at_symbol_for_name(
+        data_wrapper.get_param(1)
+    )
     target_user_id_or_name = helpers.wrap_user_id_or_name(
         raw_target_user_id_or_name
     )

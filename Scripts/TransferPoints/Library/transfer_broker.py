@@ -77,7 +77,7 @@ class TransferBroker(object):
         return True
 
     def _prepare_transfer(self, request):
-        # Retrive data about target.
+        # Retrieve data about target.
         target_data = self.searcher.find_user_data(
             request.target_id_or_name
         )

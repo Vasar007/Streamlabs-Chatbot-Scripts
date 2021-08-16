@@ -130,7 +130,7 @@ def init_logging(parent_wrapper, settings):
 
 def get_logger():
     """
-    Retrive actual logger or NullLogger if logging is not initialized.
+    Retrieve actual logger or NullLogger if logging is not initialized.
     """
     return LoggerFactory.get_logger()
 

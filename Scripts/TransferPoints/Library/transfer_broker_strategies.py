@@ -76,7 +76,7 @@ class BaseTransferStrategy(object):
         if self.settings.AllowToAddRemoveSetForOtherWithSamePermissionOrHigher:
             return True
 
-        # Retrive target user permission. If target has required permission,
+        # Retrieve target user permission. If target has required permission,
         # operation should be denied. It can prevent moderator from changing
         # own points and other moderator's points, for example.
 

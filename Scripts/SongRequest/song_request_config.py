@@ -62,7 +62,7 @@ ScriptName = "Song Request Script"
 Website = "https://github.com/Vasar007/Streamlabs-Chatbot-Scripts"
 Description = "Extended song request script."
 Creator = "Vasar007"
-Version = "1.0.1"
+Version = "1.0.2"
 
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).

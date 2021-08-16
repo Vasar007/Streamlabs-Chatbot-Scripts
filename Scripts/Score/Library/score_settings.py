@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from Scripts.SongRequest.SongRequest_StreamlabsSystem import ScriptSettings
 import os
 import codecs
 import json

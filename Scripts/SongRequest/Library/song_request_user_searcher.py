@@ -24,7 +24,7 @@ class SongRequestUserSearcher(object):
 
         user_id_or_name_low = user_id_or_name.lower()
 
-        # Retrive viewers data.
+        # Retrieve viewers data.
         # List<string userid>
         viewer_ids = self.parent_wrapper.get_viewer_list()
         self._log_viewers(viewer_ids)
@@ -55,7 +55,7 @@ class SongRequestUserSearcher(object):
             "Using dangerous extended search to find user."
         )
 
-        # Retrive extended viewers data.
+        # Retrieve extended viewers data.
         # PythonDictionary<string userid, string username>.
         viewers = self.parent_wrapper.get_display_names(viewer_ids)
         self._log_viewers(viewers)

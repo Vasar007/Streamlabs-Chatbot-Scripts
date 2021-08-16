@@ -43,7 +43,7 @@ class TransferPermissionChecker(object):
             .format(user_id, target_id, permission_handler)
         )
 
-        # Retrive permissions and compare user and target permissions step by
+        # Retrieve permissions and compare user and target permissions step by
         # step because we do not have any method to get exactly permission of
         # the selected user.
 
