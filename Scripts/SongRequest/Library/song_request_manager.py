@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import threading
 
 import song_request_config as config
 import song_request_helpers as helpers
@@ -29,13 +30,22 @@ class SongRequestManager(object):
         self._dispatchers = dispatchers
 
         self._storage = Storage(logger)
+        self._lock = threading.Lock()
 
     def get_messenger(self):
         return self._messenger
 
     def run_dispatch(self):
-        for dispatcher in self._dispatchers:
-            dispatcher.dispatch(self._storage)
+        if self._lock.locked():
+            self._logger.debug(
+                "Cannot do dispatch because another dispatch is running."
+            )
+            return
+
+        with self._lock:
+            self._logger.debug("Running dispatch iteration.")
+            for dispatcher in self._dispatchers:
+                dispatcher.dispatch(self._storage)
 
     def get_user_requests_for(self, user_data, target_user_id_or_name):
         self._logger.debug(
