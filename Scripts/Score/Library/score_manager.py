@@ -16,81 +16,81 @@ class ScoreValueHandler(object):
 class ScoreManager(object):
 
     def __init__(self, settings):
-        self.settings = settings
+        self._settings = settings
 
-        self.active_score = None
+        self._active_score = None
 
     def get_score(self):
-        if self.active_score is None:
-            message = self.settings.NoScoreFoundMessage
+        if self._active_score is None:
+            message = self._settings.NoScoreFoundMessage
         else:
             message = (
-                self.settings.CurrentScoreMessage
-                .format(self.active_score)
+                self._settings.CurrentScoreMessage
+                .format(self._active_score)
             )
 
-        return ScoreValueHandler(True, self.active_score, message)
+        return ScoreValueHandler(True, self._active_score, message)
 
     def create_score(self, player1_name, player2_name, description):
         new_score = score.create_score_from_scratch(
             player1_name, player2_name, description
         )
 
-        if self.active_score is None:
-            self.active_score = new_score
+        if self._active_score is None:
+            self._active_score = new_score
 
-            message = self.settings.CreatedScoreMessage.format(new_score)
+            message = self._settings.CreatedScoreMessage.format(new_score)
         else:
-            self.active_score = new_score
+            self._active_score = new_score
 
             message = (
-                self.settings.RecreatedScoreMessage
+                self._settings.RecreatedScoreMessage
                 .format(new_score)
             )
 
-        return ScoreValueHandler(True, self.active_score, message)
+        return ScoreValueHandler(True, self._active_score, message)
 
     def update_score(self, raw_player1_score, raw_player2_score, description):
-        if self.active_score is None:
-            message = self.settings.NothingToUpdateMessage
+        if self._active_score is None:
+            message = self._settings.NothingToUpdateMessage
         else:
             (player1_score, message) = self._try_get_score(raw_player1_score)
             if player1_score is None:
-                return ScoreValueHandler(False, self.active_score, message)
+                return ScoreValueHandler(False, self._active_score, message)
 
             (player2_score, message) = self._try_get_score(raw_player2_score)
             if player2_score is None:
-                return ScoreValueHandler(False, self.active_score, message)
+                return ScoreValueHandler(False, self._active_score, message)
 
-            self.active_score.update(player1_score, player2_score, description)
+            self._active_score.update(player1_score, player2_score, description)
 
             message = (
-                self.settings.UpdatedScoreMessage
-                .format(self.active_score)
+                self._settings.UpdatedScoreMessage
+                .format(self._active_score)
             )
 
-        return ScoreValueHandler(True, self.active_score, message)
+        return ScoreValueHandler(True, self._active_score, message)
 
     def reset_score(self):
-        if self.active_score is None:
-            message = self.settings.NothingToResetMessage
+        if self._active_score is None:
+            message = self._settings.NothingToResetMessage
         else:
-            self.active_score.reset()
+            self._active_score.reset()
 
-            message = self.settings.ResetScoreMessage.format(self.active_score)
+            message = self._settings.ResetScoreMessage.format(self._active_score)
 
-        return ScoreValueHandler(True, self.active_score, message)
+        return ScoreValueHandler(True, self._active_score, message)
 
     def delete_score(self):
         deleted_score = None
-        if self.active_score is None:
-            message = self.settings.NothingToDeleteMessage
+        if self._active_score is None:
+            message = self._settings.NothingToDeleteMessage
         else:
-            deleted_score = self.active_score
-            self.active_score = None
+            deleted_score = self._active_score
+            self._active_score = None
 
             message = (
-                self.settings.DeletedScoreMessage
+                self._settings.DeletedScoreMessage
                 .format(deleted_score)
             )
 
@@ -104,7 +104,7 @@ class ScoreManager(object):
         )
         if is_player_score_invalid:
             message = (
-                self.settings.InvalidScoreValueMessage
+                self._settings.InvalidScoreValueMessage
                 .format(raw_player_score, config.ExampleScoreValue)
             )
             return (None, message)

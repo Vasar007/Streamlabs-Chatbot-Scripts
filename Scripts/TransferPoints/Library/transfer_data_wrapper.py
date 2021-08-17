@@ -7,29 +7,29 @@ class TransferDataWrapper(object):
     """
 
     def __init__(self, data):
-        self.data = data
+        self._data = data
 
     @property
     def user_id(self):
-        return self.data.User
+        return self._data.User
 
     @property
     def user_name(self):
-        return self.data.UserName
+        return self._data.UserName
 
     @property
     def message(self):
-        return self.data.Message
+        return self._data.Message
 
     @property
     def raw_data(self):
-        return self.data.RawData
+        return self._data.RawData
 
     @property
     def service_type(self):
-        return self.data.ServiceType
+        return self._data.ServiceType
 
-    # Functions to retrive common info about message.
+    # Functions to retrieve common info about message.
 
     def is_chat_message(self):
         r"""
@@ -37,7 +37,7 @@ class TransferDataWrapper(object):
 
         bool IsChatMessage()
         """
-        return self.data.IsChatMessage()
+        return self._data.IsChatMessage()
 
     def is_raw_data(self):
         r"""
@@ -45,7 +45,7 @@ class TransferDataWrapper(object):
 
         bool IsRawData()
         """
-        return self.data.IsRawData()
+        return self._data.IsRawData()
 
     def is_from_twitch(self):
         r"""
@@ -53,15 +53,15 @@ class TransferDataWrapper(object):
 
         bool IsFromTwitch()
         """
-        return self.data.IsFromTwitch()
+        return self._data.IsFromTwitch()
 
     def is_from_youtube(self):
         r"""
-        Checks if the message came from Youtube chat.
+        Checks if the message came from YouTube chat.
 
         bool IsFromYoutube()
         """
-        return self.data.IsFromYoutube()
+        return self._data.IsFromYoutube()
 
     def is_from_mixer(self):
         r"""
@@ -69,7 +69,7 @@ class TransferDataWrapper(object):
 
         bool IsFromMixer()
         """
-        return self.data.IsFromMixer()
+        return self._data.IsFromMixer()
 
     def is_from_discord(self):
         r"""
@@ -77,7 +77,7 @@ class TransferDataWrapper(object):
 
         bool IsFromDiscord()
         """
-        return self.data.IsFromDiscord()
+        return self._data.IsFromDiscord()
 
     def is_whisper(self):
         r"""
@@ -85,9 +85,9 @@ class TransferDataWrapper(object):
 
         bool IsWhisper()
         """
-        return self.data.IsWhisper()
+        return self._data.IsWhisper()
 
-    # Functions to retrive parameters data from message.
+    # Functions to retrieve parameters data from message.
 
     def get_param(self, id_):
         r"""
@@ -95,7 +95,7 @@ class TransferDataWrapper(object):
 
         string GetParam(int id)
         """
-        return self.data.GetParam(id_)
+        return self._data.GetParam(id_)
 
     def get_param_count(self):
         r"""
@@ -103,4 +103,4 @@ class TransferDataWrapper(object):
 
         int GetParamCount()
         """
-        return self.data.GetParamCount()
+        return self._data.GetParamCount()

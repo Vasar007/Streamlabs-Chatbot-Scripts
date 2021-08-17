@@ -20,9 +20,9 @@ class BaseTransferStrategy(object):
     __metaclass__ = ABCMeta
 
     def __init__(self, parent_wrapper, settings, logger):
-        self.parent_wrapper = parent_wrapper
-        self.settings = settings
-        self.logger = logger
+        self._parent_wrapper = parent_wrapper
+        self._settings = settings
+        self._logger = logger
 
     @abstractmethod
     def validate_transfer(self, user_id, target_id):
@@ -62,7 +62,7 @@ class BaseTransferStrategy(object):
         Checks whether transfer to youself is allowed.
         """
         return (
-            self.settings.AllowToTransferToYourself or
+            self._settings.AllowToTransferToYourself or
             user_id != target_id
         )
 
@@ -73,14 +73,14 @@ class BaseTransferStrategy(object):
         Contract: check of caller user permission should be applied before this
         method call.
         """
-        if self.settings.AllowToAddRemoveSetForOtherWithSamePermissionOrHigher:
+        if self._settings.AllowToAddRemoveSetForOtherWithSamePermissionOrHigher:
             return True
 
         # Retrieve target user permission. If target has required permission,
         # operation should be denied. It can prevent moderator from changing
         # own points and other moderator's points, for example.
 
-        checker = PermissionChecker(self.parent_wrapper, self.logger)
+        checker = PermissionChecker(self._parent_wrapper, self._logger)
         check_result = checker.check_permissions(
             user_id, target_id, permission_handler
         )
@@ -112,17 +112,17 @@ class BaseTransferStrategy(object):
 
         self._log_current_currency(target_id, currency_name, "before adding")
 
-        is_success = self.parent_wrapper.add_points(target_id, final_amount)
-        self.logger.debug(
+        is_success = self._parent_wrapper.add_points(target_id, final_amount)
+        self._logger.debug(
             "Add points completed with status: " + str(is_success)
         )
         if send_message:
             message = (
-                self.settings.SuccessfulAddingMessage
+                self._settings.SuccessfulAddingMessage
                 .format(user_name, final_amount, currency_name, target_name)
             )
-            self.logger.info(message)
-            self.parent_wrapper.send_stream_message(message)
+            self._logger.info(message)
+            self._parent_wrapper.send_stream_message(message)
 
         self._log_current_currency(target_id, currency_name, "after adding")
         return is_success
@@ -136,31 +136,31 @@ class BaseTransferStrategy(object):
 
         self._log_current_currency(target_id, currency_name, "before removing")
 
-        is_success = self.parent_wrapper.remove_points(target_id, final_amount)
-        self.logger.debug(
+        is_success = self._parent_wrapper.remove_points(target_id, final_amount)
+        self._logger.debug(
             "Remove points completed with status: " + str(is_success)
         )
         if send_message:
             message = (
-                self.settings.SuccessfulRemovingMessage
+                self._settings.SuccessfulRemovingMessage
                 .format(user_name, final_amount, currency_name, target_name)
             )
-            self.logger.info(message)
-            self.parent_wrapper.send_stream_message(message)
+            self._logger.info(message)
+            self._parent_wrapper.send_stream_message(message)
 
         self._log_current_currency(target_id, currency_name, "after removing")
         return is_success
 
     def _log_current_currency(self, user_id, currency_name, message_part):
-        current_points = self.parent_wrapper.get_points(user_id)
-        self.logger.debug(
+        current_points = self._parent_wrapper.get_points(user_id)
+        self._logger.debug(
             "User {0} has {1} {2} {3}."
             .format(user_id, current_points, currency_name, message_part)
         )
 
     def _create_transaction(self):
         return TransferTransaction(
-            self.logger,
+            self._logger,
             self._handle_add_tranfer,
             self._handle_remove_tranfer
         )
@@ -173,25 +173,25 @@ class NormalTransferStrategy(BaseTransferStrategy):
             parent_wrapper, settings, logger
         )
 
-        self.tax_collector = tax_collector
+        self._tax_collector = tax_collector
 
     def validate_transfer(self, user_id, target_id):
         return self._validate_transfer(user_id, target_id)
 
     def try_get_amount_value(self, user_id, target_id, raw_amount):
-        if raw_amount == self.settings.ParameterAll:
-            return self.parent_wrapper.get_points(user_id)
+        if raw_amount == self._settings.ParameterAll:
+            return self._parent_wrapper.get_points(user_id)
 
         return helpers.safe_cast(raw_amount, int)
 
     def check_amount_value(self, amount):
-        min_amount = self.settings.MinGiveAmount
-        max_amount = self.settings.MaxGiveAmount
+        min_amount = self._settings.MinGiveAmount
+        max_amount = self._settings.MaxGiveAmount
 
         if max_amount < min_amount:
             min_amount = config.MinGiveAmount
             max_amount = config.MaxGiveAmount
-            self.logger.error(
+            self._logger.error(
                 "Encountered invalid amount settings. " +
                 "Using default value for min ({0}) and max ({1}) amount."
                 .format(min_amount, max_amount)
@@ -201,31 +201,31 @@ class NormalTransferStrategy(BaseTransferStrategy):
 
     def handle_invalid_amount(self, user_name, raw_amount):
         amount_example = config.ExampleAmountMinMaxRange.format(
-            self.settings.MinGiveAmount, self.settings.MaxGiveAmount
+            self._settings.MinGiveAmount, self._settings.MaxGiveAmount
         )
 
         message = (
-            self.settings.InvalidAmountMessage
+            self._settings.InvalidAmountMessage
             .format(user_name, raw_amount, amount_example)
         )
-        self.logger.info(message)
-        self.parent_wrapper.send_stream_message(message)
+        self._logger.info(message)
+        self._parent_wrapper.send_stream_message(message)
 
     def calculate_final_amount(self, user_id, amount):
-        (final_amount, fee) = self.tax_collector.apply_fee(
+        (final_amount, fee) = self._tax_collector.apply_fee(
             user_id, amount, return_fee=True
         )
         return TransferAmount(amount, final_amount, fee)
 
     def has_enough_funds(self, user_id, target_id, transfer_amount):
-        current_amount = self.parent_wrapper.get_points(user_id)
+        current_amount = self._parent_wrapper.get_points(user_id)
         return transfer_amount.initial_amount <= current_amount
 
     def handle_not_enough_funds(self, user_data, target_data, currency_name,
                                 transfer_amount):
-        current_amount = self.parent_wrapper.get_points(user_data.id)
+        current_amount = self._parent_wrapper.get_points(user_data.id)
         message = (
-            self.settings.NotEnoughFundsToTransferMessage
+            self._settings.NotEnoughFundsToTransferMessage
             .format(
                 user_data.name,
                 currency_name,
@@ -233,8 +233,8 @@ class NormalTransferStrategy(BaseTransferStrategy):
                 transfer_amount.initial_amount
             )
         )
-        self.logger.info(message)
-        self.parent_wrapper.send_stream_message(message)
+        self._logger.info(message)
+        self._parent_wrapper.send_stream_message(message)
 
     def handle_transfer_request(self, request, target_data, transfer_amount):
         self._handle_normal_transfer(request, target_data, transfer_amount)
@@ -260,7 +260,7 @@ class NormalTransferStrategy(BaseTransferStrategy):
 
             # Send message to chat.
             message = (
-                self.settings.SuccessfulTransferMessage
+                self._settings.SuccessfulTransferMessage
                 .format(
                     request.user_data.name,
                     transfer_amount.final_amount,
@@ -269,7 +269,7 @@ class NormalTransferStrategy(BaseTransferStrategy):
                     transfer_amount.fee
                 )
             )
-            self.parent_wrapper.send_stream_message(message)
+            self._parent_wrapper.send_stream_message(message)
 
             # Commit changes.
             transaction.commit()
@@ -283,8 +283,8 @@ class AddTransferStrategy(BaseTransferStrategy):
         )
 
     def validate_transfer(self, user_id, target_id):
-        permission = self.settings.PermissionOnAddRemoveSet
-        permission_info = self.settings.PermissionInfoOnAddRemoveSet
+        permission = self._settings.PermissionOnAddRemoveSet
+        permission_info = self._settings.PermissionInfoOnAddRemoveSet
         permission_handler = PermissionHandler(permission, permission_info)
         return self._validate_transfer(user_id, target_id, permission_handler)
 
@@ -296,11 +296,11 @@ class AddTransferStrategy(BaseTransferStrategy):
 
     def handle_invalid_amount(self, user_name, raw_amount):
         message = (
-            self.settings.InvalidAmountMessage
+            self._settings.InvalidAmountMessage
             .format(user_name, raw_amount, config.ExampleAmountValidRange)
         )
-        self.logger.info(message)
-        self.parent_wrapper.send_stream_message(message)
+        self._logger.info(message)
+        self._parent_wrapper.send_stream_message(message)
 
     def calculate_final_amount(self, user_id, amount):
         return TransferAmount(amount, amount)
@@ -334,14 +334,14 @@ class RemoveTransferStrategy(BaseTransferStrategy):
         )
 
     def validate_transfer(self, user_id, target_id):
-        permission = self.settings.PermissionOnAddRemoveSet
-        permission_info = self.settings.PermissionInfoOnAddRemoveSet
+        permission = self._settings.PermissionOnAddRemoveSet
+        permission_info = self._settings.PermissionInfoOnAddRemoveSet
         permission_handler = PermissionHandler(permission, permission_info)
         return self._validate_transfer(user_id, target_id, permission_handler)
 
     def try_get_amount_value(self, user_id, target_id, raw_amount):
-        if raw_amount == self.settings.ParameterAll:
-            return self.parent_wrapper.get_points(target_id)
+        if raw_amount == self._settings.ParameterAll:
+            return self._parent_wrapper.get_points(target_id)
 
         return helpers.safe_cast(raw_amount, int)
 
@@ -350,24 +350,24 @@ class RemoveTransferStrategy(BaseTransferStrategy):
 
     def handle_invalid_amount(self, user_name, raw_amount):
         message = (
-            self.settings.InvalidAmountMessage
+            self._settings.InvalidAmountMessage
             .format(user_name, raw_amount, config.ExampleAmountValidRange)
         )
-        self.logger.info(message)
-        self.parent_wrapper.send_stream_message(message)
+        self._logger.info(message)
+        self._parent_wrapper.send_stream_message(message)
 
     def calculate_final_amount(self, user_id, amount):
         return TransferAmount(amount, amount)
 
     def has_enough_funds(self, user_id, target_id, transfer_amount):
-        current_amount = self.parent_wrapper.get_points(target_id)
+        current_amount = self._parent_wrapper.get_points(target_id)
         return transfer_amount.final_amount <= current_amount
 
     def handle_not_enough_funds(self, user_data, target_data, currency_name,
                                 transfer_amount):
-        current_amount = self.parent_wrapper.get_points(target_data.id)
+        current_amount = self._parent_wrapper.get_points(target_data.id)
         message = (
-            self.settings.NotEnoughFundsToRemoveMessage
+            self._settings.NotEnoughFundsToRemoveMessage
             .format(
                 user_data.name,
                 target_data.name,
@@ -376,8 +376,8 @@ class RemoveTransferStrategy(BaseTransferStrategy):
                 transfer_amount.final_amount
             )
         )
-        self.logger.info(message)
-        self.parent_wrapper.send_stream_message(message)
+        self._logger.info(message)
+        self._parent_wrapper.send_stream_message(message)
 
     def handle_transfer_request(self, request, target_data, transfer_amount):
         with self._create_transaction() as transaction:
@@ -400,8 +400,8 @@ class SetTransferStrategy(BaseTransferStrategy):
         )
 
     def validate_transfer(self, user_id, target_id):
-        permission = self.settings.PermissionOnAddRemoveSet
-        permission_info = self.settings.PermissionInfoOnAddRemoveSet
+        permission = self._settings.PermissionOnAddRemoveSet
+        permission_info = self._settings.PermissionInfoOnAddRemoveSet
         permission_handler = PermissionHandler(permission, permission_info)
         return self._validate_transfer(user_id, target_id, permission_handler)
 
@@ -413,11 +413,11 @@ class SetTransferStrategy(BaseTransferStrategy):
 
     def handle_invalid_amount(self, user_name, raw_amount):
         message = (
-            self.settings.InvalidAmountMessage
+            self._settings.InvalidAmountMessage
             .format(user_name, raw_amount, config.ExampleAmountSetRange)
         )
-        self.logger.info(message)
-        self.parent_wrapper.send_stream_message(message)
+        self._logger.info(message)
+        self._parent_wrapper.send_stream_message(message)
 
     def calculate_final_amount(self, user_id, amount):
         return TransferAmount(amount, amount)
@@ -439,7 +439,7 @@ class SetTransferStrategy(BaseTransferStrategy):
         # 2. Add specified number of points to the target user.
         with self._create_transaction() as transaction:
             # Remove points from the target user.
-            current_amount = self.parent_wrapper.get_points(target_data.id)
+            current_amount = self._parent_wrapper.get_points(target_data.id)
             remove_parameters = request.to_paramters(
                 target_data=target_data,
                 final_amount=current_amount
@@ -455,7 +455,7 @@ class SetTransferStrategy(BaseTransferStrategy):
 
             # Send message to chat.
             message = (
-                self.settings.SuccessfulSettingMessage
+                self._settings.SuccessfulSettingMessage
                 .format(
                     request.user_data.name,
                     transfer_amount.final_amount,
@@ -463,7 +463,7 @@ class SetTransferStrategy(BaseTransferStrategy):
                     target_data.name
                 )
             )
-            self.parent_wrapper.send_stream_message(message)
+            self._parent_wrapper.send_stream_message(message)
 
             # Commit changes.
             transaction.commit()

@@ -28,8 +28,8 @@ class TransferPermissionCheckResult(object):
 class TransferPermissionChecker(object):
 
     def __init__(self, parent_wrapper, logger):
-        self.parent_wrapper = parent_wrapper
-        self.logger = logger
+        self._parent_wrapper = parent_wrapper
+        self._logger = logger
 
     def check_permissions(self, user_id, target_id, permission_handler):
         """
@@ -38,7 +38,7 @@ class TransferPermissionChecker(object):
         Contract: check of caller user permission should be applied before this
         method call.
         """
-        self.logger.debug(
+        self._logger.debug(
             "Comparing {0} permission with target {1}. Handler: {2}"
             .format(user_id, target_id, permission_handler)
         )
@@ -68,16 +68,16 @@ class TransferPermissionChecker(object):
             not permission_handler.has_info()
         )
         if should_skip_check:
-            self.logger.debug(
+            self._logger.debug(
                 "Encountered user_specific permission with no info." +
                 "Going to the next permission value to check."
             )
             return None
 
-        has_user_permission = self.parent_wrapper.has_permission(
+        has_user_permission = self._parent_wrapper.has_permission(
             user_id, permission, permission_handler.info
         )
-        has_target_permission = self.parent_wrapper.has_permission(
+        has_target_permission = self._parent_wrapper.has_permission(
             target_id, permission, permission_handler.info
         )
         if has_user_permission and has_target_permission:

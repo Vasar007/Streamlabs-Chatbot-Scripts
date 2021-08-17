@@ -34,7 +34,7 @@ class TransferEventEmitter(object):
         self.max_listeners = max_listeners
         self.delimiter = delimiter
 
-        self.__tree = self.__new_branch()
+        self._tree = self.__new_branch()
 
     @classmethod
     def __new_branch(cls):
@@ -55,7 +55,7 @@ class TransferEventEmitter(object):
         if self.__CBKEY in parts:
             return None
 
-        branch = self.__tree
+        branch = self._tree
         for p in parts:
             if p not in branch:
                 return None
@@ -90,7 +90,7 @@ class TransferEventEmitter(object):
             if self.__CBKEY in parts:
                 return func
 
-            branch = self.__tree
+            branch = self._tree
             for p in parts:
                 branch = branch.setdefault(p, self.__new_branch())
 
@@ -126,7 +126,7 @@ class TransferEventEmitter(object):
             if not callable(func):
                 return func
 
-            listeners = self.__tree[self.__CBKEY]
+            listeners = self._tree[self.__CBKEY]
 
             if 0 <= self.max_listeners <= len(listeners):
                 return func
@@ -163,7 +163,7 @@ class TransferEventEmitter(object):
         *None*, decorator usage is assumed. Returns the function.
         """
         def _off_any(func):
-            self.__remove_listener(self.__tree, func)
+            self.__remove_listener(self._tree, func)
 
             return func
 
@@ -173,8 +173,8 @@ class TransferEventEmitter(object):
         """
         Removes all registered functions.
         """
-        del self.__tree
-        self.__tree = self.__new_branch()
+        del self._tree
+        self._tree = self.__new_branch()
 
     def listeners(self, event):
         """
@@ -191,14 +191,14 @@ class TransferEventEmitter(object):
         """
         Returns all functions that were registered using *on_any*.
         """
-        return [l.func for l in self.__tree[self.__CBKEY]]
+        return [l.func for l in self._tree[self.__CBKEY]]
 
     def listeners_all(self):
         """
         Returns all registered functions.
         """
-        listeners = list(self.__tree[self.__CBKEY])
-        branches = self.__tree.values()
+        listeners = list(self._tree[self.__CBKEY])
+        branches = list(self._tree.values())
 
         for b in branches:
             if not isinstance(b, dict):
@@ -221,8 +221,8 @@ class TransferEventEmitter(object):
         if self.__CBKEY in parts:
             return
 
-        listeners = list(self.__tree[self.__CBKEY])
-        branches = [self.__tree]
+        listeners = list(self._tree[self.__CBKEY])
+        branches = [self._tree]
 
         for p in parts:
             _branches = []

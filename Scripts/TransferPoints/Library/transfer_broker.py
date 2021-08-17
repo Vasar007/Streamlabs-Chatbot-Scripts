@@ -16,17 +16,17 @@ import transfer_broker_strategies as strategies
 class TransferBroker(object):
 
     def __init__(self, parent_wrapper, settings, logger):
-        self.parent_wrapper = parent_wrapper
-        self.settings = settings
-        self.logger = logger
+        self._parent_wrapper = parent_wrapper
+        self._settings = settings
+        self._logger = logger
 
-        self.searcher = UserSearcher(parent_wrapper, logger)
-        self.tax_collector = TaxCollector(parent_wrapper, settings, logger)
+        self._searcher = UserSearcher(parent_wrapper, logger)
+        self._tax_collector = TaxCollector(parent_wrapper, settings, logger)
 
     def try_send_transfer(self, request):
         target_data = self._prepare_transfer(request)
         if not target_data.has_value():
-            self.logger.debug("Target is invalid, interupt tranfer.")
+            self._logger.debug("Target is invalid, interrupt transfer.")
             return False
 
         strategy = self._create_transfer_strategy(request.transfer_type)
@@ -57,7 +57,7 @@ class TransferBroker(object):
             )
             return False
 
-        self.logger.info("Initial amount to transfer: {0}.".format(amount_int))
+        self._logger.info("Initial amount to transfer: {0}.".format(amount_int))
         final_amount = strategy.calculate_final_amount(
             request.user_data.id, amount_int
         )
@@ -78,7 +78,7 @@ class TransferBroker(object):
 
     def _prepare_transfer(self, request):
         # Retrieve data about target.
-        target_data = self.searcher.find_user_data(
+        target_data = self._searcher.find_user_data(
             request.target_id_or_name
         )
         if not target_data.has_value():
@@ -99,26 +99,26 @@ class TransferBroker(object):
         # Normal transfer case.
         if transfer_type == TransferType.NormalTransfer:
             return strategies.NormalTransferStrategy(
-                self.parent_wrapper, self.settings, self.logger,
-                self.tax_collector
+                self._parent_wrapper, self._settings, self._logger,
+                self._tax_collector
             )
 
         # Add transfer case.
         elif transfer_type == TransferType.AddTransfer:
             return strategies.AddTransferStrategy(
-                self.parent_wrapper, self.settings, self.logger
+                self._parent_wrapper, self._settings, self._logger
             )
 
         # Remove transfer case.
         elif transfer_type == TransferType.RemoveTransfer:
             return strategies.RemoveTransferStrategy(
-                self.parent_wrapper, self.settings, self.logger
+                self._parent_wrapper, self._settings, self._logger
             )
 
         # Set transfer case.
         elif transfer_type == TransferType.SetTransfer:
             return strategies.SetTransferStrategy(
-                self.parent_wrapper, self.settings, self.logger
+                self._parent_wrapper, self._settings, self._logger
             )
 
         # Default case.
@@ -130,23 +130,23 @@ class TransferBroker(object):
 
     def _handle_no_target(self, user_name, currency_name):
         message = (
-            self.settings.NoTargetMessage
+            self._settings.NoTargetMessage
             .format(user_name, currency_name)
         )
-        self.logger.info(message)
-        self.parent_wrapper.send_stream_message(message)
+        self._logger.info(message)
+        self._parent_wrapper.send_stream_message(message)
 
     def _handle_invalid_target(self, user_name, target):
         message = (
-            self.settings.InvalidTargetMessage
+            self._settings.InvalidTargetMessage
             .format(user_name, target)
         )
-        self.logger.info(message)
-        self.parent_wrapper.send_stream_message(message)
+        self._logger.info(message)
+        self._parent_wrapper.send_stream_message(message)
 
     def _handle_invalid_validation(self, issue_type, user_name, target_name,
                                    currency_name, command):
-        # Denied transfer to youself case.
+        # Denied transfer to yourself case.
         if issue_type == IssueType.DeniedTransferToYouself:
             self._handle_target_is_sender(user_name, currency_name)
 
@@ -163,19 +163,19 @@ class TransferBroker(object):
 
     def _handle_target_is_sender(self, user_name, currency_name):
         message = (
-            self.settings.DeniedTransferToYourselfMessage
+            self._settings.DeniedTransferToYourselfMessage
             .format(user_name, currency_name)
         )
-        self.logger.info(message)
-        self.parent_wrapper.send_stream_message(message)
+        self._logger.info(message)
+        self._parent_wrapper.send_stream_message(message)
 
     def _handle_operation_denied(self, command, target_name):
         message = (
-            self.settings.OperationDeniedMessage
+            self._settings.OperationDeniedMessage
             .format(command, target_name)
         )
-        self.logger.info(message)
-        self.parent_wrapper.send_stream_message(message)
+        self._logger.info(message)
+        self._parent_wrapper.send_stream_message(message)
 
 
 def get_transfer_type(command, settings):

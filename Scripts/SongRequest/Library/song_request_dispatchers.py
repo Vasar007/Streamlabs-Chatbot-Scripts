@@ -44,9 +44,9 @@ class BaseSongRequestDispatcher(object):
     __metaclass__ = ABCMeta
 
     def __init__(self, parent_wrapper, settings, logger):
-        self.parent_wrapper = parent_wrapper
-        self.settings = settings
-        self.logger = logger
+        self._parent_wrapper = parent_wrapper
+        self._settings = settings
+        self._logger = logger
 
     @abstractmethod
     def dispatch(self, storage):
@@ -74,24 +74,24 @@ class WaitingSongRequestDispatcher(BaseSongRequestDispatcher):
         storage.update_states(waiting_requests)
 
     def _process_request(self, request):
-        self.logger.debug("Waiting request [{0}].".format(request))
+        self._logger.debug("Waiting request [{0}].".format(request))
 
         request_creation_time = request.CreationTimeUtc
         current_time = DateTime.UtcNow
-        waiting_timeout_in_seconds = self.settings.WaitingTimeoutForSongRequestsInSeconds
+        waiting_timeout_in_seconds = self._settings.WaitingTimeoutForSongRequestsInSeconds
 
         if current_time < request_creation_time.AddSeconds(waiting_timeout_in_seconds):
-            self.logger.debug(
+            self._logger.debug(
                 "Waiting timeout has not passed for request {0}."
                 .format(request.RequestId)
             )
             return request
 
-        self.logger.info(
+        self._logger.info(
             "Waiting request {0} was approved because timeout has passed."
             .format(request.RequestId)
         )
-        return request.AutoApprove(self.settings.AutoApproveReason)
+        return request.AutoApprove(self._settings.AutoApproveReason)
 
 
 
@@ -109,7 +109,7 @@ class PendingSongRequestDispatcher(BaseSongRequestDispatcher):
         )
 
         if not pending_requests:
-            self.logger.debug("No pending requests found. Skipping dispatch.")
+            self._logger.debug("No pending requests found. Skipping dispatch.")
             return
 
         # Update request's states to prevent double processing.
@@ -128,20 +128,20 @@ class PendingSongRequestDispatcher(BaseSongRequestDispatcher):
 
             # Need to wait some time before new request processing.
             if len_pending_requests > 1:
-                self.logger.debug("Waiting some time before new request.")
-                time.sleep(self.settings.TimeoutToWaitBetweenSongRequestsInSeconds)
+                self._logger.debug("Waiting some time before new request.")
+                time.sleep(self._settings.TimeoutToWaitBetweenSongRequestsInSeconds)
 
         storage.update_states(pending_requests)
 
     def _process_request(self, request):
-        self.logger.debug("Processing request [{0}].".format(request))
+        self._logger.debug("Processing request [{0}].".format(request))
 
         result = None
         try:
             result = self.page_scrapper.Process(request)
         except Exception as ex:
             error = str(ex)
-            self.logger.exception(
+            self._logger.exception(
                 "Failed to process request {0}: {1}"
                 .format(request.RequestId, error)
             )
@@ -150,35 +150,35 @@ class PendingSongRequestDispatcher(BaseSongRequestDispatcher):
         return self._handle_result(result)
 
     def _handle_result(self, result):
-        self.logger.info("Processing request result [{0}].".format(result))
+        self._logger.info("Processing request result [{0}].".format(result))
 
         user_name = result.SongRequest.UserData.Name.Value
         description = result.Description
         song_request_with_number = format_processed_song_request(
-            self.settings,
+            self._settings,
             result.SongRequest
         )
 
         message = None
         if result.IsSuccess:
             if not description:
-                description = self.settings.OnSuccessSongRequestDefaultResultMessage
+                description = self._settings.OnSuccessSongRequestDefaultResultMessage
 
             message = (
-                self.settings.OnSuccessSongRequestMessage
+                self._settings.OnSuccessSongRequestMessage
                 .format(user_name, song_request_with_number, description)
             )
         else:
             if not description:
-                description = self.settings.OnFailureSongRequestDefaultErrorMessage
+                description = self._settings.OnFailureSongRequestDefaultErrorMessage
 
             message = (
-                self.settings.OnFailureSongRequestMessage
+                self._settings.OnFailureSongRequestMessage
                 .format(user_name, song_request_with_number, description)
             )
 
-        self.logger.info(message)
-        self.parent_wrapper.send_stream_message(message)
+        self._logger.info(message)
+        self._parent_wrapper.send_stream_message(message)
 
         return result.SongRequest
 
@@ -201,10 +201,10 @@ class DeniedSongRequestDispatcher(BaseSongRequestDispatcher):
             self._process_request(request, storage)
 
     def _process_request(self, request, storage):
-        self.logger.debug("Denied request [{0}].".format(request))
+        self._logger.debug("Denied request [{0}].".format(request))
 
         storage.remove_request(request)
-        self.logger.info(
+        self._logger.info(
             "Denied request {0} was removed from storage."
             .format(request.RequestId)
         )

@@ -8,7 +8,7 @@ class BaseSongRequestMessenger(object):
     __metaclass__ = ABCMeta
 
     def __init__(self, parent_wrapper):
-        self.parent_wrapper = parent_wrapper
+        self._parent_wrapper = parent_wrapper
 
     @abstractmethod
     def send_message(self, target_user_id, message):
@@ -25,7 +25,7 @@ class PublicSongRequestMessenger(BaseSongRequestMessenger):
         super(PublicSongRequestMessenger, self).__init__(parent_wrapper)
 
     def send_message(self, target_user_id, message):
-        self.parent_wrapper.send_stream_message(message)
+        self._parent_wrapper.send_stream_message(message)
 
     def send_message_for_group(self, target_user_ids, message):
         users_to_mention = ""
@@ -38,7 +38,7 @@ class PublicSongRequestMessenger(BaseSongRequestMessenger):
         if users_to_mention:
             final_message = users_to_mention + "," + message
 
-        self.parent_wrapper.send_stream_message(final_message)
+        self._parent_wrapper.send_stream_message(final_message)
 
 
 class WhisperSongRequestMessenger(BaseSongRequestMessenger):
@@ -47,7 +47,7 @@ class WhisperSongRequestMessenger(BaseSongRequestMessenger):
         super(WhisperSongRequestMessenger, self).__init__(parent_wrapper)
 
     def send_message(self, target_user_id, message):
-        self.parent_wrapper.send_stream_whisper(target_user_id, message)
+        self._parent_wrapper.send_stream_whisper(target_user_id, message)
 
     def send_message_for_group(self, target_user_ids, message):
         for target_user_id in target_user_ids:
@@ -69,14 +69,14 @@ def create_messenger(parent_wrapper, settings, logger):
 class SongRequestMessengerHandler(object):
 
     def __init__(self, parent_wrapper, settings, logger):
-        self.parent_wrapper = parent_wrapper
-        self.settings = settings
-        self.logger = logger
+        self._parent_wrapper = parent_wrapper
+        self._settings = settings
+        self._logger = logger
         self.real_messenger = self._create_messenger()
 
         # Subscribe on settings reload to correctly change messenger type.
         reload_callback = lambda settings: self._on_settings_reload(settings)
-        self.settings.subscribe_on_reload(reload_callback)
+        self._settings.subscribe_on_reload(reload_callback)
 
     def send_message(self, target_user_id, message):
         self.real_messenger.send_message(target_user_id, message)
@@ -85,8 +85,8 @@ class SongRequestMessengerHandler(object):
         self.real_messenger.send_message_for_group(target_user_ids, message)
 
     def _create_messenger(self):
-        return create_messenger(self.parent_wrapper, self.settings, self.logger)
+        return create_messenger(self._parent_wrapper, self._settings, self._logger)
 
     def _on_settings_reload(self, new_settings):
-        self.settings = new_settings
+        self._settings = new_settings
         self.real_messenger = self._create_messenger()
