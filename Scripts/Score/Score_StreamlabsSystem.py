@@ -205,18 +205,19 @@ def HandleNoPermission(required_permission, command):
     ParentHandler.send_stream_message(message)
 
 
-def WrapCommand(process_command):
+def WrapCommand(process_command, command_cooldown):
     @wraps(process_command)
     def ProcessCommandWrapper(command, data_wrapper, manager):
         try:
+            is_on_cooldown = ParentHandler.is_on_cooldown(ScriptName, command)
             is_on_user_cooldown = ParentHandler.is_on_user_cooldown(
                 ScriptName, command, data_wrapper.user_id
             )
 
             # Check cooldown.
-            if is_on_user_cooldown:
-                cooldown = ParentHandler.get_user_cooldown_duration(
-                    ScriptName, command, data_wrapper.user_id
+            if is_on_cooldown:
+                cooldown = ParentHandler.get_cooldown_duration(
+                    ScriptName, command
                 )
 
                 # If command is on cooldown, send message.
@@ -225,9 +226,26 @@ def WrapCommand(process_command):
                     .format(command, cooldown)
                 )
                 ParentHandler.send_stream_message(message)
+            elif is_on_user_cooldown:
+                cooldown = ParentHandler.get_user_cooldown_duration(
+                    ScriptName, command, data_wrapper.user_id
+                )
+
+                # If command is on cooldown for user, send message.
+                message = (
+                    ScriptSettings.TimeRemainingMessage
+                    .format(command, cooldown)
+                )
+                ParentHandler.send_stream_message(message)
             else:
                 # If not, process command.
                 process_command(command, data_wrapper, manager)
+                # Put the command on cooldown.
+                ParentHandler.add_cooldown(
+                    ScriptName,
+                    command,
+                    command_cooldown
+                )
         except Exception as ex:
             Logger().exception(
                 "Failed to process command {0}: {1}".format(command, str(ex))

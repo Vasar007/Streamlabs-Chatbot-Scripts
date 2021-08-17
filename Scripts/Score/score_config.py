@@ -50,7 +50,7 @@ CommandCreateScoreUsage = "{0} {1} {2} {3}"
 CommandUpdateScoreUsage = "{0} {1} {2} {3}"
 ExamplePlayerName = "[PlayerName]"
 ExampleScoreValue = "[0–∞]"
-ExampleOptionalDescription = "[OptionalDescription enclosed in [] brackets]"
+ExampleOptionalDescription = "[OptionalDescription]"
 
 # [Required] Script Information.
 ScriptName = "Score Script"

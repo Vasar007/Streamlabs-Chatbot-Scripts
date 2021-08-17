@@ -150,7 +150,7 @@ class PendingSongRequestDispatcher(BaseSongRequestDispatcher):
         return self._handle_result(result)
 
     def _handle_result(self, result):
-        self._logger.info("Processing request result [{0}].".format(result))
+        self._logger.debug("Processing request result [{0}].".format(result))
 
         user_name = result.SongRequest.UserData.Name.Value
         description = result.Description
