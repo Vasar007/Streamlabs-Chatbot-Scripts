@@ -330,8 +330,24 @@ def TryProcessCommand(command, data_wrapper):
 
     param_count = data_wrapper.get_param_count()
 
+    # !scripts_info
+    if command == config.DefaultVersionCommand:
+        required_permission = config.PermissionOnDefaultVersionCommand
+        permission_info = config.PermissionInfoOnDefaultVersionCommand
+        func = GetFuncToProcessIfHasPermission(
+            ProcessScriptsInfoCommand,
+            config.DefaultVersionCommandCooldown,
+            data_wrapper.user_id,
+            required_permission,
+            permission_info
+        )
+        # Version command call can have optional text.
+        is_valid_call = param_count >= 1
+
+        usage_example = config.DefaultVersionCommand
+
     # !sr
-    if command == ScriptSettings.CommandAddSongRequest:
+    elif command == ScriptSettings.CommandAddSongRequest:
         required_permission = ScriptSettings.PermissionOnAddCancelSongRequest
         permission_info = ScriptSettings.PermissionInfoOnAddCancelSongRequest
         func = GetFuncToProcessIfHasPermission(
@@ -489,6 +505,15 @@ def ShouldSkipCommandProcessing(data_wrapper):
     Logger().info(message)
     Manager.get_messenger().send_message(data_wrapper.user_id, message)
     return True
+
+
+def ProcessScriptsInfoCommand(command, data_wrapper):
+    # Input example: !scripts_info <Anything>
+    # Command <Anything>
+    message = "\"{0}\" by {1}, v{2}".format(ScriptName, Creator, Version)
+    Manager.get_messenger().send_message(
+        data_wrapper.user_id, message
+    )
 
 
 def ProcessAddSongRequestCommand(command, data_wrapper):

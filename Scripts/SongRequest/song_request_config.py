@@ -46,6 +46,14 @@ Editor = "editor"
 
 PermissionHierarchy = (Everyone, Subscriber, UserSpecific, Moderator, Editor)
 
+DefaultVersionCommand = "!scripts_info"
+DefaultVersionCommandCooldown = 1
+
+# Values: everyone, moderator, subscriber, user_specific, editor.
+PermissionOnDefaultVersionCommand = Moderator
+# This field should only be filled when using the user_specific permission.
+PermissionInfoOnDefaultVersionCommand = ""
+
 CommandAddGetSkipSongRequestUsage = "{0} {1}"
 CommandManageSongRequestUsage = "{0} {1} {2}"
 ExampleUserIdOrName = "[UserIdOrName]"

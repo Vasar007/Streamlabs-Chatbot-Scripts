@@ -265,8 +265,24 @@ def TryProcessCommand(command, data_wrapper):
 
     param_count = data_wrapper.get_param_count()
 
+    # !scripts_info
+    if command == config.DefaultVersionCommand:
+        required_permission = config.PermissionOnDefaultVersionCommand
+        permission_info = config.PermissionInfoOnDefaultVersionCommand
+        func = GetFuncToProcessIfHasPermission(
+            ProcessScriptsInfoCommand,
+            config.DefaultVersionCommandCooldown,
+            data_wrapper.user_id,
+            required_permission,
+            permission_info
+        )
+        # Version command call can have optional text.
+        is_valid_call = param_count >= 1
+
+        usage_example = config.DefaultVersionCommand
+
     # !give
-    if command == ScriptSettings.CommandGive:
+    elif command == ScriptSettings.CommandGive:
         required_permission = ScriptSettings.PermissionOnGiveGetTax
         permission_info = ScriptSettings.PermissionInfoOnGiveGetTax
         func = GetFuncToProcessIfHasPermission(
@@ -377,6 +393,13 @@ def TryProcessCommand(command, data_wrapper):
     return CommandWrapper(
         command, func, required_permission, is_valid_call, usage_example
     )
+
+
+def ProcessScriptsInfoCommand(command, data_wrapper):
+    # Input example: !scripts_info <Anything>
+    # Command <Anything>
+    message = "\"{0}\" by {1}, v{2}".format(ScriptName, Creator, Version)
+    ParentHandler.send_stream_message(message)
 
 
 def ProcessAnyTransferCurrencyCommand(command, data_wrapper):

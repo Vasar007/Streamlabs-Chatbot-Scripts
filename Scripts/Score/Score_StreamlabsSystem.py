@@ -270,8 +270,24 @@ def TryProcessCommand(command, data_wrapper):
 
     param_count = data_wrapper.get_param_count()
 
+    # !scripts_info
+    if command == config.DefaultVersionCommand:
+        required_permission = config.PermissionOnDefaultVersionCommand
+        permission_info = config.PermissionInfoOnDefaultVersionCommand
+        func = GetFuncToProcessIfHasPermission(
+            ProcessScriptsInfoCommand,
+            config.DefaultVersionCommandCooldown,
+            data_wrapper.user_id,
+            required_permission,
+            permission_info
+        )
+        # Version command call can have optional text.
+        is_valid_call = param_count >= 1
+
+        usage_example = config.DefaultVersionCommand
+
     # !score
-    if command == ScriptSettings.CommandGetScore:
+    elif command == ScriptSettings.CommandGetScore:
         required_permission = ScriptSettings.PermissionOnGet
         permission_info = ScriptSettings.PermissionInfoOnGet
         func = GetFuncToProcessIfHasPermission(
@@ -385,6 +401,13 @@ def TryExtractDescription(required_parameters_number, data_wrapper):
     log_description = description if description else "<None>"
     Logger().debug("Extracted description: " + log_description)
     return description
+
+
+def ProcessScriptsInfoCommand(command, data_wrapper, manager):
+    # Input example: !scripts_info <Anything>
+    # Command <Anything>
+    message = "\"{0}\" by {1}, v{2}".format(ScriptName, Creator, Version)
+    ParentHandler.send_stream_message(message)
 
 
 def ProcessGetCommand(command, data_wrapper, manager):
