@@ -95,6 +95,8 @@ class SongRequestSettings(object):
         self.CommandRejectSongRequestCooldown = config.CommandRejectSongRequestCooldown
         self.CommandGetSongRequest = config.CommandGetSongRequest
         self.CommandGetSongRequestCooldown = config.CommandGetSongRequestCooldown
+        self.CommandResetSongRequest = config.CommandResetSongRequest
+        self.CommandResetSongRequestCooldown = config.CommandResetSongRequestCooldown
         self.CommandSkipSongRequest = config.CommandSkipSongRequest
         self.CommandSkipSongRequestCooldown = config.CommandSkipSongRequestCooldown
         self.CommandOptionSongRequest = config.CommandOptionSongRequest
@@ -153,6 +155,7 @@ class SongRequestSettings(object):
         self.SongRequestRejectedMessage = config.SongRequestRejectedMessage
         self.SongRequestDefaultRejectReason = config.SongRequestDefaultRejectReason
         self.SongRequestCancelMessage = config.SongRequestCancelMessage
+        self.ResetUserSongRequestOptionsMessage = config.ResetUserSongRequestOptionsMessage
         self.GotUserSongRequestsMessage = config.GotUserSongRequestsMessage
         self.NoUserSongRequestsMessage = config.NoUserSongRequestsMessage
         self.OptionValueTheSameMessage = config.OptionValueTheSameMessage
@@ -220,6 +223,14 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
     @property
     def CommandGetSongRequestCooldown(self):
         return self._settings.CommandGetSongRequestCooldown
+
+    @property
+    def CommandResetSongRequest(self):
+        return self._settings.CommandResetSongRequest
+
+    @property
+    def CommandResetSongRequestCooldown(self):
+        return self._settings.CommandResetSongRequestCooldown
 
     @property
     def CommandSkipSongRequest(self):
@@ -431,6 +442,10 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
     @property
     def SongRequestCancelMessage(self):
         return self._settings.SongRequestCancelMessage
+
+    @property
+    def ResetUserSongRequestOptionsMessage(self):
+        return self._settings.ResetUserSongRequestOptionsMessage
 
     @property
     def GotUserSongRequestsMessage(self):

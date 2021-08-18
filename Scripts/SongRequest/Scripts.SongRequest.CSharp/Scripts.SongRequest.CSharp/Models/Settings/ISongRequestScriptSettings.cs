@@ -19,6 +19,9 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         string CommandRejectSongRequest { get; }
         int CommandRejectSongRequestCooldown { get; }
 
+        string CommandResetSongRequest { get; }
+        int CommandResetSongRequestCooldown { get; }
+
         string CommandGetSongRequest { get; }
         int CommandGetSongRequestCooldown { get; }
 
@@ -93,6 +96,7 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         string SongRequestRejectedMessage { get; }
         string SongRequestDefaultRejectReason { get; }
         string SongRequestCancelMessage { get; }
+        string ResetUserSongRequestOptionsMessage { get; }
         string GotUserSongRequestsMessage { get; }
         string NoUserSongRequestsMessage { get; }
         string OptionValueTheSameMessage { get; }

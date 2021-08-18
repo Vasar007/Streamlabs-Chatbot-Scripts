@@ -69,6 +69,23 @@
         "tooltip": "How long the Reject Song Request command should go on cooldown for.",
         "group": "Setup"
     },
+    "CommandResetSongRequest": {
+        "type": "textbox",
+        "value": "!sr_set",
+        "label": "Set Song Request Command",
+        "tooltip": "The command that will be used to set song requests settings for users.",
+        "group": "Setup"
+    },
+    "CommandResetSongRequestCooldown": {
+        "type": "slider",
+        "value": 1,
+        "min": 1,
+        "max": 100,
+        "ticks": 1,
+        "label": "Set Song Request Command Cooldown (In Seconds)",
+        "tooltip": "How long the Set Song Request command should go on cooldown for.",
+        "group": "Setup"
+    },
     "CommandGetSongRequest": {
         "type": "textbox",
         "value": "!sr_get",
@@ -463,6 +480,13 @@
         "value": "{0}, your song request {1} was canceled.",
         "label": "On Song Request Canceled Message",
         "tooltip": "The message that will be sent to chat when user's song request was canceled. 0 — user name, 1 — song request.",
+        "group": "Chat Messages"
+    },
+    "ResetUserSongRequestOptionsMessage": {
+        "type": "textbox",
+        "value": "{0}, {1} reseted your number of ordered requests.",
+        "label": "On Set Song Request Options Message",
+        "tooltip": "The message that will be sent to chat when user changes song request options. 0 — target user name, 1 — user name who reseted number of song requests.",
         "group": "Chat Messages"
     },
     "GotUserSongRequestsMessage": {

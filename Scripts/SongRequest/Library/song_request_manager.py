@@ -65,6 +65,28 @@ class SongRequestManager(object):
 
         return (self._get_user_requests(target_data), target_data)
 
+    def remove_all_user_requests_for(self, user_data, target_user_id_or_name):
+        self._logger.debug(
+            "Removing all requests for user [{0}]."
+            .format(target_user_id_or_name)
+        )
+
+        target_data = self._prepare_target_data(
+            user_data, target_user_id_or_name
+        )
+        if not target_data.HasValue:
+            self._logger.debug(
+                "Target user {0} is invalid, skip user requests processing."
+                .format(request_decision.TargetUserIdOrName.Value)
+            )
+            return (None, None)
+
+        all_target_user_requests = self._get_user_requests(target_data)
+        for request in all_target_user_requests:
+            self._storage.remove_request(request)
+
+        return target_data
+
     def add_request(self, user_data, song_link):
         self._logger.debug(
             "Adding request from user [{0}], link [{1}]."
@@ -393,6 +415,37 @@ def approve_or_reject_request(command, data_wrapper, settings, manager):
         manager.reject_request(request_decision)
     else:
         raise ValueError("Unexpected command to handle: {0}.".format(command))
+
+
+def reset_option_for_user(data_wrapper, settings, logger, manager):
+    user_data = helpers.wrap_user_data(
+        data_wrapper.user_id, data_wrapper.user_name
+    )
+
+    raw_target_user_id_or_name = helpers.strip_at_symbol_for_name(
+        data_wrapper.get_param(1)
+    )
+    target_user_id_or_name = helpers.wrap_user_id_or_name(
+        raw_target_user_id_or_name
+    )
+
+    target_data = manager.remove_all_user_requests_for(
+        user_data, target_user_id_or_name
+    )
+
+    target_user_name = None
+    if target_data:
+        target_user_name = target_data.Name.Value
+    else:
+        target_user_name = target_user_id_or_name.Value
+
+    message = (
+        settings.ResetUserSongRequestOptionsMessage
+        .format(target_user_name, user_data.Name.Value)
+    )
+
+    logger.info(message)
+    manager.get_messenger().send_message(user_data.Id.Value, message)
 
 
 def get_all_user_requests(data_wrapper, settings, logger, manager):

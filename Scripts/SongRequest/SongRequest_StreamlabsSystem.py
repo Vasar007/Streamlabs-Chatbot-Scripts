@@ -361,7 +361,7 @@ def TryProcessCommand(command, data_wrapper):
         is_valid_call = param_count >= 2
 
         usage_example = (
-            config.CommandAddGetSkipSongRequestUsage
+            config.CommandAddResetGetSkipSongRequestUsage
             .format(
                 ScriptSettings.CommandAddSongRequest,
                 config.ExampleYouTubeLinkToSong
@@ -414,6 +414,28 @@ def TryProcessCommand(command, data_wrapper):
             )
         )
 
+    # !sr_reset
+    elif command == ScriptSettings.CommandResetSongRequest:
+        required_permission = ScriptSettings.PermissionOnManageSongRequest
+        permission_info = ScriptSettings.PermissionInfoOnManageSongRequest
+        func = GetFuncToProcessIfHasPermission(
+            ProcessResetSongRequestsCommand,
+            ScriptSettings.CommandResetSongRequestCooldown,
+            data_wrapper.user_id,
+            required_permission,
+            permission_info
+        )
+        # Reset command call can have optional text.
+        is_valid_call = param_count >= 2
+
+        usage_example = (
+            config.CommandAddResetGetSkipSongRequestUsage
+            .format(
+                ScriptSettings.CommandResetSongRequest,
+                config.ExampleUserIdOrName
+            )
+        )
+
     # !sr_get
     elif command == ScriptSettings.CommandGetSongRequest:
         required_permission = ScriptSettings.PermissionOnManageSongRequest
@@ -429,7 +451,7 @@ def TryProcessCommand(command, data_wrapper):
         is_valid_call = param_count >= 2
 
         usage_example = (
-            config.CommandAddGetSkipSongRequestUsage
+            config.CommandAddResetGetSkipSongRequestUsage
             .format(
                 ScriptSettings.CommandGetSongRequest,
                 config.ExampleUserIdOrName
@@ -451,7 +473,7 @@ def TryProcessCommand(command, data_wrapper):
         is_valid_call = param_count >= 1
 
         usage_example = (
-            config.CommandAddGetSkipSongRequestUsage
+            config.CommandAddResetGetSkipSongRequestUsage
             .format(
                 ScriptSettings.CommandSkipSongRequest,
                 config.ExampleAllValue
@@ -548,6 +570,14 @@ def ProcessApproveRejectSongRequestCommand(command, data_wrapper):
     # Command <@>TargetUserNameOrId <RequestNumber> <Anything>
     song_request_manager.approve_or_reject_request(
         command, data_wrapper, ScriptSettings, Manager
+    )
+
+
+def ProcessResetSongRequestsCommand(command, data_wrapper):
+    # Input example: !st_reset Vasar <Anything>
+    # Command <@>TargetUserNameOrId <Anything>
+    song_request_manager.reset_option_for_user(
+        data_wrapper, ScriptSettings, Logger(), Manager
     )
 
 
