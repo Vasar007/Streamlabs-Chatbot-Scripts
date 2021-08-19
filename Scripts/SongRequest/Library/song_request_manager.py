@@ -59,7 +59,7 @@ class SongRequestManager(object):
         if not target_data.HasValue:
             self._logger.debug(
                 "Target user {0} is invalid, skip user requests processing."
-                .format(request_decision.TargetUserIdOrName.Value)
+                .format(target_user_id_or_name)
             )
             return (None, None)
 
@@ -77,9 +77,9 @@ class SongRequestManager(object):
         if not target_data.HasValue:
             self._logger.debug(
                 "Target user {0} is invalid, skip user requests processing."
-                .format(request_decision.TargetUserIdOrName.Value)
+                .format(target_user_id_or_name)
             )
-            return (None, None)
+            return None
 
         all_target_user_requests = self._get_user_requests(target_data)
         for request in all_target_user_requests:
@@ -259,6 +259,9 @@ class SongRequestManager(object):
         self._messenger.send_message(user_id, message)
 
     def _handle_request_added(self, user_id, user_name, song_request):
+        if self._settings.LowMessageMode:
+            return
+
         message = (
             self._settings.SongRequestAddedMessage
             .format(user_name, song_request)
@@ -387,7 +390,7 @@ def approve_or_reject_request(command, data_wrapper, settings, manager):
     if param_count > 1:
         raw_request_number = data_wrapper.get_param(2)
         request_number = SongRequestNumber.TryParse(
-            raw_request_number, SongRequestNumber.All
+            raw_request_number, SongRequestNumber.All, settings
         )
 
     reason = ""
@@ -395,7 +398,7 @@ def approve_or_reject_request(command, data_wrapper, settings, manager):
         seems_like_request_number = data_wrapper.get_param(2)
         is_request_number = (
             seems_like_request_number.isdigit() or
-            seems_like_request_number.lower() == SongRequestNumber.RawAllValue.lower()
+            settings.is_all_parameter(seems_like_request_number)
         )
         if param_count > 2:
             start_reason = 2 if not is_request_number else 3
@@ -417,13 +420,27 @@ def approve_or_reject_request(command, data_wrapper, settings, manager):
         raise ValueError("Unexpected command to handle: {0}.".format(command))
 
 
+def change_option_for_user(data_wrapper, settings, logger, manager):
+    second_subcommand = data_wrapper.get_param(3).lower()
+
+    if settings.is_reset_subcommand(second_subcommand):
+        reset_option_for_user(data_wrapper, settings, logger, manager)
+    else:
+        message = (
+            settings.InvalidOptionsSubcommandMessage
+            .format(data_wrapper.user_name, second_subcommand)
+        )
+        logger.info(message)
+        manager.get_messenger().send_message(data_wrapper.user_id, message)
+
+
 def reset_option_for_user(data_wrapper, settings, logger, manager):
     user_data = helpers.wrap_user_data(
         data_wrapper.user_id, data_wrapper.user_name
     )
 
     raw_target_user_id_or_name = helpers.strip_at_symbol_for_name(
-        data_wrapper.get_param(1)
+        data_wrapper.get_param(2)
     )
     target_user_id_or_name = helpers.wrap_user_id_or_name(
         raw_target_user_id_or_name
@@ -433,19 +450,14 @@ def reset_option_for_user(data_wrapper, settings, logger, manager):
         user_data, target_user_id_or_name
     )
 
-    target_user_name = None
     if target_data:
         target_user_name = target_data.Name.Value
-    else:
-        target_user_name = target_user_id_or_name.Value
-
-    message = (
-        settings.ResetUserSongRequestOptionsMessage
-        .format(target_user_name, user_data.Name.Value)
-    )
-
-    logger.info(message)
-    manager.get_messenger().send_message(user_data.Id.Value, message)
+        message = (
+            settings.ResetUserSongRequestOptionsMessage
+            .format(target_user_name, user_data.Name.Value)
+        )
+        logger.info(message)
+        manager.get_messenger().send_message(user_data.Id.Value, message)
 
 
 def get_all_user_requests(data_wrapper, settings, logger, manager):

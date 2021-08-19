@@ -67,7 +67,7 @@ class TemplateSettings(object):
         cls._reload_event.on(config.SettingsReloadEventName, reload_callback)
 
     def _set_default(self):
-        # Setup group.
+        # Commands group.
         self.CommandPing = config.CommandPing
         self.CommandPingCooldown = config.CommandPingCooldown
 

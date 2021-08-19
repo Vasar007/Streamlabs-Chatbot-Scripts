@@ -6,7 +6,7 @@
         "value": "!give",
         "label": "Give Command",
         "tooltip": "Command that users will use when they want to transfer points.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandGiveCooldown": {
         "type": "slider",
@@ -16,14 +16,14 @@
         "ticks": 1,
         "label": "Give Command Cooldown (seconds)",
         "tooltip": "How long the Give command should go on cooldown for.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandAdd": {
         "type": "textbox",
         "value": "!add",
         "label": "Add Command",
         "tooltip": "Command that (typically) moderators will use when they want to add points.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandAddCooldown": {
         "type": "slider",
@@ -33,14 +33,14 @@
         "ticks": 1,
         "label": "Add Command Cooldown (seconds)",
         "tooltip": "How long the Add command should go on cooldown for.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandRemove": {
         "type": "textbox",
         "value": "!remove",
         "label": "Remove Command",
         "tooltip": "Command that (typically) moderators will use when they want to remove points.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandRemoveCooldown": {
         "type": "slider",
@@ -50,14 +50,14 @@
         "ticks": 1,
         "label": "Remove Cooldown (seconds)",
         "tooltip": "How long the Remove command should go on cooldown for.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandSet": {
         "type": "textbox",
         "value": "!set",
         "label": "Set Command",
         "tooltip": "Command that (typically) moderators will use when they want to set points value to certain amount.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandSetCooldown": {
         "type": "slider",
@@ -67,14 +67,14 @@
         "ticks": 1,
         "label": "Set Command Cooldown (seconds)",
         "tooltip": "How long the Set command should go on cooldown for.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandGetTax": {
         "type": "textbox",
         "value": "!get_tax",
         "label": "Get Tax Command",
         "tooltip": "Command that users will use when they want to to retrieve current tax percent.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandGetTaxCooldown": {
         "type": "slider",
@@ -84,15 +84,16 @@
         "ticks": 1,
         "label": "Get Tax Command Cooldown (seconds)",
         "tooltip": "How long the Get Tax command should go on cooldown for.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "ParameterAll": {
         "type": "textbox",
         "value": "all",
         "label": "Parameter All",
         "tooltip": "Command parameter that allow to use all points amount to transfer.",
-        "group": "Setup"
+        "group": "Commands"
     },
+
     "GiveTaxPercent": {
         "type": "slider",
         "value": 10,

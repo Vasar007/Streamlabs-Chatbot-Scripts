@@ -10,6 +10,8 @@ namespace Scripts.SongRequest.TestConsoleApp.Mocks
         {
             var mock = new Mock<ISongRequestScriptSettings>();
 
+            mock.Setup(x => x.ParameterAll).Returns(TestConfig.ParameterAll);
+
             mock.Setup(x => x.EnableWebDriverDebug).Returns(TestConfig.EnableWebDriverDebug);
             mock.Setup(x => x.BrowserDriverPath).Returns(TestConfig.BrowserDriverPath);
             mock.Setup(x => x.BrowserDriverExecutableName).Returns(TestConfig.BrowserDriverExecutableName);

@@ -19,8 +19,6 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         string CommandRejectSongRequest { get; }
         int CommandRejectSongRequestCooldown { get; }
 
-        string CommandResetSongRequest { get; }
-        int CommandResetSongRequestCooldown { get; }
 
         string CommandGetSongRequest { get; }
         int CommandGetSongRequestCooldown { get; }
@@ -30,6 +28,14 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
 
         string CommandOptionSongRequest { get; }
         int CommandOptionSongRequestCooldown { get; }
+        string SubcommandChangeUserOptionForSongRequests { get; }
+        string SubcommandResetNumberOfOrderedSongRequests { get; }
+
+        string ParameterAll { get; }
+
+        #endregion
+
+        #region Setup Group
 
         HttpLink HttpPageLinkToParse { get; }
         int NumberOfSongRequestsToAdd { get; }
@@ -96,9 +102,10 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         string SongRequestRejectedMessage { get; }
         string SongRequestDefaultRejectReason { get; }
         string SongRequestCancelMessage { get; }
-        string ResetUserSongRequestOptionsMessage { get; }
         string GotUserSongRequestsMessage { get; }
         string NoUserSongRequestsMessage { get; }
+        string ResetUserSongRequestOptionsMessage { get; }
+        string InvalidOptionsSubcommandMessage { get; }
         string OptionValueTheSameMessage { get; }
         string OptionValueChangedMessage { get; }
         string FailedToSetOptionMessage { get; }

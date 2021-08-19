@@ -6,7 +6,7 @@
         "value": "!ping",
         "label": "Ping Command",
         "tooltip": "The command that will be responded to.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandPingCooldown": {
         "type": "slider",
@@ -16,7 +16,7 @@
         "ticks": 1,
         "label": "Ping Command Cooldown (seconds)",
         "tooltip": "How long the Ping command should go on cooldown for.",
-        "group": "Setup"
+        "group": "Commands"
     },
 
     "PermissionOnPing": {

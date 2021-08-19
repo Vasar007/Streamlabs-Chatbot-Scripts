@@ -65,7 +65,7 @@ ScriptName = "Transfer Points Script"
 Website = "https://github.com/Vasar007/Streamlabs-Chatbot-Scripts"
 Description = "Allows viewers to transfer Streamlabs points between eachother."
 Creator = "Vasar007"
-Version = "1.0.3"
+Version = "1.1.0"
 
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).

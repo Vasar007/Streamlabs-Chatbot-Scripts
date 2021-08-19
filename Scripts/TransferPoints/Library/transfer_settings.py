@@ -66,8 +66,14 @@ class TransferSettings(object):
         """
         cls._reload_event.on(config.SettingsReloadEventName, reload_callback)
 
+    def _are_strings_equal(self, value1, value2):
+        return value1.lower() == value2.lower()
+
+    def is_all_parameter(self, value):
+        return self._are_strings_equal(value, self.ParameterAll)
+
     def _set_default(self):
-        # Setup group.
+        # Commands group.
         self.CommandGive = config.CommandGive
         self.CommandGiveCooldown = config.CommandGiveCooldown
         self.CommandAdd = config.CommandAdd
@@ -79,6 +85,8 @@ class TransferSettings(object):
         self.CommandGetTax = config.CommandGetTax
         self.CommandGetTaxCooldown = config.CommandGetTaxCooldown
         self.ParameterAll = config.ParameterAll
+
+        # Setup group.
         self.GiveTaxPercent = config.GiveTaxPercent
         self.MinGiveAmount = config.MinGiveAmount
         self.MaxGiveAmount = config.MaxGiveAmount

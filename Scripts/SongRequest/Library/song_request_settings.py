@@ -83,8 +83,20 @@ class SongRequestSettings(object):
         logger.info("Using mod IDs to whisper: {0}".format(mod_ids))
         return mod_ids
 
+    def _are_strings_equal(self, value1, value2):
+        return value1.lower() == value2.lower()
+
+    def is_all_parameter(self, value):
+        return self._are_strings_equal(value, self.ParameterAll)
+
+    def is_user_subcommand(self, value):
+        return self._are_strings_equal(value, self.SubcommandChangeUserOptionForSongRequests)
+
+    def is_reset_subcommand(self, value):
+        return self._are_strings_equal(value, self.SubcommandResetNumberOfOrderedSongRequests)
+
     def _set_default(self):
-        # Setup group.
+        # Commands group.
         self.CommandAddSongRequest = config.CommandAddSongRequest
         self.CommandAddSongRequestCooldown = config.CommandAddSongRequestCooldown
         self.CommandCancelSongRequest = config.CommandCancelSongRequest
@@ -95,12 +107,15 @@ class SongRequestSettings(object):
         self.CommandRejectSongRequestCooldown = config.CommandRejectSongRequestCooldown
         self.CommandGetSongRequest = config.CommandGetSongRequest
         self.CommandGetSongRequestCooldown = config.CommandGetSongRequestCooldown
-        self.CommandResetSongRequest = config.CommandResetSongRequest
-        self.CommandResetSongRequestCooldown = config.CommandResetSongRequestCooldown
         self.CommandSkipSongRequest = config.CommandSkipSongRequest
         self.CommandSkipSongRequestCooldown = config.CommandSkipSongRequestCooldown
         self.CommandOptionSongRequest = config.CommandOptionSongRequest
         self.CommandOptionSongRequestCooldown = config.CommandOptionSongRequestCooldown
+        self.SubcommandChangeUserOptionForSongRequests = config.SubcommandChangeUserOptionForSongRequests
+        self.SubcommandResetNumberOfOrderedSongRequests = config.SubcommandResetNumberOfOrderedSongRequests
+        self.ParameterAll = config.ParameterAll
+
+        # Setup group.
         self.HttpPageLinkToParse = config.HttpPageLinkToParse
         self.MaxNumberOfSongRequestsToAdd = config.MaxNumberOfSongRequestsToAdd
         self.WaitingTimeoutForSongRequestsInSeconds = config.WaitingTimeoutForSongRequestsInSeconds
@@ -155,9 +170,10 @@ class SongRequestSettings(object):
         self.SongRequestRejectedMessage = config.SongRequestRejectedMessage
         self.SongRequestDefaultRejectReason = config.SongRequestDefaultRejectReason
         self.SongRequestCancelMessage = config.SongRequestCancelMessage
-        self.ResetUserSongRequestOptionsMessage = config.ResetUserSongRequestOptionsMessage
         self.GotUserSongRequestsMessage = config.GotUserSongRequestsMessage
         self.NoUserSongRequestsMessage = config.NoUserSongRequestsMessage
+        self.ResetUserSongRequestOptionsMessage = config.ResetUserSongRequestOptionsMessage
+        self.InvalidOptionsSubcommandMessage = config.InvalidOptionsSubcommandMessage
         self.OptionValueTheSameMessage = config.OptionValueTheSameMessage
         self.OptionValueChangedMessage = config.OptionValueChangedMessage
         self.FailedToSetOptionMessage = config.FailedToSetOptionMessage
@@ -183,7 +199,7 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
 
     # Implementation of ISongRequestScriptSettings
 
-    # Setup group.
+    # Commands group.
     @property
     def CommandAddSongRequest(self):
         return self._settings.CommandAddSongRequest
@@ -225,14 +241,6 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
         return self._settings.CommandGetSongRequestCooldown
 
     @property
-    def CommandResetSongRequest(self):
-        return self._settings.CommandResetSongRequest
-
-    @property
-    def CommandResetSongRequestCooldown(self):
-        return self._settings.CommandResetSongRequestCooldown
-
-    @property
     def CommandSkipSongRequest(self):
         return self._settings.CommandSkipSongRequest
 
@@ -248,6 +256,19 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
     def CommandOptionSongRequestCooldown(self):
         return self._settings.CommandOptionSongRequestCooldown
 
+    @property
+    def SubcommandChangeUserOptionForSongRequests(self):
+        return self._settings.SubcommandChangeUserOptionForSongRequests
+
+    @property
+    def SubcommandResetNumberOfOrderedSongRequests(self):
+        return self._settings.SubcommandResetNumberOfOrderedSongRequests
+
+    @property
+    def ParameterAll(self):
+        return self._settings.ParameterAll
+
+    # Setup group.
     @property
     def HttpPageLinkToParse(self):
         return helpers.wrap_http_link(self._settings.HttpPageLinkToParse)
@@ -444,16 +465,20 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
         return self._settings.SongRequestCancelMessage
 
     @property
-    def ResetUserSongRequestOptionsMessage(self):
-        return self._settings.ResetUserSongRequestOptionsMessage
-
-    @property
     def GotUserSongRequestsMessage(self):
         return self._settings.GotUserSongRequestsMessage
 
     @property
     def NoUserSongRequestsMessage(self):
         return self._settings.NoUserSongRequestsMessage
+
+    @property
+    def ResetUserSongRequestOptionsMessage(self):
+        return self._settings.ResetUserSongRequestOptionsMessage
+
+    @property
+    def InvalidOptionsSubcommandMessage(self):
+        return self._settings.InvalidOptionsSubcommandMessage
 
     @property
     def OptionValueTheSameMessage(self):

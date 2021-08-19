@@ -67,7 +67,7 @@ class ScoreSettings(object):
         cls._reload_event.on(config.SettingsReloadEventName, reload_callback)
 
     def _set_default(self):
-        # Setup group.
+        # Commands group.
         self.CommandGetScore = config.CommandGetScore
         self.CommandGetScoreCooldown = config.CommandGetScoreCooldown
         self.CommandCreateScore = config.CommandCreateScore

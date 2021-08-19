@@ -54,14 +54,17 @@ PermissionOnDefaultVersionCommand = Moderator
 # This field should only be filled when using the user_specific permission.
 PermissionInfoOnDefaultVersionCommand = ""
 
-CommandAddResetGetSkipSongRequestUsage = "{0} {1}"
+CommandAddGetSkipSongRequestUsage = "{0} {1}"
 CommandManageSongRequestUsage = "{0} {1} {2}"
+CommandManageUserOptionsUsage = "{0} {1} {2} {3}"
+CommandOptionsUsage = "{0} | {1}"
 ExampleUserIdOrName = "[UserIdOrName]"
 ExampleRequestNumberValidRange = "[1–{0}]"
 ExampleYouTubeLinkToSong = "[YouTube link]"
-ExampleAllValue = "[all]"
+ExampleAllValue = "[{0}]"
 ExampleOptionName = "[Option name]"
-ExampleOptionValue = "[New option value]"
+ExampleOptionValue = "[Option value]"
+ExampleSubcommand = "[Subcommand]"
 
 DefaultDelimeter = ","
 
@@ -82,14 +85,17 @@ CommandApproveSongRequest = "!sr_approve"
 CommandApproveSongRequestCooldown = 1
 CommandRejectSongRequest = "!sr_reject"
 CommandRejectSongRequestCooldown = 1
-CommandResetSongRequest = "!sr_reset"
-CommandResetSongRequestCooldown = 1
 CommandGetSongRequest = "!sr_get"
 CommandGetSongRequestCooldown = 1
 CommandSkipSongRequest = "!sr_skip"
 CommandSkipSongRequestCooldown = 1
+
 CommandOptionSongRequest = "!sr_option"
 CommandOptionSongRequestCooldown = 1
+SubcommandChangeUserOptionForSongRequests = "user"
+SubcommandResetNumberOfOrderedSongRequests = "reset"
+
+ParameterAll = "all"
 
 HttpPageLinkToParse = ""
 MaxNumberOfSongRequestsToAdd = 1
@@ -154,9 +160,10 @@ OnFailureSongRequestDefaultErrorMessage = "Unknown error occurred"
 SongRequestRejectedMessage = "{0}, your song request {1} was rejected by {2}."
 SongRequestDefaultRejectReason = "song didn't pass moderation"
 SongRequestCancelMessage = "{0}, your song request {1} was canceled."
-ResetUserSongRequestOptionsMessage = "{0}, {1} reseted your number of ordered requests."
 GotUserSongRequestsMessage = "{0} has {1} song request(-s): {2}"
 NoUserSongRequestsMessage = "{0} has no song requests."
+ResetUserSongRequestOptionsMessage = "{0}, {1} reseted your number of ordered requests."
+InvalidOptionsSubcommandMessage = "{0}, failed to process unknown subcommand {1}."
 OptionValueTheSameMessage = "{0}, option {1} value cannot be changed to the same value {2}"
 OptionValueChangedMessage = "{0}, option {1} value has been changed from {2} to {3}"
 FailedToSetOptionMessage = "{0}, failed to change option {1}: {2}"

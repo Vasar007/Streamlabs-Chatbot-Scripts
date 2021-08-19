@@ -6,7 +6,7 @@
         "value": "!sr",
         "label": "Add Song Request Command",
         "tooltip": "The command that will be used to add song requests.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandAddSongRequestCooldown": {
         "type": "slider",
@@ -16,14 +16,14 @@
         "ticks": 1,
         "label": "Add Song Request Command Cooldown (In Seconds)",
         "tooltip": "How long the Add Song Request command should go on cooldown for.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandCancelSongRequest": {
         "type": "textbox",
         "value": "!sr_cancel",
         "label": "Cancel Song Request Command",
         "tooltip": "The command that will be used to cancel song requests.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandCancelSongRequestCooldown": {
         "type": "slider",
@@ -33,14 +33,14 @@
         "ticks": 1,
         "label": "Cancel Song Request Command Cooldown (In Seconds)",
         "tooltip": "How long the Cancel Song Request command should go on cooldown for.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandApproveSongRequest": {
         "type": "textbox",
         "value": "!sr_approve",
         "label": "Approve Song Request Command",
         "tooltip": "The command that will be used to approve song requests from other users.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandApproveSongRequestCooldown": {
         "type": "slider",
@@ -50,14 +50,14 @@
         "ticks": 1,
         "label": "Approve Song Request Command Cooldown (In Seconds)",
         "tooltip": "How long the Approve Song Request command should go on cooldown for.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandRejectSongRequest": {
         "type": "textbox",
         "value": "!sr_reject",
         "label": "Reject Song Request Command",
         "tooltip": "The command that will be used to reject song requests from other users.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandRejectSongRequestCooldown": {
         "type": "slider",
@@ -67,31 +67,14 @@
         "ticks": 1,
         "label": "Reject Song Request Command Cooldown (In Seconds)",
         "tooltip": "How long the Reject Song Request command should go on cooldown for.",
-        "group": "Setup"
-    },
-    "CommandResetSongRequest": {
-        "type": "textbox",
-        "value": "!sr_set",
-        "label": "Set Song Request Command",
-        "tooltip": "The command that will be used to set song requests settings for users.",
-        "group": "Setup"
-    },
-    "CommandResetSongRequestCooldown": {
-        "type": "slider",
-        "value": 1,
-        "min": 1,
-        "max": 100,
-        "ticks": 1,
-        "label": "Set Song Request Command Cooldown (In Seconds)",
-        "tooltip": "How long the Set Song Request command should go on cooldown for.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandGetSongRequest": {
         "type": "textbox",
         "value": "!sr_get",
         "label": "Get Song Request Command",
         "tooltip": "The command that will be used to get song requests from other users.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandGetSongRequestCooldown": {
         "type": "slider",
@@ -101,31 +84,14 @@
         "ticks": 1,
         "label": "Get Song Request Command Cooldown (In Seconds)",
         "tooltip": "How long the Get Song Request command should go on cooldown for.",
-        "group": "Setup"
-    },
-    "CommandOptionSongRequest": {
-        "type": "textbox",
-        "value": "!sr_option",
-        "label": "Change Option For Song Request Command",
-        "tooltip": "The command that will be used to change song requests settings in runtime.",
-        "group": "Setup"
-    },
-    "CommandOptionSongRequestCooldown": {
-        "type": "slider",
-        "value": 1,
-        "min": 1,
-        "max": 100,
-        "ticks": 1,
-        "label": "Change Option For Song Request Command Cooldown (In Seconds)",
-        "tooltip": "How long the Change Option For Song Request command should go on cooldown for.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandSkipSongRequest": {
         "type": "textbox",
         "value": "!sr_skip",
         "label": "Skip Song Request Command",
         "tooltip": "The command that will be used to skip current song.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandSkipSongRequestCooldown": {
         "type": "slider",
@@ -135,8 +101,47 @@
         "ticks": 1,
         "label": "Change Option For Skip Song Request Command Cooldown (In Seconds)",
         "tooltip": "How long the Change Option For Skip Song Request command should go on cooldown for.",
-        "group": "Setup"
+        "group": "Commands"
     },
+    "CommandOptionSongRequest": {
+        "type": "textbox",
+        "value": "!sr_option",
+        "label": "Change Option For Song Request Command",
+        "tooltip": "The command that will be used to change song requests settings in runtime.",
+        "group": "Commands"
+    },
+    "CommandOptionSongRequestCooldown": {
+        "type": "slider",
+        "value": 1,
+        "min": 1,
+        "max": 100,
+        "ticks": 1,
+        "label": "Change Option For Song Request Command Cooldown (In Seconds)",
+        "tooltip": "How long the Change Option For Song Request command should go on cooldown for.",
+        "group": "Commands"
+    },
+    "SubcommandChangeUserOptionForSongRequests": {
+        "type": "textbox",
+        "value": "user",
+        "label": "Change User Options For Song Requests Subcommand",
+        "tooltip": "The command that will be used to change user options for song requests.",
+        "group": "Commands"
+    },
+    "SubcommandResetNumberOfOrderedSongRequests": {
+       "type": "textbox",
+        "value": "reset",
+        "label": "Reset Number Of Ordered Song Request Subcommand",
+        "tooltip": "The command that will be used to reset number of ordered song requests for user.",
+        "group": "Commands"
+    },
+    "ParameterAll": {
+        "type": "textbox",
+        "value": "all",
+        "label": "Parameter All",
+        "tooltip": "Command parameter that allow to process all song requests at once.",
+        "group": "Commands"
+    },
+
     "HttpPageLinkToParse": {
         "type": "textbox",
         "value": "",
@@ -482,13 +487,6 @@
         "tooltip": "The message that will be sent to chat when user's song request was canceled. 0 — user name, 1 — song request.",
         "group": "Chat Messages"
     },
-    "ResetUserSongRequestOptionsMessage": {
-        "type": "textbox",
-        "value": "{0}, {1} reseted your number of ordered requests.",
-        "label": "On Set Song Request Options Message",
-        "tooltip": "The message that will be sent to chat when user changes song request options. 0 — target user name, 1 — user name who reseted number of song requests.",
-        "group": "Chat Messages"
-    },
     "GotUserSongRequestsMessage": {
         "type": "textbox",
         "value": "{0} has {1} song request(-s): {2}",
@@ -501,6 +499,20 @@
         "value": "{0} has no song requests.",
         "label": "On Get No User Song Requests Message",
         "tooltip": "The message that will be sent to chat when user tries to get song requests list of someone who doesn't have any requests. 0 — target user name.",
+        "group": "Chat Messages"
+    },
+    "ResetUserSongRequestOptionsMessage": {
+        "type": "textbox",
+        "value": "{0}, {1} reseted your number of ordered requests.",
+        "label": "On Reset Song Request Options Message",
+        "tooltip": "The message that will be sent to chat when user resets number of ordered song requests for another user. 0 — target user name, 1 — user name who reseted number of song requests.",
+        "group": "Chat Messages"
+    },
+    "InvalidOptionsSubcommandMessage": {
+        "type": "textbox",
+        "value": "{0}, failed to process unknown subcommand {1}.",
+        "label": "On Invalid Options Subcommand Message",
+        "tooltip": "The message that will be sent to chat when user uses invalid subcommand for Set Options command. 0 — target user name, 1 — invalid subcommand.",
         "group": "Chat Messages"
     },
     "OptionValueTheSameMessage": {

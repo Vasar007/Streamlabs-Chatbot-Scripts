@@ -6,7 +6,7 @@
         "value": "!score",
         "label": "Get Command",
         "tooltip": "The command to show current score.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandGetScoreCooldown": {
         "type": "slider",
@@ -16,14 +16,14 @@
         "ticks": 1,
         "label": "Get Command Cooldown (seconds)",
         "tooltip": "How long the Get command should go on cooldown for.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandCreateScore": {
         "type": "textbox",
         "value": "!create_score",
         "label": "Create Command",
         "tooltip": "The command to create new score.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandCreateScoreCooldown": {
         "type": "slider",
@@ -33,14 +33,14 @@
         "ticks": 1,
         "label": "Create Command Cooldown (seconds)",
         "tooltip": "How long the Create command should go on cooldown for.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandUpdateScore": {
         "type": "textbox",
         "value": "!update_score",
         "label": "Update Command",
         "tooltip": "The command to update current score.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandUpdateScoreCooldown": {
         "type": "slider",
@@ -50,14 +50,14 @@
         "ticks": 1,
         "label": "Update Command Cooldown (seconds)",
         "tooltip": "How long the Update command should go on cooldown for.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandResetScore": {
         "type": "textbox",
         "value": "!reset_score",
         "label": "Reset Command",
         "tooltip": "The command to reset current score.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandResetScoreCooldown": {
         "type": "slider",
@@ -67,14 +67,14 @@
         "ticks": 1,
         "label": "Reset Command Cooldown (seconds)",
         "tooltip": "How long the Reset command should go on cooldown for.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandDeleteScore": {
         "type": "textbox",
         "value": "!delete_score",
         "label": "Delete Command",
         "tooltip": "The command to delete current score.",
-        "group": "Setup"
+        "group": "Commands"
     },
     "CommandDeleteScoreCooldown": {
         "type": "slider",
@@ -84,7 +84,7 @@
         "ticks": 1,
         "label": "Delete Command Cooldown (seconds)",
         "tooltip": "How long the Delete command should go on cooldown for.",
-        "group": "Setup"
+        "group": "Commands"
     },
 
     "PermissionOnGet": {

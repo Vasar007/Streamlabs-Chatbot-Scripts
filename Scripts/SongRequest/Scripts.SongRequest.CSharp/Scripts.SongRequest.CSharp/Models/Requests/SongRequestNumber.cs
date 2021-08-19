@@ -1,10 +1,10 @@
 ﻿using System;
+using Scripts.SongRequest.CSharp.Models.Settings;
 
 namespace Scripts.SongRequest.CSharp.Models.Requests
 {
     public sealed record SongRequestNumber
     {
-        public const string RawAllValue = "All";
         public const int AllValue = -1;
 
         public static SongRequestNumber All { get; } = new(AllValue);
@@ -21,23 +21,26 @@ namespace Scripts.SongRequest.CSharp.Models.Requests
         }
 
         public static SongRequestNumber Parse(
-            string rawValue)
+            string rawValue,
+            ISongRequestScriptSettings settings)
         {
-            return InternalParse(rawValue, defaultValue: null);
+            return InternalParse(rawValue, defaultValue: null, settings);
         }
 
         public static SongRequestNumber TryParse(
             string rawValue,
-            SongRequestNumber defaultValue)
+            SongRequestNumber defaultValue,
+            ISongRequestScriptSettings settings)
         {
-            return InternalParse(rawValue, defaultValue);
+            return InternalParse(rawValue, defaultValue, settings);
         }
 
         private static SongRequestNumber InternalParse(
             string rawValue,
-            SongRequestNumber? defaultValue)
+            SongRequestNumber? defaultValue,
+            ISongRequestScriptSettings settings)
         {
-            if (StringComparer.OrdinalIgnoreCase.Equals(rawValue, RawAllValue))
+            if (StringComparer.OrdinalIgnoreCase.Equals(rawValue, settings.ParameterAll))
             {
                 return All;
             }

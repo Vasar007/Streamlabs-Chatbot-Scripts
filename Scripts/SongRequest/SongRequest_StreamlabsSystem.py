@@ -361,7 +361,7 @@ def TryProcessCommand(command, data_wrapper):
         is_valid_call = param_count >= 2
 
         usage_example = (
-            config.CommandAddResetGetSkipSongRequestUsage
+            config.CommandAddGetSkipSongRequestUsage
             .format(
                 ScriptSettings.CommandAddSongRequest,
                 config.ExampleYouTubeLinkToSong
@@ -414,28 +414,6 @@ def TryProcessCommand(command, data_wrapper):
             )
         )
 
-    # !sr_reset
-    elif command == ScriptSettings.CommandResetSongRequest:
-        required_permission = ScriptSettings.PermissionOnManageSongRequest
-        permission_info = ScriptSettings.PermissionInfoOnManageSongRequest
-        func = GetFuncToProcessIfHasPermission(
-            ProcessResetSongRequestsCommand,
-            ScriptSettings.CommandResetSongRequestCooldown,
-            data_wrapper.user_id,
-            required_permission,
-            permission_info
-        )
-        # Reset command call can have optional text.
-        is_valid_call = param_count >= 2
-
-        usage_example = (
-            config.CommandAddResetGetSkipSongRequestUsage
-            .format(
-                ScriptSettings.CommandResetSongRequest,
-                config.ExampleUserIdOrName
-            )
-        )
-
     # !sr_get
     elif command == ScriptSettings.CommandGetSongRequest:
         required_permission = ScriptSettings.PermissionOnManageSongRequest
@@ -451,7 +429,7 @@ def TryProcessCommand(command, data_wrapper):
         is_valid_call = param_count >= 2
 
         usage_example = (
-            config.CommandAddResetGetSkipSongRequestUsage
+            config.CommandAddGetSkipSongRequestUsage
             .format(
                 ScriptSettings.CommandGetSongRequest,
                 config.ExampleUserIdOrName
@@ -473,10 +451,10 @@ def TryProcessCommand(command, data_wrapper):
         is_valid_call = param_count >= 1
 
         usage_example = (
-            config.CommandAddResetGetSkipSongRequestUsage
+            config.CommandAddGetSkipSongRequestUsage
             .format(
                 ScriptSettings.CommandSkipSongRequest,
-                config.ExampleAllValue
+                config.ExampleAllValue.format(ScriptSettings.ParameterAll)
             )
         )
 
@@ -495,13 +473,26 @@ def TryProcessCommand(command, data_wrapper):
         # but it will be considered as additional string value for settings.
         is_valid_call = param_count >= 3
 
-        usage_example = (
+        control_usage_example = (
             config.CommandManageSongRequestUsage
             .format(
                 ScriptSettings.CommandOptionSongRequest,
                 config.ExampleOptionName,
                 config.ExampleOptionValue
             )
+        )
+        user_usage_example = (
+            config.CommandManageUserOptionsUsage
+            .format(
+                ScriptSettings.CommandOptionSongRequest,
+                ScriptSettings.SubcommandChangeUserOptionForSongRequests,
+                config.ExampleUserIdOrName,
+                config.ExampleSubcommand
+            )
+        )
+        usage_example = (
+            config.CommandOptionsUsage
+            .format(control_usage_example, user_usage_example)
         )
 
     return CommandWrapper(
@@ -572,15 +563,6 @@ def ProcessApproveRejectSongRequestCommand(command, data_wrapper):
         command, data_wrapper, ScriptSettings, Manager
     )
 
-
-def ProcessResetSongRequestsCommand(command, data_wrapper):
-    # Input example: !st_reset Vasar <Anything>
-    # Command <@>TargetUserNameOrId <Anything>
-    song_request_manager.reset_option_for_user(
-        data_wrapper, ScriptSettings, Logger(), Manager
-    )
-
-
 def ProcessGetSongRequestsCommand(command, data_wrapper):
     # Input example: !st_get Vasar <Anything>
     # Command <@>TargetUserNameOrId <Anything>
@@ -597,9 +579,7 @@ def ProcessSkipSongRequestCommand(command, data_wrapper):
     raw_user_name = data_wrapper.user_name
 
     potential_all = data_wrapper.get_param(1)
-    should_skip_all = (
-        potential_all.lower() == SongRequestNumber.RawAllValue.lower()
-    )
+    should_skip_all = ScriptSettings.is_all_parameter(potential_all)
     result = PageScrapper.Skip(should_skip_all)
 
     message = None
@@ -624,9 +604,36 @@ def ProcessSkipSongRequestCommand(command, data_wrapper):
     Manager.get_messenger().send_message(raw_user_id, message)
 
 
+def ProcessOptionSubcommands(command, data_wrapper):
+    param_count = data_wrapper.get_param_count()
+
+    # Subcommands have 4 or more parameters.
+    if param_count < 4:
+        return False
+
+    subcommand = data_wrapper.get_param(1)
+    if ScriptSettings.is_user_subcommand(subcommand):
+        Logger().info(
+            "User {0} wants to change {1} options."
+            .format(data_wrapper.user_id, subcommand)
+        )
+        song_request_manager.change_option_for_user(
+            data_wrapper, ScriptSettings, Logger(), Manager
+        )
+        return True
+
+    return False
+
+
 def ProcessOptionSongRequestsCommand(command, data_wrapper):
-    # Input example: !sr_option Vasar <NewValue>
+    # Input example: !sr_option <OptionName> <NewValue>
     # Command OptionName NewOptionValue
+    # Input example: !sr_option user Vasar <Subcommmand>
+    # Command Subcommand <@>TargetUserNameOrId Subcommand
+    if ProcessOptionSubcommands(command, data_wrapper):
+        return
+
+    # If it is not a subcommand, process as usual.
     raw_user_id = data_wrapper.user_id
     raw_user_name = data_wrapper.user_name
 
@@ -639,7 +646,7 @@ def ProcessOptionSongRequestsCommand(command, data_wrapper):
     raw_new_value = raw_new_value.strip()
 
     Logger().info(
-        "User {0} want to change option {1} to {2}"
+        "User {0} wants to change option {1} to {2}"
         .format(raw_user_id, option_name, raw_new_value)
     )
 

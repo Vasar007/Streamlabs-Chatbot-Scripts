@@ -165,6 +165,9 @@ class BaseTransferStrategy(object):
             self._handle_remove_tranfer
         )
 
+    def _is_all_parameter(self, raw_amount):
+        return self._settings.is_all_parameter(raw_amount)
+
 
 class NormalTransferStrategy(BaseTransferStrategy):
 
@@ -179,7 +182,7 @@ class NormalTransferStrategy(BaseTransferStrategy):
         return self._validate_transfer(user_id, target_id)
 
     def try_get_amount_value(self, user_id, target_id, raw_amount):
-        if raw_amount == self._settings.ParameterAll:
+        if self._is_all_parameter(raw_amount):
             return self._parent_wrapper.get_points(user_id)
 
         return helpers.safe_cast(raw_amount, int)
@@ -340,7 +343,7 @@ class RemoveTransferStrategy(BaseTransferStrategy):
         return self._validate_transfer(user_id, target_id, permission_handler)
 
     def try_get_amount_value(self, user_id, target_id, raw_amount):
-        if raw_amount == self._settings.ParameterAll:
+        if self._is_all_parameter(raw_amount):
             return self._parent_wrapper.get_points(target_id)
 
         return helpers.safe_cast(raw_amount, int)
