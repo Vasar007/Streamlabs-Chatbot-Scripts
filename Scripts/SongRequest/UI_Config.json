@@ -419,7 +419,7 @@
     },
     "SongRequestAddedMessage": {
         "type": "textbox",
-        "value": "{0}, your song request {1} was added and will be processing later.",
+        "value": "{0}, your song request {1} was added and will be processed later.",
         "label": "On Song Request Added Message",
         "tooltip": "The message that will be sent to chat when user's song request was added. 0 — user name, 1 — song request.",
         "group": "Chat Messages"
