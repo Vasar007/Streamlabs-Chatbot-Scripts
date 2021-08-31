@@ -49,22 +49,29 @@ PermissionHierarchy = (Everyone, Subscriber, UserSpecific, Moderator, Editor)
 DefaultVersionCommand = "!scripts_info"
 DefaultVersionCommandCooldown = 1
 
+CommandOption = "!sr_option"
+CommandOptionCooldown = 1
+SubcommandChangeUserOption = "user"
+SubcommandResetNumberOfOrderedSongRequests = "reset"
+
+CommandAllOptionsUsage = "{0} | {1}"
+CommandOptionUsage = "{0} {1} {2}"
+CommandManageUserOptionsUsage = "{0} {1} {2} {3}"
+ExampleOptionName = "[Option name]"
+ExampleOptionValue = "[Option value]"
+ExampleSubcommand = "[Subcommand]"
+
 # Values: everyone, moderator, subscriber, user_specific, editor.
-PermissionOnDefaultVersionCommand = Moderator
+PermissionOnDefaultScriptCommands = Moderator
 # This field should only be filled when using the user_specific permission.
-PermissionInfoOnDefaultVersionCommand = ""
+PermissionInfoOnDefaultScriptCommands = ""
 
 CommandAddGetSkipSongRequestUsage = "{0} {1}"
 CommandManageSongRequestUsage = "{0} {1} {2}"
-CommandManageUserOptionsUsage = "{0} {1} {2} {3}"
-CommandOptionsUsage = "{0} | {1}"
 ExampleUserIdOrName = "[UserIdOrName]"
 ExampleRequestNumberValidRange = "[1–{0}]"
 ExampleYouTubeLinkToSong = "[YouTube link]"
 ExampleAllValue = "[{0}]"
-ExampleOptionName = "[Option name]"
-ExampleOptionValue = "[Option value]"
-ExampleSubcommand = "[Subcommand]"
 
 DefaultDelimeter = ","
 
@@ -73,7 +80,7 @@ ScriptName = "Song Request Script"
 Website = "https://github.com/Vasar007/Streamlabs-Chatbot-Scripts"
 Description = "Extended song request script."
 Creator = "Vasar007"
-Version = "1.1.0"
+Version = "1.2.0"
 
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).
@@ -89,11 +96,6 @@ CommandGetSongRequest = "!sr_get"
 CommandGetSongRequestCooldown = 1
 CommandSkipSongRequest = "!sr_skip"
 CommandSkipSongRequestCooldown = 1
-
-CommandOptionSongRequest = "!sr_option"
-CommandOptionSongRequestCooldown = 1
-SubcommandChangeUserOptionForSongRequests = "user"
-SubcommandResetNumberOfOrderedSongRequests = "reset"
 
 ParameterAll = "all"
 

@@ -2,7 +2,7 @@
 
 Transfer script allows viewers to transfer Streamlabs points between eachother.
 
-Documentation for script version: `1.0.3`
+Documentation for script version: `1.2.0`
 
 ## Available features
 
@@ -21,7 +21,7 @@ See common instruction [here](../../README.md#how-to-install-any-script).
 
 ## How to use
 
-Script has single command to use.
+Script has several commands to use.
 You can configure almost all script settings though SL Chatbot UI.
 The other ones you can change directly in script directory config (`*_config.py`) or script file.
 

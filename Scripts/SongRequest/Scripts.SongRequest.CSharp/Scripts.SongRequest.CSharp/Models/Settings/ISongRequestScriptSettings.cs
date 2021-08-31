@@ -26,11 +26,6 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         string CommandSkipSongRequest { get; }
         int CommandSkipSongRequestCooldown { get; }
 
-        string CommandOptionSongRequest { get; }
-        int CommandOptionSongRequestCooldown { get; }
-        string SubcommandChangeUserOptionForSongRequests { get; }
-        string SubcommandResetNumberOfOrderedSongRequests { get; }
-
         string ParameterAll { get; }
 
         #endregion

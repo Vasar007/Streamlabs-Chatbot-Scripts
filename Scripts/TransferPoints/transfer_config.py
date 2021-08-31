@@ -49,10 +49,17 @@ PermissionHierarchy = (Everyone, Subscriber, UserSpecific, Moderator, Editor)
 DefaultVersionCommand = "!scripts_info"
 DefaultVersionCommandCooldown = 1
 
+CommandOption = "!transfer_option"
+CommandOptionCooldown = 1
+
+CommandOptionUsage = "{0} {1} {2}"
+ExampleOptionName = "[Option name]"
+ExampleOptionValue = "[Option value]"
+
 # Values: everyone, moderator, subscriber, user_specific, editor.
-PermissionOnDefaultVersionCommand = Moderator
+PermissionOnDefaultScriptCommands = Moderator
 # This field should only be filled when using the user_specific permission.
-PermissionInfoOnDefaultVersionCommand = ""
+PermissionInfoOnDefaultScriptCommands = ""
 
 CommandTransferUsage = "{0} {1} {2}"
 ExampleUserIdOrName = "[UserIdOrName]"
@@ -65,7 +72,7 @@ ScriptName = "Transfer Points Script"
 Website = "https://github.com/Vasar007/Streamlabs-Chatbot-Scripts"
 Description = "Allows viewers to transfer Streamlabs points between eachother."
 Creator = "Vasar007"
-Version = "1.1.0"
+Version = "1.2.0"
 
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).
@@ -116,3 +123,8 @@ InvalidTargetMessage = "Sorry {0}, but {1} doesn't exist."
 DeniedTransferToYourselfMessage = "Sorry {0}, but you cannot transfer {1} to yourself."
 CurrentTaxPercentMessage = "Current tax: {0}%"
 TimeRemainingMessage = "Command {0} is on cooldown. Time remaining: {1} (seconds)."
+OptionValueTheSameMessage = "{0}, option {1} value cannot be changed to the same value {2}"
+OptionValueChangedMessage = "{0}, option {1} value has been changed from {2} to {3}"
+FailedToSetOptionMessage = "{0}, failed to change option {1}: {2}"
+FailedToSetOptionInvalidTypeMessage = "Invalid type (expected: {0})"
+FailedToSetOptionInvalidNameMessage = "Invalid option name"

@@ -216,6 +216,41 @@
         "tooltip": "Chat message will be sent if user tries to call command which is on cooldown now. 0 — command which is on cooldown, 1 — time remaining.",
         "group": "Chat Messages"
     },
+    "OptionValueTheSameMessage": {
+        "type": "textbox",
+        "value": "{0}, option {1} value cannot be changed to the same value {2}",
+        "label": "On Changing Option Value To The Same Message",
+        "tooltip": "The message that will be sent to chat when user tries to change option value to the same value. 0 — user name, 1 — option name, 2 — current option value.",
+        "group": "Chat Messages"
+    },
+    "OptionValueChangedMessage": {
+        "type": "textbox",
+        "value": "{0}, option {1} value has been changed from {2} to {3}",
+        "label": "On Changing Option Value To New Value Message",
+        "tooltip": "The message that will be sent to chat when user changes settings option. 0 — user name, 1 — option name, 2 — old option value, 3 — new option value.",
+        "group": "Chat Messages"
+    },
+    "FailedToSetOptionMessage": {
+        "type": "textbox",
+        "value": "{0}, failed to change option {1}: {2}",
+        "label": "On Failed To Change Option Value Message",
+        "tooltip": "The message that will be sent to chat when settings option cannot be changed. 0 — user name, 1 — option name, 2 — error description.",
+        "group": "Chat Messages"
+    },
+    "FailedToSetOptionInvalidTypeMessage": {
+        "type": "textbox",
+        "value": "Invalid type (expected: {0})",
+        "label": "On Failed To Change Option Due To Invalid Type Message",
+        "tooltip": "The message that will be sent to chat when settings option cannot be changed due to invalid type. 0 — expected type.",
+        "group": "Chat Messages"
+    },
+    "FailedToSetOptionInvalidNameMessage": {
+        "type": "textbox",
+        "value": "Invalid option name",
+        "label": "On Failed To Change Option Due To Invalid Name Message",
+        "tooltip": "The message that will be sent to chat when settings option cannot be changed due to invalid name.",
+        "group": "Chat Messages"
+    },
 
     "LoggingLevel": {
         "type": "dropdown",

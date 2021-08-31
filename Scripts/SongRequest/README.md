@@ -1,12 +1,17 @@
 # Song Request Script
 
-Custom song request script.
+Extended song request script.
 
-Documentation for script version: `1.0.0`
+Documentation for script version: `1.2.0`
 
 ## Available features
 
-- TODO
+- Add song requests to song queue (script supports only YouTube music);
+- Cancel their own song requests;
+- Skip ordered songs;
+- Get ordered songs for user;
+- Moderators can approve or reject song requests. If there are no moderators, song requests will be auto-approved;
+- Change script settings on the fly (does not require to reload script).
 
 ## How to install script
 
@@ -16,7 +21,7 @@ See common instruction [here](../../README.md#how-to-install-any-script).
 
 ## How to use
 
-Script has single command to use.
+Script has several commands to use.
 You can configure almost all script settings though SL Chatbot UI.
 The other ones you can change directly in script directory config (`*_config.py`) or script file.
 

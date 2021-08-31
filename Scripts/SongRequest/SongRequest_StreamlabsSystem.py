@@ -121,8 +121,10 @@ def Execute(data):
     [Required] Execute Data/Process messages.
     """
     try:
-        # Script accepts all messages.
+        # Check whether script can process message.
         data_wrapper = DataWrapper(data)
+        if not CanProcessMessage(data_wrapper):
+            return
 
         # Check if the proper command is used, the command is not on cooldown
         # and the user has permission to use the command.
@@ -252,6 +254,13 @@ def Logger():
     return helpers.get_logger()
 
 
+def CanProcessMessage(data_wrapper):
+    return (
+        data_wrapper.is_chat_message() or
+        ScriptSettings.UseWhisperMessagesToControlSongRequests
+    )
+
+
 def HandleNoPermission(required_permission, command, data_wrapper):
     message = (
         ScriptSettings.PermissionDeniedMessage
@@ -332,8 +341,8 @@ def TryProcessCommand(command, data_wrapper):
 
     # !scripts_info
     if command == config.DefaultVersionCommand:
-        required_permission = config.PermissionOnDefaultVersionCommand
-        permission_info = config.PermissionInfoOnDefaultVersionCommand
+        required_permission = config.PermissionOnDefaultScriptCommands
+        permission_info = config.PermissionInfoOnDefaultScriptCommands
         func = GetFuncToProcessIfHasPermission(
             ProcessScriptsInfoCommand,
             config.DefaultVersionCommandCooldown,
@@ -345,6 +354,43 @@ def TryProcessCommand(command, data_wrapper):
         is_valid_call = param_count >= 1
 
         usage_example = config.DefaultVersionCommand
+
+    # !sr_option
+    elif command == config.CommandOption:
+        required_permission = config.PermissionOnDefaultScriptCommands
+        permission_info = config.PermissionInfoOnDefaultScriptCommands
+        func = GetFuncToProcessIfHasPermission(
+            ProcessOptionSongRequestsCommand,
+            config.CommandOptionCooldown,
+            data_wrapper.user_id,
+            required_permission,
+            permission_info
+        )
+        # Settings command call cannot have optional text
+        # but it will be considered as additional string value for settings.
+        is_valid_call = param_count >= 3
+
+        control_usage_example = (
+            config.CommandOptionUsage
+            .format(
+                config.CommandOption,
+                config.ExampleOptionName,
+                config.ExampleOptionValue
+            )
+        )
+        user_usage_example = (
+            config.CommandManageUserOptionsUsage
+            .format(
+                config.CommandOption,
+                config.SubcommandChangeUserOption,
+                config.ExampleUserIdOrName,
+                config.ExampleSubcommand
+            )
+        )
+        usage_example = (
+            config.CommandAllOptionsUsage
+            .format(control_usage_example, user_usage_example)
+        )
 
     # !sr
     elif command == ScriptSettings.CommandAddSongRequest:
@@ -458,43 +504,6 @@ def TryProcessCommand(command, data_wrapper):
             )
         )
 
-    # !sr_option
-    elif command == ScriptSettings.CommandOptionSongRequest:
-        required_permission = ScriptSettings.PermissionOnManageSongRequest
-        permission_info = ScriptSettings.PermissionInfoOnManageSongRequest
-        func = GetFuncToProcessIfHasPermission(
-            ProcessOptionSongRequestsCommand,
-            ScriptSettings.CommandOptionSongRequestCooldown,
-            data_wrapper.user_id,
-            required_permission,
-            permission_info
-        )
-        # Settings command call cannot have optional text
-        # but it will be considered as additional string value for settings.
-        is_valid_call = param_count >= 3
-
-        control_usage_example = (
-            config.CommandManageSongRequestUsage
-            .format(
-                ScriptSettings.CommandOptionSongRequest,
-                config.ExampleOptionName,
-                config.ExampleOptionValue
-            )
-        )
-        user_usage_example = (
-            config.CommandManageUserOptionsUsage
-            .format(
-                ScriptSettings.CommandOptionSongRequest,
-                ScriptSettings.SubcommandChangeUserOptionForSongRequests,
-                config.ExampleUserIdOrName,
-                config.ExampleSubcommand
-            )
-        )
-        usage_example = (
-            config.CommandOptionsUsage
-            .format(control_usage_example, user_usage_example)
-        )
-
     return CommandWrapper(
         command, func, required_permission, is_valid_call, usage_example
     )
@@ -526,6 +535,41 @@ def ProcessScriptsInfoCommand(command, data_wrapper):
     message = "\"{0}\" by {1}, v{2}".format(ScriptName, Creator, Version)
     Manager.get_messenger().send_message(
         data_wrapper.user_id, message
+    )
+
+
+def ProcessOptionSubcommands(command, data_wrapper):
+    param_count = data_wrapper.get_param_count()
+
+    # Subcommands have 4 or more parameters.
+    if param_count < 4:
+        return False
+
+    subcommand = data_wrapper.get_param(1)
+    if ScriptSettings.is_user_subcommand(subcommand):
+        Logger().info(
+            "User {0} wants to change {1} options."
+            .format(data_wrapper.user_id, subcommand)
+        )
+        song_request_manager.change_option_for_user(
+            data_wrapper, ScriptSettings, Logger(), Manager
+        )
+        return True
+
+    return False
+
+
+def ProcessOptionSongRequestsCommand(command, data_wrapper):
+    # Input example: !sr_option <OptionName> <NewValue>
+    # Command OptionName NewOptionValue
+    # Input example: !sr_option user Vasar <Subcommmand>
+    # Command Subcommand <@>TargetUserNameOrId Subcommand
+    if ProcessOptionSubcommands(command, data_wrapper):
+        return
+
+    # If it is not a subcommand, process as usual.
+    ScriptSettings.update_settings_on_the_fly(
+        Logger(), Manager.get_messenger(), SettingsFile, data_wrapper
     )
 
 
@@ -599,100 +643,6 @@ def ProcessSkipSongRequestCommand(command, data_wrapper):
             ScriptSettings.FailedToSkipSongRequestsMessage
             .format(raw_user_name, result.Description)
         )
-
-    Logger().info(message)
-    Manager.get_messenger().send_message(raw_user_id, message)
-
-
-def ProcessOptionSubcommands(command, data_wrapper):
-    param_count = data_wrapper.get_param_count()
-
-    # Subcommands have 4 or more parameters.
-    if param_count < 4:
-        return False
-
-    subcommand = data_wrapper.get_param(1)
-    if ScriptSettings.is_user_subcommand(subcommand):
-        Logger().info(
-            "User {0} wants to change {1} options."
-            .format(data_wrapper.user_id, subcommand)
-        )
-        song_request_manager.change_option_for_user(
-            data_wrapper, ScriptSettings, Logger(), Manager
-        )
-        return True
-
-    return False
-
-
-def ProcessOptionSongRequestsCommand(command, data_wrapper):
-    # Input example: !sr_option <OptionName> <NewValue>
-    # Command OptionName NewOptionValue
-    # Input example: !sr_option user Vasar <Subcommmand>
-    # Command Subcommand <@>TargetUserNameOrId Subcommand
-    if ProcessOptionSubcommands(command, data_wrapper):
-        return
-
-    # If it is not a subcommand, process as usual.
-    raw_user_id = data_wrapper.user_id
-    raw_user_name = data_wrapper.user_name
-
-    option_name = data_wrapper.get_param(1)
-    param_count = data_wrapper.get_param_count()
-
-    raw_new_value = ""
-    for i in range(2, param_count):
-        raw_new_value += " " + data_wrapper.get_param(i)
-    raw_new_value = raw_new_value.strip()
-
-    Logger().info(
-        "User {0} wants to change option {1} to {2}"
-        .format(raw_user_id, option_name, raw_new_value)
-    )
-
-    message = None
-    try:
-        previous_value = ScriptSettings.__dict__[option_name]
-        previous_value_type = type(previous_value)
-        new_value = helpers.safe_cast_with_guess(
-            raw_new_value, previous_value_type
-        )
-
-        if new_value is None:
-            submessage = (
-                ScriptSettings.FailedToSetOptionInvalidTypeMessage
-                .format(previous_value_type)
-            )
-            message = (
-                ScriptSettings.FailedToSetOptionMessage
-                .format(raw_user_name, option_name, submessage)
-            )
-        elif previous_value == new_value:
-            message = (
-                ScriptSettings.OptionValueTheSameMessage
-                .format(raw_user_name, option_name, previous_value, new_value)
-            )
-        else:
-            ScriptSettings.__dict__[option_name] = new_value
-            message = (
-                ScriptSettings.OptionValueChangedMessage
-                .format(raw_user_name, option_name, previous_value, new_value)
-            )
-
-        ScriptSettings.save(SettingsFile)
-    except KeyError as key_error:
-        submessage = ScriptSettings.FailedToSetOptionInvalidNameMessage
-        message = (
-            ScriptSettings.FailedToSetOptionMessage
-            .format(raw_user_name, option_name, submessage)
-        )
-        Logger().exception(message)
-    except Exception as ex:
-        message = (
-            ScriptSettings.FailedToSetOptionMessage
-            .format(raw_user_name, option_name, str(ex))
-        )
-        Logger().exception(message)
 
     Logger().info(message)
     Manager.get_messenger().send_message(raw_user_id, message)

@@ -91,9 +91,9 @@ def Execute(data):
     [Required] Execute Data/Process messages.
     """
     try:
-        # Script accepts only messages from chat.
+        # Check whether script can process message.
         data_wrapper = DataWrapper(data)
-        if not data_wrapper.is_chat_message():
+        if not CanProcessMessage(data_wrapper):
             return
 
         # Check if the proper command is used, the command is not on cooldown
@@ -198,6 +198,10 @@ def Logger():
     return helpers.get_logger()
 
 
+def CanProcessMessage(data_wrapper):
+    return data_wrapper.is_chat_message()
+
+
 def HandleNoPermission(required_permission, command):
     message = (
         ScriptSettings.PermissionDeniedMessage
@@ -274,8 +278,8 @@ def TryProcessCommand(command, data_wrapper):
 
     # !scripts_info
     if command == config.DefaultVersionCommand:
-        required_permission = config.PermissionOnDefaultVersionCommand
-        permission_info = config.PermissionInfoOnDefaultVersionCommand
+        required_permission = config.PermissionOnDefaultScriptCommands
+        permission_info = config.PermissionInfoOnDefaultScriptCommands
         func = GetFuncToProcessIfHasPermission(
             ProcessScriptsInfoCommand,
             config.DefaultVersionCommandCooldown,
@@ -287,6 +291,29 @@ def TryProcessCommand(command, data_wrapper):
         is_valid_call = param_count >= 1
 
         usage_example = config.DefaultVersionCommand
+
+    # !template_option
+    elif command == config.CommandOption:
+        required_permission = config.PermissionOnDefaultScriptCommands
+        permission_info = config.PermissionInfoOnDefaultScriptCommands
+        func = GetFuncToProcessIfHasPermission(
+            ProcessOptionCommand,
+            config.CommandOptionCooldown,
+            data_wrapper.user_id,
+            required_permission,
+            permission_info
+        )
+        # Settings command call cannot have optional text
+        # but it will be considered as additional string value for settings.
+        is_valid_call = param_count >= 3
+        usage_example = (
+            config.CommandOptionUsage
+            .format(
+                config.CommandOption,
+                config.ExampleOptionName,
+                config.ExampleOptionValue
+            )
+        )
 
     # !ping
     elif command == ScriptSettings.CommandPing:
@@ -312,6 +339,14 @@ def ProcessScriptsInfoCommand(command, data_wrapper):
     # Command <Anything>
     message = "\"{0}\" by {1}, v{2}".format(ScriptName, Creator, Version)
     ParentHandler.send_stream_message(message)
+
+
+def ProcessOptionCommand(command, data_wrapper):
+    # Input example: !template_option <OptionName> <NewValue>
+    # Command OptionName NewOptionValue
+    ScriptSettings.update_settings_on_the_fly(
+        Logger(), ParentHandler, SettingsFile, data_wrapper
+    )
 
 
 def ProcessPingCommand(command, data_wrapper):

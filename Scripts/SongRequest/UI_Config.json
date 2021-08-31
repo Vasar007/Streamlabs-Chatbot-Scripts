@@ -103,37 +103,6 @@
         "tooltip": "How long the Change Option For Skip Song Request command should go on cooldown for.",
         "group": "Commands"
     },
-    "CommandOptionSongRequest": {
-        "type": "textbox",
-        "value": "!sr_option",
-        "label": "Change Option For Song Request Command",
-        "tooltip": "The command that will be used to change song requests settings in runtime.",
-        "group": "Commands"
-    },
-    "CommandOptionSongRequestCooldown": {
-        "type": "slider",
-        "value": 1,
-        "min": 1,
-        "max": 100,
-        "ticks": 1,
-        "label": "Change Option For Song Request Command Cooldown (In Seconds)",
-        "tooltip": "How long the Change Option For Song Request command should go on cooldown for.",
-        "group": "Commands"
-    },
-    "SubcommandChangeUserOptionForSongRequests": {
-        "type": "textbox",
-        "value": "user",
-        "label": "Change User Options For Song Requests Subcommand",
-        "tooltip": "The command that will be used to change user options for song requests.",
-        "group": "Commands"
-    },
-    "SubcommandResetNumberOfOrderedSongRequests": {
-       "type": "textbox",
-        "value": "reset",
-        "label": "Reset Number Of Ordered Song Request Subcommand",
-        "tooltip": "The command that will be used to reset number of ordered song requests for user.",
-        "group": "Commands"
-    },
     "ParameterAll": {
         "type": "textbox",
         "value": "all",

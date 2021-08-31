@@ -2,7 +2,7 @@
 
 Score script adds score counter between two opponents.
 
-Documentation for script version: `1.0.2`
+Documentation for script version: `1.2.0`
 
 ## Available features
 
@@ -22,7 +22,7 @@ See common instruction [here](../../README.md#how-to-install-any-script).
 
 ## How to use
 
-Script has single command to use.
+Script has several commands to use.
 You can configure almost all script settings though SL Chatbot UI.
 The other ones you can change directly in script directory config (`*_config.py`) or script file.
 

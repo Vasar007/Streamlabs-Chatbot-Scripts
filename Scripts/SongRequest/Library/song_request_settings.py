@@ -90,10 +90,75 @@ class SongRequestSettings(object):
         return self._are_strings_equal(value, self.ParameterAll)
 
     def is_user_subcommand(self, value):
-        return self._are_strings_equal(value, self.SubcommandChangeUserOptionForSongRequests)
+        return self._are_strings_equal(value, self.SubcommandChangeUserOption)
 
     def is_reset_subcommand(self, value):
         return self._are_strings_equal(value, self.SubcommandResetNumberOfOrderedSongRequests)
+
+    def update_settings_on_the_fly(self, logger, messenger, settingsfile,
+                                   data_wrapper):
+        raw_user_id = data_wrapper.user_id
+        raw_user_name = data_wrapper.user_name
+
+        option_name = data_wrapper.get_param(1)
+        param_count = data_wrapper.get_param_count()
+
+        raw_new_value = ""
+        for i in range(2, param_count):
+            raw_new_value += " " + data_wrapper.get_param(i)
+        raw_new_value = raw_new_value.strip()
+
+        logger.info(
+            "User {0} wants to change option {1} to {2}"
+            .format(raw_user_id, option_name, raw_new_value)
+        )
+
+        message = None
+        try:
+            previous_value = self.__dict__[option_name]
+            previous_value_type = type(previous_value)
+            new_value = helpers.safe_cast_with_guess(
+                raw_new_value, previous_value_type
+            )
+
+            if new_value is None:
+                submessage = (
+                    self.FailedToSetOptionInvalidTypeMessage
+                    .format(previous_value_type)
+                )
+                message = (
+                    self.FailedToSetOptionMessage
+                    .format(raw_user_name, option_name, submessage)
+                )
+            elif previous_value == new_value:
+                message = (
+                    self.OptionValueTheSameMessage
+                    .format(raw_user_name, option_name, previous_value, new_value)
+                )
+            else:
+                self.__dict__[option_name] = new_value
+                message = (
+                    self.OptionValueChangedMessage
+                    .format(raw_user_name, option_name, previous_value, new_value)
+                )
+
+            self.save(settingsfile)
+            logger.info(message)
+        except KeyError as key_error:
+            submessage = self.FailedToSetOptionInvalidNameMessage
+            message = (
+                self.FailedToSetOptionMessage
+                .format(raw_user_name, option_name, submessage)
+            )
+            logger.exception(message)
+        except Exception as ex:
+            message = (
+                self.FailedToSetOptionMessage
+                .format(raw_user_name, option_name, str(ex))
+            )
+            logger.exception(message)
+
+        messenger.send_message(raw_user_id, message)
 
     def _set_default(self):
         # Commands group.
@@ -109,10 +174,6 @@ class SongRequestSettings(object):
         self.CommandGetSongRequestCooldown = config.CommandGetSongRequestCooldown
         self.CommandSkipSongRequest = config.CommandSkipSongRequest
         self.CommandSkipSongRequestCooldown = config.CommandSkipSongRequestCooldown
-        self.CommandOptionSongRequest = config.CommandOptionSongRequest
-        self.CommandOptionSongRequestCooldown = config.CommandOptionSongRequestCooldown
-        self.SubcommandChangeUserOptionForSongRequests = config.SubcommandChangeUserOptionForSongRequests
-        self.SubcommandResetNumberOfOrderedSongRequests = config.SubcommandResetNumberOfOrderedSongRequests
         self.ParameterAll = config.ParameterAll
 
         # Setup group.
@@ -247,22 +308,6 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
     @property
     def CommandSkipSongRequestCooldown(self):
         return self._settings.CommandSkipSongRequestCooldown
-
-    @property
-    def CommandOptionSongRequest(self):
-        return self._settings.CommandOptionSongRequest
-
-    @property
-    def CommandOptionSongRequestCooldown(self):
-        return self._settings.CommandOptionSongRequestCooldown
-
-    @property
-    def SubcommandChangeUserOptionForSongRequests(self):
-        return self._settings.SubcommandChangeUserOptionForSongRequests
-
-    @property
-    def SubcommandResetNumberOfOrderedSongRequests(self):
-        return self._settings.SubcommandResetNumberOfOrderedSongRequests
 
     @property
     def ParameterAll(self):
