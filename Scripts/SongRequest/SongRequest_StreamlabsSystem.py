@@ -407,10 +407,32 @@ def TryProcessCommand(command, data_wrapper):
         is_valid_call = param_count >= 2
 
         usage_example = (
-            config.CommandAddGetSkipSongRequestUsage
+            config.CommandAddCancelGetSkipSongRequestUsage
             .format(
                 ScriptSettings.CommandAddSongRequest,
                 config.ExampleYouTubeLinkToSong
+            )
+        )
+
+    # !sr_cancel
+    elif command == ScriptSettings.CommandCancelSongRequest:
+        required_permission = ScriptSettings.PermissionOnAddCancelSongRequest
+        permission_info = ScriptSettings.PermissionInfoOnAddCancelSongRequest
+        func = GetFuncToProcessIfHasPermission(
+            ProcessCancelSongRequestCommand,
+            ScriptSettings.CommandCancelSongRequestCooldown,
+            data_wrapper.user_id,
+            required_permission,
+            permission_info
+        )
+        # Cancel command call can have optional text.
+        is_valid_call = param_count >= 1
+
+        usage_example = (
+            config.CommandAddCancelGetSkipSongRequestUsage
+            .format(
+                ScriptSettings.CommandCancelSongRequest,
+                GetRequestNumberRange()
             )
         )
 
@@ -475,7 +497,7 @@ def TryProcessCommand(command, data_wrapper):
         is_valid_call = param_count >= 2
 
         usage_example = (
-            config.CommandAddGetSkipSongRequestUsage
+            config.CommandAddCancelGetSkipSongRequestUsage
             .format(
                 ScriptSettings.CommandGetSongRequest,
                 config.ExampleUserIdOrName
@@ -497,7 +519,7 @@ def TryProcessCommand(command, data_wrapper):
         is_valid_call = param_count >= 1
 
         usage_example = (
-            config.CommandAddGetSkipSongRequestUsage
+            config.CommandAddCancelGetSkipSongRequestUsage
             .format(
                 ScriptSettings.CommandSkipSongRequest,
                 config.ExampleAllValue.format(ScriptSettings.ParameterAll)
@@ -596,6 +618,16 @@ def ProcessAddSongRequestCommand(command, data_wrapper):
     user_data = helpers.wrap_user_data(raw_user_id, raw_user_name)
 
     Manager.add_request(user_data, song_link)
+
+
+def ProcessCancelSongRequestCommand(command, data_wrapper):
+    # Input example: !sr_cancel <Anything>
+    # Input example: !sr_cancel all <Anything>
+    # Input example: !sr_cancel 3 <Anything>
+    # Command <RequestNumber> <Anything>
+    song_request_manager.cancel_request(
+        data_wrapper, ScriptSettings, Manager
+    )
 
 
 def ProcessApproveRejectSongRequestCommand(command, data_wrapper):

@@ -15,6 +15,8 @@ from song_request_dispatchers import PendingSongRequestDispatcher
 from song_request_dispatchers import WaitingSongRequestDispatcher
 from song_request_dispatchers import DeniedSongRequestDispatcher
 
+from song_request_settings import SongRequestCSharpSettings as CSharpSettings
+
 from Scripts.SongRequest.CSharp.Models.Requests import SongRequestNumber
 from Scripts.SongRequest.CSharp.Models.Requests import SongRequestModel
 from Scripts.SongRequest.CSharp.Models.Requests import SongRequestDecision
@@ -119,8 +121,16 @@ class SongRequestManager(object):
 
         return True
 
-    def cancel_request(self):
-        raise NotImplementedError()
+    def cancel_request(self, request_decision):
+        self._logger.debug(
+            "Canceling request with decision [{0}].".format(request_decision)
+        )
+
+        return self._internal_processing(
+            request_decision,
+            lambda request: request.Cancel(request_decision),
+            self._handle_request_canceled
+        )
 
     def approve_request(self, request_decision):
         self._logger.debug(
@@ -333,6 +343,17 @@ class SongRequestManager(object):
 
         return message
 
+    def _handle_request_canceled(self, user_name, target_id, target_name,
+                                 song_request, reason):
+        message = (
+            self._settings.SongRequestCancelMessage
+            .format(target_name, song_request)
+        )
+        message = self._format_with_reason(message, reason)
+
+        self._logger.info(message)
+        self._messenger.send_message(target_id, message)
+
     def _handle_request_approved(self, user_name, target_id, target_name,
                                  song_request, reason):
         message = (
@@ -373,6 +394,47 @@ def create_manager(parent_wrapper, settings, logger, page_scrapper):
     )
 
 
+def cancel_request(data_wrapper, settings, manager):
+    user_data = helpers.wrap_user_data(
+        data_wrapper.user_id, data_wrapper.user_name
+    )
+
+    # User can cancel request only for yourself.
+    target_user_id_or_name = helpers.wrap_user_id_or_name(
+        data_wrapper.user_id
+    )
+
+    param_count = data_wrapper.get_param_count()
+    param_number_to_process = 1
+
+    request_number = SongRequestNumber.All
+    if param_count > 1:
+        raw_request_number = data_wrapper.get_param(param_number_to_process)
+        request_number = SongRequestNumber.TryParse(
+            raw_request_number, SongRequestNumber.All, CSharpSettings(settings)
+        )
+
+    reason = ""
+    if param_count > 1:
+        seems_like_request_number = data_wrapper.get_param(
+            param_number_to_process
+        )
+        is_request_number = (
+            seems_like_request_number.isdigit() or
+            settings.is_all_parameter(seems_like_request_number)
+        )
+        start_reason = 1 if not is_request_number else 2
+        for i in range(start_reason, param_count):
+            reason += " " + data_wrapper.get_param(i)
+        reason = reason.strip()
+
+    request_decision = SongRequestDecision.CreateWithUtcNow(
+        user_data, target_user_id_or_name, request_number, reason
+    )
+
+    manager.cancel_request(request_decision)
+
+
 def approve_or_reject_request(command, data_wrapper, settings, manager):
     user_data = helpers.wrap_user_data(
         data_wrapper.user_id, data_wrapper.user_name
@@ -384,18 +446,22 @@ def approve_or_reject_request(command, data_wrapper, settings, manager):
     target_user_id_or_name = helpers.wrap_user_id_or_name(
         raw_target_user_id_or_name
     )
+
+    param_number_to_process = 2
     param_count = data_wrapper.get_param_count()
 
     request_number = SongRequestNumber.All
     if param_count > 1:
-        raw_request_number = data_wrapper.get_param(2)
+        raw_request_number = data_wrapper.get_param(param_number_to_process)
         request_number = SongRequestNumber.TryParse(
-            raw_request_number, SongRequestNumber.All, settings
+            raw_request_number, SongRequestNumber.All, CSharpSettings(settings)
         )
 
     reason = ""
     if param_count > 1:
-        seems_like_request_number = data_wrapper.get_param(2)
+        seems_like_request_number = data_wrapper.get_param(
+            param_number_to_process
+        )
         is_request_number = (
             seems_like_request_number.isdigit() or
             settings.is_all_parameter(seems_like_request_number)

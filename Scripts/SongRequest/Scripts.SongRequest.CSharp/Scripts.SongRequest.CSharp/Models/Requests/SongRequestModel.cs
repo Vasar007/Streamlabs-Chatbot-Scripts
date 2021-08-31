@@ -119,9 +119,9 @@ namespace Scripts.SongRequest.CSharp.Models.Requests
             };
         }
 
-        public SongRequestModel Cancel(string reason)
+        public SongRequestModel Cancel(SongRequestDecision decision)
         {
-            var processedBy = SongRequestProcessedInfo.CreateWithUtcNow(UserData, reason);
+            var processedBy = SongRequestProcessedInfo.CreateWithDecision(decision);
 
             return this with
             {

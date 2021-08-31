@@ -19,7 +19,6 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         string CommandRejectSongRequest { get; }
         int CommandRejectSongRequestCooldown { get; }
 
-
         string CommandGetSongRequest { get; }
         int CommandGetSongRequestCooldown { get; }
 

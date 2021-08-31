@@ -66,7 +66,7 @@ PermissionOnDefaultScriptCommands = Moderator
 # This field should only be filled when using the user_specific permission.
 PermissionInfoOnDefaultScriptCommands = ""
 
-CommandAddGetSkipSongRequestUsage = "{0} {1}"
+CommandAddCancelGetSkipSongRequestUsage = "{0} {1}"
 CommandManageSongRequestUsage = "{0} {1} {2}"
 ExampleUserIdOrName = "[UserIdOrName]"
 ExampleRequestNumberValidRange = "[1–{0}]"
