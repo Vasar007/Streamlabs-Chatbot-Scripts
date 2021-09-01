@@ -62,6 +62,7 @@ Version = config.Version
 ParentHandler = None  # Parent wrapper instance.
 SettingsFile = ""
 ScriptSettings = QueueSettings()
+Manager = None  # Queue manager instance.
 
 
 def Init():
@@ -84,6 +85,13 @@ def Init():
     ScriptSettings = QueueSettings(SettingsFile)
 
     helpers.init_logging(ParentHandler, ScriptSettings)
+
+    # Initialize global variables.
+    global Manager
+    Manager = queue_manager.create_manager(
+        ParentHandler, ScriptSettings, Logger()
+    )
+
     Logger().info("Script successfully initialized.")
 
 
@@ -347,9 +355,36 @@ def ProcessOptionCommand(command, data_wrapper):
     )
 
 
+def ProcessQueueInfoSubcommands(command, data_wrapper):
+    param_count = data_wrapper.get_param_count()
+
+    # Subcommands have 3 or more parameters.
+    if param_count < 3:
+        return False
+
+    subcommand = data_wrapper.get_param(1)
+    if ScriptSettings.is_user_subcommand(subcommand):
+        Logger().info(
+            "User {0} wants to get queue info, subcommand {1}."
+            .format(data_wrapper.user_id, subcommand)
+        )
+        queue_manager.output_queue_info_for_user(
+            Manager, data_wrapper, ParentHandler, Logger(), ScriptSettings
+        )
+        return True
+
+    return False
+
+
 def ProcessQueueInfoCommand(command, data_wrapper):
     # Input example: !queue_info
     # Command <Anything>
+    # Input example: !queue_info user Vasar
+    # Command Subcommand <@>TargetUserNameOrId
+    if ProcessQueueInfoSubcommands(command, data_wrapper):
+        return
+
+    # If it is not a subcommand, process as usual.
     queue_manager.output_queue_info(
-        data_wrapper, ParentHandler, Logger(), ScriptSettings
+        Manager, data_wrapper, ParentHandler, Logger(), ScriptSettings
     )

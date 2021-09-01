@@ -61,6 +61,11 @@ PermissionOnDefaultScriptCommands = Moderator
 # This field should only be filled when using the user_specific permission.
 PermissionInfoOnDefaultScriptCommands = ""
 
+DefaultDelimeter = ","
+DefaultAllValueAsInt = 20
+DefaultMaxValue = 1000
+DefaultUserInQueueFormat = "#{0} {1}"
+
 # [Required] Script Information.
 ScriptName = "Queue Script"
 Website = "https://github.com/Vasar007/Streamlabs-Chatbot-Scripts"
@@ -72,6 +77,9 @@ Version = "1.0.0"
 # overwritten later/not refactored yet).
 CommandQueueInfo = "!queue_info"
 CommandQueueInfoCooldown = 1
+
+SubcommandGetUserQueueInfo = "user"
+ParameterAll = "all"
 
 # Values: everyone, moderator, subscriber, user_specific, editor.
 PermissionOnQueueInfo = Everyone
@@ -88,4 +96,6 @@ FailedToSetOptionMessage = "{0}, failed to change option {1}: {2}"
 FailedToSetOptionInvalidTypeMessage = "Invalid type (expected: {0})"
 FailedToSetOptionInvalidNameMessage = "Invalid option name"
 AllQueueInfoStateMessage = "Current queue state: {0}"
-QueueIsEmptyMessage = "Queue is empty"
+QueueIsEmptyMessage = "Queue is empty."
+UserIsNotInQueueMessage = "User {0} is not in the queue."
+UserIsInQueueMessage = "User {0} is in the queue, position: {1}"

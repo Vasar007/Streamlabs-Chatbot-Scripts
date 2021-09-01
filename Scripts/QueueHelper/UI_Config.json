@@ -18,6 +18,13 @@
         "tooltip": "How long the Queue Info command should go on cooldown for.",
         "group": "Commands"
     },
+    "ParameterAll": {
+        "type": "textbox",
+        "value": "all",
+        "label": "Parameter All",
+        "tooltip": "Command parameter that allow to get information about all users in the queue.",
+        "group": "Commands"
+    },
 
     "PermissionOnQueueInfo": {
         "type": "dropdown",
@@ -94,17 +101,32 @@
     "AllQueueInfoStateMessage": {
         "type": "textbox",
         "value": "Current queue state: {0}",
-        "label": "Command",
+        "label": "All Queue Info Message",
         "tooltip": "The message that will be sent to chat when user retrieves queue info. 0 — information about queue.",
         "group": "Chat Messages"
     },
     "QueueIsEmptyMessage": {
         "type": "textbox",
-        "value": "Queue is empty",
-        "label": "Command",
+        "value": "Queue is empty.",
+        "label": "Queue Is Empty",
         "tooltip": "The message that will be sent to chat as response on queue info when queue is empty.",
         "group": "Chat Messages"
     },
+    "UserIsNotInQueueMessage": {
+        "type": "textbox",
+        "value": "User {0} is not in the queue.",
+        "label": "User Is Not In The Queue",
+        "tooltip": "The message that will be sent to chat as response on queue info when user is not in the queue. 0 — user name",
+        "group": "Chat Messages"
+    },
+    "UserIsInQueueMessage": {
+        "type": "textbox",
+        "value": "User {0} is in the queue, position: {1}",
+        "label": "User Is In Queue",
+        "tooltip": "The message that will be sent to chat as response on queue info when user is in the queue. 0 — user name, 1 — position",
+        "group": "Chat Messages"
+    },
+
     "LoggingLevel": {
         "type": "dropdown",
         "value": "Info",

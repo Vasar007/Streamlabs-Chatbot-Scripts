@@ -58,6 +58,14 @@ class QueueSettings(object):
             )
             f.write(content)
 
+    @classmethod
+    def subscribe_on_reload(cls, reload_callback):
+        """
+        Allows to add callback on settings reload event.
+        Callback should accept single parameter — current settings class.
+        """
+        cls._reload_event.on(config.SettingsReloadEventName, reload_callback)
+
     def update_settings_on_the_fly(self, logger, parent_wrapper, settingsfile,
                                    data_wrapper):
         raw_user_id = data_wrapper.user_id
@@ -123,18 +131,20 @@ class QueueSettings(object):
 
         parent_wrapper.send_stream_message(message)
 
-    @classmethod
-    def subscribe_on_reload(cls, reload_callback):
-        """
-        Allows to add callback on settings reload event.
-        Callback should accept single parameter — current settings class.
-        """
-        cls._reload_event.on(config.SettingsReloadEventName, reload_callback)
+    def _are_strings_equal(self, value1, value2):
+        return value1.lower() == value2.lower()
+
+    def is_user_subcommand(self, value):
+        return self._are_strings_equal(value, config.SubcommandGetUserQueueInfo)
+
+    def is_all_parameter(self, value):
+        return self._are_strings_equal(value, self.ParameterAll)
 
     def _set_default(self):
         # Commands group.
         self.CommandQueueInfo = config.CommandQueueInfo
         self.CommandQueueInfoCooldown = config.CommandQueueInfoCooldown
+        self.ParameterAll = config.ParameterAll
 
         # Permission group.
         self.PermissionOnQueueInfo = config.PermissionOnQueueInfo
@@ -151,6 +161,8 @@ class QueueSettings(object):
         self.FailedToSetOptionInvalidNameMessage = config.FailedToSetOptionInvalidNameMessage
         self.AllQueueInfoStateMessage = config.AllQueueInfoStateMessage
         self.QueueIsEmptyMessage = config.QueueIsEmptyMessage
+        self.UserIsNotInQueueMessage = config.UserIsNotInQueueMessage
+        self.UserIsInQueueMessage = config.UserIsInQueueMessage
 
         # Debugging group.
         self.LoggingLevel = config.LoggingLevel
