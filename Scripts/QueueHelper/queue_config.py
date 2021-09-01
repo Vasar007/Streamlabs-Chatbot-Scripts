@@ -15,7 +15,7 @@ LogLevels = {
 
 LogFormat = "[%(asctime)s] %(levelname)s    %(message)s"
 LogDateFormat = "%d/%m/%Y %H:%M:%S"
-LogFileRelativePath = os.path.join("Services", "Scripts", "Template")
+LogFileRelativePath = os.path.join("Services", "Scripts", "Queue")
 LogFileNameFormat = "{0}.log"
 LogFileMaxBytes = 10 * 1024 * 1024  # 10 MB
 LogFileBackupCount = 10  # Keep last 10 files alive.
@@ -49,7 +49,7 @@ PermissionHierarchy = (Everyone, Subscriber, UserSpecific, Moderator, Editor)
 DefaultVersionCommand = "!scripts_info"
 DefaultVersionCommandCooldown = 1
 
-CommandOption = "!template_option"
+CommandOption = "!queue_option"
 CommandOptionCooldown = 1
 
 CommandOptionUsage = "{0} {1} {2}"
@@ -62,29 +62,30 @@ PermissionOnDefaultScriptCommands = Moderator
 PermissionInfoOnDefaultScriptCommands = ""
 
 # [Required] Script Information.
-ScriptName = "Template Script"
+ScriptName = "Queue Script"
 Website = "https://github.com/Vasar007/Streamlabs-Chatbot-Scripts"
-Description = "Basic boilerplate script to play with."
+Description = "Queue helper with some handful stuff."
 Creator = "Vasar007"
-Version = "1.2.0"
+Version = "1.0.0"
 
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).
-CommandPing = "!ping"
-CommandPingCooldown = 1
+CommandQueueInfo = "!queue_info"
+CommandQueueInfoCooldown = 1
 
 # Values: everyone, moderator, subscriber, user_specific, editor.
-PermissionOnPing = Everyone
+PermissionOnQueueInfo = Everyone
 # This field should only be filled when using the user_specific permission.
-PermissionInfoOnPing = ""
+PermissionInfoOnQueueInfo = ""
 
 PermissionDeniedMessage = "Permission denied: You have to be a {0} to use {1} command!"
 
 InvalidCommandCallMessage = "Invalid {0} command call. Usage: {1}"
-ResponseMessage = "Pong!"
 TimeRemainingMessage = "Command {0} is on cooldown. Time remaining: {1} (seconds)."
 OptionValueTheSameMessage = "{0}, option {1} value cannot be changed to the same value [{2}]"
 OptionValueChangedMessage = "{0}, option {1} value has been changed from [{2}] to [{3}]"
 FailedToSetOptionMessage = "{0}, failed to change option {1}: {2}"
 FailedToSetOptionInvalidTypeMessage = "Invalid type (expected: {0})"
 FailedToSetOptionInvalidNameMessage = "Invalid option name"
+AllQueueInfoStateMessage = "Current queue state: {0}"
+QueueIsEmptyMessage = "Queue is empty"

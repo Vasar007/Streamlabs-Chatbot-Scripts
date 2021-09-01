@@ -77,6 +77,13 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
 
         string InvalidCommandCallMessage { get; }
         string TimeRemainingMessage { get; }
+        string OptionValueTheSameMessage { get; }
+        string OptionValueChangedMessage { get; }
+        string FailedToSetOptionMessage { get; }
+        string FailedToSetOptionInvalidTypeMessage { get; }
+        string FailedToSetOptionInvalidNameMessage { get; }
+        string ResetUserSongRequestOptionsMessage { get; }
+        string InvalidOptionsSubcommandMessage { get; }
         string MaxLimitOfSongRequestsIsExceededMessage { get; }
         string InvalidTargetMessage { get; }
         string NoSongRequestsMessage { get; }
@@ -98,13 +105,6 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         string SongRequestCancelMessage { get; }
         string GotUserSongRequestsMessage { get; }
         string NoUserSongRequestsMessage { get; }
-        string ResetUserSongRequestOptionsMessage { get; }
-        string InvalidOptionsSubcommandMessage { get; }
-        string OptionValueTheSameMessage { get; }
-        string OptionValueChangedMessage { get; }
-        string FailedToSetOptionMessage { get; }
-        string FailedToSetOptionInvalidTypeMessage { get; }
-        string FailedToSetOptionInvalidNameMessage { get; }
         string FailedToValidateLinkMessage { get; }
         string CommandProcessingDisabledMessage { get; }
         string SkipAllSongRequestsMessage { get; }

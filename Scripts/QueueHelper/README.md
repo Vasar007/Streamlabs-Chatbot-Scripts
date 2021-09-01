@@ -1,21 +1,16 @@
-# Song Request Script
+# Queue Script
 
-Extended song request script.
+Queue helper with some handful stuff.
 
-Documentation for script version: `1.2.0`
+Documentation for script version: `1.0.0`
 
 ## Available features
 
-- Add song requests to song queue (script supports only YouTube music);
-- Cancel their own song requests;
-- Skip ordered songs;
-- Get ordered songs for user;
-- Moderators can approve or reject song requests. If there are no moderators, song requests will be auto-approved;
-- Change script settings on the fly (does not require to reload script).
+TODO
 
 ## How to install script
 
-[Download script of latest version](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/Latest%20versions/SongRequest.zip).
+[Download script of latest version](https://github.com/Vasar007/Streamlabs-Chatbot-Scripts/raw/main/Releases/Latest%20versions/Queue.zip).
 
 See common instruction [here](../../README.md#how-to-install-any-script).
 

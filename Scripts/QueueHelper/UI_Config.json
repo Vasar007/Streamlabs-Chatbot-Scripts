@@ -1,37 +1,37 @@
 {
     "output_file": "Settings/settings.json",
 
-    "CommandPing": {
+    "CommandQueueInfo": {
         "type": "textbox",
         "value": "!ping",
-        "label": "Ping Command",
-        "tooltip": "The command that will be responded to.",
+        "label": "Queue Info Command",
+        "tooltip": "The command that will be output information about queue.",
         "group": "Commands"
     },
-    "CommandPingCooldown": {
+    "CommandQueueInfoCooldown": {
         "type": "slider",
         "value": 1,
         "min": 1,
         "max": 100,
         "ticks": 1,
-        "label": "Ping Command Cooldown (seconds)",
-        "tooltip": "How long the Ping command should go on cooldown for.",
+        "label": "Queue Info Command Cooldown (seconds)",
+        "tooltip": "How long the Queue Info command should go on cooldown for.",
         "group": "Commands"
     },
 
-    "PermissionOnPing": {
+    "PermissionOnQueueInfo": {
         "type": "dropdown",
         "value": "everyone",
         "items": ["everyone", "subscriber", "user_specific", "moderator", "editor"],
         "label": "Permission",
-        "tooltip": "Who is able to use the script commands.",
+        "tooltip": "Who is able to get queue info.",
         "group": "Permission"
     },
-    "PermissionInfoOnPing": {
+    "PermissionInfoOnQueueInfo": {
         "type": "textbox",
         "value": "",
         "label": "Info",
-        "tooltip": "This field should only be filled when using the user_specific permission.",
+        "tooltip": "This field should only be filled when using the user_specific permission on Queue Info Command.",
         "group": "Permission"
     },
     "PermissionDeniedMessage": {
@@ -91,14 +91,20 @@
         "tooltip": "The message that will be sent to chat when settings option cannot be changed due to invalid name.",
         "group": "Chat Messages"
     },
-    "ResponseMessage": {
+    "AllQueueInfoStateMessage": {
         "type": "textbox",
-        "value": "Pong!",
+        "value": "Current queue state: {0}",
         "label": "Command",
-        "tooltip": "The message that will be sent to chat when using the command.",
+        "tooltip": "The message that will be sent to chat when user retrieves queue info. 0 — information about queue.",
         "group": "Chat Messages"
     },
-
+    "QueueIsEmptyMessage": {
+        "type": "textbox",
+        "value": "Queue is empty",
+        "label": "Command",
+        "tooltip": "The message that will be sent to chat as response on queue info when queue is empty.",
+        "group": "Chat Messages"
+    },
     "LoggingLevel": {
         "type": "dropdown",
         "value": "Info",

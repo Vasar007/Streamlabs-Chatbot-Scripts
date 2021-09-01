@@ -4,12 +4,12 @@ import os
 import codecs
 import json
 
-import template_config as config
-import template_helpers as helpers
-from template_event_emitter import TemplateEventEmitter as EventEmitter 
+import queue_config as config
+import queue_helpers as helpers
+from queue_event_emitter import QueueEventEmitter as EventEmitter 
 
 
-class TemplateSettings(object):
+class QueueSettings(object):
 
     _reload_event = EventEmitter()
 
@@ -39,7 +39,7 @@ class TemplateSettings(object):
         """
         self.__dict__ = json.loads(jsondata, encoding=encoding)
 
-        TemplateSettings._reload_event.emit(
+        QueueSettings._reload_event.emit(
             config.SettingsReloadEventName, self
         )
 
@@ -57,14 +57,6 @@ class TemplateSettings(object):
                 )
             )
             f.write(content)
-
-    @classmethod
-    def subscribe_on_reload(cls, reload_callback):
-        """
-        Allows to add callback on settings reload event.
-        Callback should accept single parameter — current settings class.
-        """
-        cls._reload_event.on(config.SettingsReloadEventName, reload_callback)
 
     def update_settings_on_the_fly(self, logger, parent_wrapper, settingsfile,
                                    data_wrapper):
@@ -131,14 +123,22 @@ class TemplateSettings(object):
 
         parent_wrapper.send_stream_message(message)
 
+    @classmethod
+    def subscribe_on_reload(cls, reload_callback):
+        """
+        Allows to add callback on settings reload event.
+        Callback should accept single parameter — current settings class.
+        """
+        cls._reload_event.on(config.SettingsReloadEventName, reload_callback)
+
     def _set_default(self):
         # Commands group.
-        self.CommandPing = config.CommandPing
-        self.CommandPingCooldown = config.CommandPingCooldown
+        self.CommandQueueInfo = config.CommandQueueInfo
+        self.CommandQueueInfoCooldown = config.CommandQueueInfoCooldown
 
         # Permission group.
-        self.PermissionOnPing = config.PermissionOnPing
-        self.PermissionInfoOnPing = config.PermissionInfoOnPing
+        self.PermissionOnQueueInfo = config.PermissionOnQueueInfo
+        self.PermissionInfoOnQueueInfo = config.PermissionInfoOnQueueInfo
         self.PermissionDeniedMessage = config.PermissionDeniedMessage
 
         # Chat Messages group.
@@ -149,7 +149,8 @@ class TemplateSettings(object):
         self.FailedToSetOptionMessage = config.FailedToSetOptionMessage
         self.FailedToSetOptionInvalidTypeMessage = config.FailedToSetOptionInvalidTypeMessage
         self.FailedToSetOptionInvalidNameMessage = config.FailedToSetOptionInvalidNameMessage
-        self.ResponseMessage = config.ResponseMessage
+        self.AllQueueInfoStateMessage = config.AllQueueInfoStateMessage
+        self.QueueIsEmptyMessage = config.QueueIsEmptyMessage
 
         # Debugging group.
         self.LoggingLevel = config.LoggingLevel

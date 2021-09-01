@@ -58,6 +58,14 @@ class TransferSettings(object):
             )
             f.write(content)
 
+    @classmethod
+    def subscribe_on_reload(cls, reload_callback):
+        """
+        Allows to add callback on settings reload event.
+        Callback should accept single parameter — current settings class.
+        """
+        cls._reload_event.on(config.SettingsReloadEventName, reload_callback)
+
     def update_settings_on_the_fly(self, logger, parent_wrapper, settingsfile,
                                    data_wrapper):
         raw_user_id = data_wrapper.user_id
@@ -123,14 +131,6 @@ class TransferSettings(object):
 
         parent_wrapper.send_stream_message(message)
 
-    @classmethod
-    def subscribe_on_reload(cls, reload_callback):
-        """
-        Allows to add callback on settings reload event.
-        Callback should accept single parameter — current settings class.
-        """
-        cls._reload_event.on(config.SettingsReloadEventName, reload_callback)
-
     def _are_strings_equal(self, value1, value2):
         return value1.lower() == value2.lower()
 
@@ -168,6 +168,12 @@ class TransferSettings(object):
 
         # Chat Messages group.
         self.InvalidCommandCallMessage = config.InvalidCommandCallMessage
+        self.TimeRemainingMessage = config.TimeRemainingMessage
+        self.OptionValueTheSameMessage = config.OptionValueTheSameMessage
+        self.OptionValueChangedMessage = config.OptionValueChangedMessage
+        self.FailedToSetOptionMessage = config.FailedToSetOptionMessage
+        self.FailedToSetOptionInvalidTypeMessage = config.FailedToSetOptionInvalidTypeMessage
+        self.FailedToSetOptionInvalidNameMessage = config.FailedToSetOptionInvalidNameMessage
         self.SuccessfulTransferMessage = config.SuccessfulTransferMessage
         self.SuccessfulAddingMessage = config.SuccessfulAddingMessage
         self.SuccessfulRemovingMessage = config.SuccessfulRemovingMessage
@@ -179,12 +185,6 @@ class TransferSettings(object):
         self.InvalidTargetMessage = config.InvalidTargetMessage
         self.DeniedTransferToYourselfMessage = config.DeniedTransferToYourselfMessage
         self.CurrentTaxPercentMessage = config.CurrentTaxPercentMessage
-        self.TimeRemainingMessage = config.TimeRemainingMessage
-        self.OptionValueTheSameMessage = config.OptionValueTheSameMessage
-        self.OptionValueChangedMessage = config.OptionValueChangedMessage
-        self.FailedToSetOptionMessage = config.FailedToSetOptionMessage
-        self.FailedToSetOptionInvalidTypeMessage = config.FailedToSetOptionInvalidTypeMessage
-        self.FailedToSetOptionInvalidNameMessage = config.FailedToSetOptionInvalidNameMessage
 
         # Debugging group.
         self.LoggingLevel = config.LoggingLevel

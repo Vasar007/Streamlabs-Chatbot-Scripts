@@ -58,6 +58,14 @@ class ScoreSettings(object):
             )
             f.write(content)
 
+    @classmethod
+    def subscribe_on_reload(cls, reload_callback):
+        """
+        Allows to add callback on settings reload event.
+        Callback should accept single parameter — current settings class.
+        """
+        cls._reload_event.on(config.SettingsReloadEventName, reload_callback)
+
     def update_settings_on_the_fly(self, logger, parent_wrapper, settingsfile,
                                    data_wrapper):
         raw_user_id = data_wrapper.user_id
@@ -123,14 +131,6 @@ class ScoreSettings(object):
 
         parent_wrapper.send_stream_message(message)
 
-    @classmethod
-    def subscribe_on_reload(cls, reload_callback):
-        """
-        Allows to add callback on settings reload event.
-        Callback should accept single parameter — current settings class.
-        """
-        cls._reload_event.on(config.SettingsReloadEventName, reload_callback)
-
     def _set_default(self):
         # Commands group.
         self.CommandGetScore = config.CommandGetScore
@@ -153,6 +153,12 @@ class ScoreSettings(object):
 
         # Chat Messages group.
         self.InvalidCommandCallMessage = config.InvalidCommandCallMessage
+        self.TimeRemainingMessage = config.TimeRemainingMessage
+        self.OptionValueTheSameMessage = config.OptionValueTheSameMessage
+        self.OptionValueChangedMessage = config.OptionValueChangedMessage
+        self.FailedToSetOptionMessage = config.FailedToSetOptionMessage
+        self.FailedToSetOptionInvalidTypeMessage = config.FailedToSetOptionInvalidTypeMessage
+        self.FailedToSetOptionInvalidNameMessage = config.FailedToSetOptionInvalidNameMessage
         self.NoScoreFoundMessage = config.NoScoreFoundMessage
         self.CurrentScoreMessage = config.CurrentScoreMessage
         self.CreatedScoreMessage = config.CreatedScoreMessage
@@ -164,12 +170,6 @@ class ScoreSettings(object):
         self.ResetScoreMessage = config.ResetScoreMessage
         self.NothingToDeleteMessage = config.NothingToDeleteMessage
         self.DeletedScoreMessage = config.DeletedScoreMessage
-        self.TimeRemainingMessage = config.TimeRemainingMessage
-        self.OptionValueTheSameMessage = config.OptionValueTheSameMessage
-        self.OptionValueChangedMessage = config.OptionValueChangedMessage
-        self.FailedToSetOptionMessage = config.FailedToSetOptionMessage
-        self.FailedToSetOptionInvalidTypeMessage = config.FailedToSetOptionInvalidTypeMessage
-        self.FailedToSetOptionInvalidNameMessage = config.FailedToSetOptionInvalidNameMessage
 
         # Debugging group.
         self.LoggingLevel = config.LoggingLevel

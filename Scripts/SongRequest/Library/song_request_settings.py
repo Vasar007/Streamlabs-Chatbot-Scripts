@@ -69,32 +69,6 @@ class SongRequestSettings(object):
         """
         cls._reload_event.on(config.SettingsReloadEventName, reload_callback)
 
-    def parse_mod_ids(self, logger):
-        if not self.UseWhisperMessagesToControlSongRequests:
-            logger.info("Whisper option is turn off.")
-            return [""]
-
-        raw_mod_ids = self.ModIdsToWhisper
-        mod_ids = raw_mod_ids.split(config.DefaultDelimeter)
-        for i in range(len(mod_ids)):
-            temp_mod_id = mod_ids[i]
-            mod_ids[i] = temp_mod_id.strip()
-
-        logger.info("Using mod IDs to whisper: {0}".format(mod_ids))
-        return mod_ids
-
-    def _are_strings_equal(self, value1, value2):
-        return value1.lower() == value2.lower()
-
-    def is_all_parameter(self, value):
-        return self._are_strings_equal(value, self.ParameterAll)
-
-    def is_user_subcommand(self, value):
-        return self._are_strings_equal(value, self.SubcommandChangeUserOption)
-
-    def is_reset_subcommand(self, value):
-        return self._are_strings_equal(value, self.SubcommandResetNumberOfOrderedSongRequests)
-
     def update_settings_on_the_fly(self, logger, messenger, settingsfile,
                                    data_wrapper):
         raw_user_id = data_wrapper.user_id
@@ -160,6 +134,32 @@ class SongRequestSettings(object):
 
         messenger.send_message(raw_user_id, message)
 
+    def parse_mod_ids(self, logger):
+        if not self.UseWhisperMessagesToControlSongRequests:
+            logger.info("Whisper option is turn off.")
+            return [""]
+
+        raw_mod_ids = self.ModIdsToWhisper
+        mod_ids = raw_mod_ids.split(config.DefaultDelimeter)
+        for i in range(len(mod_ids)):
+            temp_mod_id = mod_ids[i]
+            mod_ids[i] = temp_mod_id.strip()
+
+        logger.info("Using mod IDs to whisper: {0}".format(mod_ids))
+        return mod_ids
+
+    def _are_strings_equal(self, value1, value2):
+        return value1.lower() == value2.lower()
+
+    def is_all_parameter(self, value):
+        return self._are_strings_equal(value, self.ParameterAll)
+
+    def is_user_subcommand(self, value):
+        return self._are_strings_equal(value, config.SubcommandChangeUserOption)
+
+    def is_reset_subcommand(self, value):
+        return self._are_strings_equal(value, config.SubcommandResetNumberOfOrderedSongRequests)
+
     def _set_default(self):
         # Commands group.
         self.CommandAddSongRequest = config.CommandAddSongRequest
@@ -212,6 +212,13 @@ class SongRequestSettings(object):
         # Chat Messages group.
         self.InvalidCommandCallMessage = config.InvalidCommandCallMessage
         self.TimeRemainingMessage = config.TimeRemainingMessage
+        self.OptionValueTheSameMessage = config.OptionValueTheSameMessage
+        self.OptionValueChangedMessage = config.OptionValueChangedMessage
+        self.FailedToSetOptionMessage = config.FailedToSetOptionMessage
+        self.FailedToSetOptionInvalidTypeMessage = config.FailedToSetOptionInvalidTypeMessage
+        self.FailedToSetOptionInvalidNameMessage = config.FailedToSetOptionInvalidNameMessage
+        self.ResetUserSongRequestOptionsMessage = config.ResetUserSongRequestOptionsMessage
+        self.InvalidOptionsSubcommandMessage = config.InvalidOptionsSubcommandMessage
         self.MaxLimitOfSongRequestsIsExceededMessage = config.MaxLimitOfSongRequestsIsExceededMessage
         self.InvalidTargetMessage = config.InvalidTargetMessage
         self.SongRequestNumberAndLinkFormat = config.SongRequestNumberAndLinkFormat
@@ -233,13 +240,6 @@ class SongRequestSettings(object):
         self.SongRequestCancelMessage = config.SongRequestCancelMessage
         self.GotUserSongRequestsMessage = config.GotUserSongRequestsMessage
         self.NoUserSongRequestsMessage = config.NoUserSongRequestsMessage
-        self.ResetUserSongRequestOptionsMessage = config.ResetUserSongRequestOptionsMessage
-        self.InvalidOptionsSubcommandMessage = config.InvalidOptionsSubcommandMessage
-        self.OptionValueTheSameMessage = config.OptionValueTheSameMessage
-        self.OptionValueChangedMessage = config.OptionValueChangedMessage
-        self.FailedToSetOptionMessage = config.FailedToSetOptionMessage
-        self.FailedToSetOptionInvalidTypeMessage = config.FailedToSetOptionInvalidTypeMessage
-        self.FailedToSetOptionInvalidNameMessage = config.FailedToSetOptionInvalidNameMessage
         self.FailedToValidateLinkMessage = config.FailedToValidateLinkMessage
         self.CommandProcessingDisabledMessage = config.CommandProcessingDisabledMessage
         self.SkipAllSongRequestsMessage = config.SkipAllSongRequestsMessage
@@ -434,6 +434,34 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
         return self._settings.TimeRemainingMessage
 
     @property
+    def OptionValueTheSameMessage(self):
+        return self._settings.OptionValueTheSameMessage
+
+    @property
+    def OptionValueChangedMessage(self):
+        return self._settings.OptionValueChangedMessage
+
+    @property
+    def FailedToSetOptionMessage(self):
+        return self._settings.FailedToSetOptionMessage
+
+    @property
+    def FailedToSetOptionInvalidTypeMessage(self):
+        return self._settings.FailedToSetOptionInvalidTypeMessage
+
+    @property
+    def FailedToSetOptionInvalidNameMessage(self):
+        return self._settings.FailedToSetOptionInvalidNameMessage
+
+    @property
+    def ResetUserSongRequestOptionsMessage(self):
+        return self._settings.ResetUserSongRequestOptionsMessage
+
+    @property
+    def InvalidOptionsSubcommandMessage(self):
+        return self._settings.InvalidOptionsSubcommandMessage
+
+    @property
     def MaxLimitOfSongRequestsIsExceededMessage(self):
         return self._settings.MaxLimitOfSongRequestsIsExceededMessage
 
@@ -516,34 +544,6 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
     @property
     def NoUserSongRequestsMessage(self):
         return self._settings.NoUserSongRequestsMessage
-
-    @property
-    def ResetUserSongRequestOptionsMessage(self):
-        return self._settings.ResetUserSongRequestOptionsMessage
-
-    @property
-    def InvalidOptionsSubcommandMessage(self):
-        return self._settings.InvalidOptionsSubcommandMessage
-
-    @property
-    def OptionValueTheSameMessage(self):
-        return self._settings.OptionValueTheSameMessage
-
-    @property
-    def OptionValueChangedMessage(self):
-        return self._settings.OptionValueChangedMessage
-
-    @property
-    def FailedToSetOptionMessage(self):
-        return self._settings.FailedToSetOptionMessage
-
-    @property
-    def FailedToSetOptionInvalidTypeMessage(self):
-        return self._settings.FailedToSetOptionInvalidTypeMessage
-
-    @property
-    def FailedToSetOptionInvalidNameMessage(self):
-        return self._settings.FailedToSetOptionInvalidNameMessage
 
     @property
     def FailedToValidateLinkMessage(self):
