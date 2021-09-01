@@ -3,7 +3,7 @@
 
     "CommandQueueInfo": {
         "type": "textbox",
-        "value": "!ping",
+        "value": "!queue_info",
         "label": "Queue Info Command",
         "tooltip": "The command that will be output information about queue.",
         "group": "Commands"
