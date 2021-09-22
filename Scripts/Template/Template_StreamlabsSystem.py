@@ -149,8 +149,10 @@ def Parse(parse_string, userid, username, targetid, targetname, message):
     Here's where the magic happens, all the strings are sent and processed
     through this function.
 
-    Parent.FUNCTION allows to use functions of the Chatbot and other outside
-    APIs (see: https://github.com/AnkhHeart/Streamlabs-Chatbot-Python-Boilerplate/wiki/Parent).
+    ATTENTION! Only service messages will be processed. E.g. messages from bot.
+    Example: you create command where bot returns in message $myparameter.
+    So, script can replace such parameter with custom text
+    ("I am a cat!" in our case). Parameter format completely is up to you.
     """
     if "$myparameter" in parse_string:
         return parse_string.replace("$myparameter", "I am a cat!")

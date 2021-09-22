@@ -192,18 +192,6 @@ def Tick():
     Manager.run_dispatch()
 
 
-def Parse(parse_string, userid, username, targetid, targetname, message):
-    """
-    [Optional] Parse method (Allows you to create your own custom $parameters).
-    Here's where the magic happens, all the strings are sent and processed
-    through this function.
-
-    Parent.FUNCTION allows to use functions of the Chatbot and other outside
-    APIs (see: https://github.com/AnkhHeart/Streamlabs-Chatbot-Python-Boilerplate/wiki/Parent).
-    """
-    return parse_string
-
-
 def ReloadSettings(jsondata):
     """
     [Optional] Reload Settings (Called when a user clicks the Save Settings
