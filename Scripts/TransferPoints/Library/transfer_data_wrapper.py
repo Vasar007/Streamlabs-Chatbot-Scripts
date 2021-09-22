@@ -26,8 +26,8 @@ class TransferDataWrapper(object):
         return self._data.RawData
 
     @property
-    def service_type(self):
-        return self._data.ServiceType
+    def service(self):
+        return self._data.Service
 
     # Functions to retrieve common info about message.
 
