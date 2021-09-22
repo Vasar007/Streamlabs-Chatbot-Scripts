@@ -256,10 +256,10 @@ def Logger():
 
 def CanProcessMessage(data_wrapper):
     if ScriptSettings.FilterNonChatMessages:
-        return (
-            data_wrapper.is_chat_message() or
-            ScriptSettings.UseWhisperMessagesToControlSongRequests
-        )
+        if data_wrapper.is_chat_message():
+            return True
+        if not ScriptSettings.UseWhisperMessagesToControlSongRequests:
+            return False
 
     # If we do not filter messages,
     # than we can process any message with content.
