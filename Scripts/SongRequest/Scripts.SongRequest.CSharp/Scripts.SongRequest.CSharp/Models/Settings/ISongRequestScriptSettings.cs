@@ -42,6 +42,7 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         bool LowMessageMode { get; }
         bool EnableCommandProcessing { get; }
         bool EnableLinkValidation { get; }
+        bool FilterNonChatMessages { get; }
 
         #endregion
 

@@ -255,10 +255,15 @@ def Logger():
 
 
 def CanProcessMessage(data_wrapper):
-    return (
-        data_wrapper.is_chat_message() or
-        ScriptSettings.UseWhisperMessagesToControlSongRequests
-    )
+    if ScriptSettings.FilterNonChatMessages:
+        return (
+            data_wrapper.is_chat_message() or
+            ScriptSettings.UseWhisperMessagesToControlSongRequests
+        )
+
+    # If we do not filter messages,
+    # than we can process any message with content.
+    return bool(data_wrapper.message)
 
 
 def HandleNoPermission(required_permission, command, data_wrapper):

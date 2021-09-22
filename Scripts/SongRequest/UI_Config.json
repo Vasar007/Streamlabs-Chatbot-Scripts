@@ -191,6 +191,13 @@
         "tooltip": "Allows script to validate links in song requests.",
         "group": "Setup"
     },
+    "FilterNonChatMessages": {
+        "type": "checkbox",
+        "value": false,
+        "label": "Filter Non Chat Messages",
+        "tooltip": "Allows script to filter all non chat messages (e.g. from bot).",
+        "group": "Setup"
+    },
 
     "SelectedBrowserDriver": {
         "type": "dropdown",

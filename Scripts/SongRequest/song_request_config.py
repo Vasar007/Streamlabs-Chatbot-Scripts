@@ -110,6 +110,7 @@ ModIdsToWhisper = ""
 LowMessageMode = True
 EnableCommandProcessing = True
 EnableLinkValidation = True
+FilterNonChatMessages = False
 
 EnableWebDriverDebug = False
 

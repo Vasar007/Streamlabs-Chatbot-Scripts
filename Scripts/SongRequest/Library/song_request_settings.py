@@ -188,6 +188,7 @@ class SongRequestSettings(object):
         self.LowMessageMode = config.LowMessageMode
         self.EnableCommandProcessing = config.EnableCommandProcessing
         self.EnableLinkValidation = config.EnableLinkValidation
+        self.FilterNonChatMessages = config.FilterNonChatMessages
 
         # Parsing group.
         self.SelectedBrowserDriver = config.SelectedBrowserDriver
@@ -357,6 +358,10 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
     @property
     def EnableLinkValidation(self):
         return self._settings.EnableLinkValidation
+
+    @property
+    def FilterNonChatMessages(self):
+        return self._settings.FilterNonChatMessages
 
     # Parsing group.
     @property
