@@ -554,7 +554,9 @@ def get_all_user_requests(data_wrapper, settings, logger, manager):
             settings, request
         )
         processed_requests = map(map_lambda, user_requests)
-        formatted_requests = " ".join(processed_requests)
+        formatted_requests = (
+            "{0} ".format(config.DefaultDelimeter).join(processed_requests)
+        )
 
         message = (
             settings.GotUserSongRequestsMessage
