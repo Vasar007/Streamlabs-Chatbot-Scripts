@@ -31,6 +31,7 @@ clr.AddReferenceToFileAndPath(os.path.join(AbsoluteScriptDir, ReferencesDirName,
 from Scripts.SongRequest.CSharp.Web.Scrapper import HttpWebScrapperFactory
 from Scripts.SongRequest.CSharp.Models.Requests import SongRequestModel
 from Scripts.SongRequest.CSharp.Models.Requests import SongRequestNumber
+from Scripts.SongRequest.CSharp.Core.Processes import ProcessManager
 
 import song_request_config as config
 import song_request_helpers as helpers  # pylint:disable=import-error
@@ -46,6 +47,9 @@ from song_request_settings import SongRequestCSharpSettings as CSharpSettings
 
 # pylint:disable=import-error
 from song_request_command_wrapper import SongRequestCommandWrapper as CommandWrapper
+
+# pylint:disable=import-error
+from song_request_process_runner import SongRequestProcessRunner as ProcessRunner
 
 # pylint:disable=import-error
 import song_request_drive_autoinstaller as autoinstaller
@@ -106,7 +110,9 @@ def Init():
     helpers.init_logging(ParentHandler, ScriptSettings)
 
     # Validate browser driver.
-    autoinstaller.ensure_browser_driver_is_installed(ScriptSettings, Logger())
+    autoinstaller.ensure_browser_driver_is_installed(
+        ScriptSettings, Logger(), ProcessRunner(ProcessManager())
+    )
 
     global PageScrapper
     PageScrapper = HttpWebScrapperFactory.Create(

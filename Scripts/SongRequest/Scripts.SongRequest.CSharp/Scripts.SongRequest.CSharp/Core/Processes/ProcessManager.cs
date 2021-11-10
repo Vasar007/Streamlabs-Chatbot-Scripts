@@ -3,8 +3,12 @@ using System.Threading.Tasks;
 
 namespace Scripts.SongRequest.CSharp.Core.Processes
 {
-    public static class ProcessManager
+    public sealed class ProcessManager
     {
+        public ProcessManager()
+        {
+        }
+
         private static ProcessLaunchContext CreateContextForOpenFile(FileInfo file)
         {
             return ProcessLaunchContext.Create(
@@ -15,7 +19,7 @@ namespace Scripts.SongRequest.CSharp.Core.Processes
             );
         }
 
-        public static void OpenFileWithAssociatedApp(FileInfo file)
+        public void OpenFileWithAssociatedApp(FileInfo file)
         {
             var launchContext = CreateContextForOpenFile(file);
 
@@ -23,7 +27,7 @@ namespace Scripts.SongRequest.CSharp.Core.Processes
             runner.Wait();
         }
 
-        public static async Task OpenFileWithAssociatedAppAsync(FileInfo file)
+        public async Task OpenFileWithAssociatedAppAsync(FileInfo file)
         {
             var launchContext = CreateContextForOpenFile(file);
 
@@ -41,7 +45,7 @@ namespace Scripts.SongRequest.CSharp.Core.Processes
             );
         }
 
-        public static string GetOutput(string fileName, string? args)
+        public string GetOutput(string fileName, string? args)
         {
             var launchContext = CreateContextForGetOutput(fileName, args);
 
@@ -51,7 +55,7 @@ namespace Scripts.SongRequest.CSharp.Core.Processes
             return runner.GetAllOutput();
         }
 
-        public static async Task<string> GetOutputAsync(string fileName, string? args)
+        public async Task<string> GetOutputAsync(string fileName, string? args)
         {
             var launchContext = CreateContextForGetOutput(fileName, args);
 

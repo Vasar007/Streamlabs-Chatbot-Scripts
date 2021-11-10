@@ -117,7 +117,9 @@ namespace Scripts.SongRequest.TestConsoleApp
         {
             string fileName = "reg.exe";
             string args = "query HKEY_CURRENT_USER\\Software\\Google\\Chrome\\BLBeacon /v version";
-            string output = ProcessManager.GetOutput(fileName, args);
+
+            var manager = new ProcessManager();
+            string output = manager.GetOutput(fileName, args);
 
             Logger.Info($"Result of the output: {output}");
 
@@ -129,7 +131,9 @@ namespace Scripts.SongRequest.TestConsoleApp
         {
             string fileName = "C:\\Program Files\\Common Files\\Webdrivers\\chromedriver.exe";
             string args = "-v";
-            string output = ProcessManager.GetOutput(fileName, args);
+
+            var manager = new ProcessManager();
+            string output = manager.GetOutput(fileName, args);
 
             Logger.Info($"Result of the output: {output}");
 

@@ -17,6 +17,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
+    <PackageReference Include="WebDriverManager" Version="2.12.2" />
   </ItemGroup>
 
 </Project>
