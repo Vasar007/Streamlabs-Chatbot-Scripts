@@ -19,7 +19,7 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
         {
             logger.Info($"Creating web scrapper for driver '{settings.SelectedBrowserDriver.Value}'.");
             logger.Info($"WebDriver path: [{settings.BrowserDriverPath.Value}].");
-            logger.Info($"WebDriver executable name: [{settings.BrowserDriverExecutableName.Value}].");
+            logger.Info($"WebDriver executable name: [{settings.BrowserDriverExecutableName.GetFullFilename()}].");
 
             var webDriver = CreateWebDriver(settings);
             return new HttpWebScrapper(settings, logger, webDriver);
@@ -51,10 +51,10 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
 
             bool enableWebDriverDebug = settings.EnableWebDriverDebug;
             FilePath driverDirPath = settings.BrowserDriverPath;
-            FileName driverExecutableFileName = settings.BrowserDriverExecutableName;
+            string driverExecutableFileName = settings.BrowserDriverExecutableName.GetFullFilename();
 
             var driverService = scope.Capture(
-                EdgeDriverService.CreateDefaultService(driverDirPath.Value, driverExecutableFileName.Value)
+                EdgeDriverService.CreateDefaultService(driverDirPath.Value, driverExecutableFileName)
             );
             SetCommonDriverServiceSettings(driverService, enableWebDriverDebug);
             driverService.UseVerboseLogging = enableWebDriverDebug;
@@ -75,10 +75,10 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
 
             bool enableWebDriverDebug = settings.EnableWebDriverDebug;
             FilePath driverDirPath = settings.BrowserDriverPath;
-            FileName driverExecutableFileName = settings.BrowserDriverExecutableName;
+            string driverExecutableFileName = settings.BrowserDriverExecutableName.GetFullFilename();
 
             var driverService = scope.Capture(
-                ChromeDriverService.CreateDefaultService(driverDirPath.Value, driverExecutableFileName.Value)
+                ChromeDriverService.CreateDefaultService(driverDirPath.Value, driverExecutableFileName)
             );
             SetCommonDriverServiceSettings(driverService, enableWebDriverDebug);
             driverService.EnableVerboseLogging = enableWebDriverDebug;
@@ -101,10 +101,10 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
 
             bool enableWebDriverDebug = settings.EnableWebDriverDebug;
             FilePath driverDirPath = settings.BrowserDriverPath;
-            FileName driverExecutableFileName = settings.BrowserDriverExecutableName;
+            string driverExecutableFileName = settings.BrowserDriverExecutableName.GetFullFilename();
 
             var driverService = scope.Capture(
-                FirefoxDriverService.CreateDefaultService(driverDirPath.Value, driverExecutableFileName.Value)
+                FirefoxDriverService.CreateDefaultService(driverDirPath.Value, driverExecutableFileName)
             );
             SetCommonDriverServiceSettings(driverService, enableWebDriverDebug);
 
@@ -126,10 +126,10 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
 
             bool enableWebDriverDebug = settings.EnableWebDriverDebug;
             FilePath driverDirPath = settings.BrowserDriverPath;
-            FileName driverExecutableFileName = settings.BrowserDriverExecutableName;
+            string driverExecutableFileName = settings.BrowserDriverExecutableName.GetFullFilename();
 
             var driverService = scope.Capture(
-                OperaDriverService.CreateDefaultService(driverDirPath.Value, driverExecutableFileName.Value)
+                OperaDriverService.CreateDefaultService(driverDirPath.Value, driverExecutableFileName)
             );
             SetCommonDriverServiceSettings(driverService, enableWebDriverDebug);
             driverService.EnableVerboseLogging = enableWebDriverDebug;

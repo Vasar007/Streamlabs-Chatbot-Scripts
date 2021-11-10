@@ -9,7 +9,7 @@ namespace Scripts.SongRequest.TestConsoleApp.Mocks
         public const string ParameterAll = "all";
 
         public static readonly FilePath BrowserDriverPath = new("C:\\Program Files\\Common Files\\Webdrivers");
-        public static readonly FileName BrowserDriverExecutableName = new("chromedriver.exe");
+        public static readonly FileName BrowserDriverExecutableName = new("chromedriver", "exe");
 
         public static readonly WebDriverType SelectedBrowserDriver = WebDriverType.ChromeDriver;
 

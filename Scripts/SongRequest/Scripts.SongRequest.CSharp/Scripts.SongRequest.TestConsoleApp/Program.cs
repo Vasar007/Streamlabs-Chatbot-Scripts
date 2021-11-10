@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using Acolyte.Common;
 using Scripts.SongRequest.CSharp.Core.Models;
+using Scripts.SongRequest.CSharp.Core.Processes;
 using Scripts.SongRequest.CSharp.Logging;
 using Scripts.SongRequest.CSharp.Models.Requests;
 using Scripts.SongRequest.CSharp.Web.Scrapper;
@@ -21,8 +25,14 @@ namespace Scripts.SongRequest.TestConsoleApp
                 ConsoleHelper.SetupUnicodeEncoding();
                 Console.WriteLine("Console application started.");
 
-                TestAddSongRequest(args);
-                TestSkipSongRequest(args);
+                if (args.Length == 1)
+                {
+                    TestAddSongRequest(args);
+                    TestSkipSongRequest(args);
+                }
+                TestGetChromeVersionViaProcess();
+                TestGetChromeDriverVersionViaProcess();
+
                 Console.WriteLine("All tests were performed.");
 
                 return ExitCodes.Success;
@@ -101,6 +111,30 @@ namespace Scripts.SongRequest.TestConsoleApp
 
             var httpLink = new HttpLink(args[0]);
             return httpLink;
+        }
+
+        private static void TestGetChromeVersionViaProcess()
+        {
+            string fileName = "reg.exe";
+            string args = "query HKEY_CURRENT_USER\\Software\\Google\\Chrome\\BLBeacon /v version";
+            string output = ProcessManager.GetOutput(fileName, args);
+
+            Logger.Info($"Result of the output: {output}");
+
+            string finalResult = output.Split(" ", StringSplitOptions.RemoveEmptyEntries).Last();
+            Logger.Info($"Final result: {finalResult}");
+        }
+
+        private static void TestGetChromeDriverVersionViaProcess()
+        {
+            string fileName = "C:\\Program Files\\Common Files\\Webdrivers\\chromedriver.exe";
+            string args = "-v";
+            string output = ProcessManager.GetOutput(fileName, args);
+
+            Logger.Info($"Result of the output: {output}");
+
+            string finalResult = output.Split(" ", StringSplitOptions.RemoveEmptyEntries).ElementAt(1);
+            Logger.Info($"Final result: {finalResult}");
         }
     }
 }

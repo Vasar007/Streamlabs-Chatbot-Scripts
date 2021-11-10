@@ -148,6 +148,29 @@ class SongRequestSettings(object):
         logger.info("Using mod IDs to whisper: {0}".format(mod_ids))
         return mod_ids
 
+    def get_full_browser_driver_filename(self):
+        """
+        Returns the filename of the binary for the current platform.
+        :return: Binary filename.
+        """
+        should_add_extension = (
+            helpers.is_windows_platform() and
+            not self.BrowserDriverExecutableName.endswith(self.BrowserDriverWindowsExtension)
+        )
+
+        if should_add_extension:
+            return self.BrowserDriverExecutableName + self.BrowserDriverWindowsExtension
+
+        return self.BrowserDriverExecutableName
+
+    def get_full_browser_driver_filepath(self):
+        """
+        Returns the full filepath of the binary for the current platform.
+        :return: Full filepath.
+        """
+        browser_driver_filename = self.get_full_browser_driver_filename()
+        return os.path.join(self.BrowserDriverPath, browser_driver_filename)
+
     def _are_strings_equal(self, value1, value2):
         return value1.lower() == value2.lower()
 
@@ -159,6 +182,10 @@ class SongRequestSettings(object):
 
     def is_reset_subcommand(self, value):
         return self._are_strings_equal(value, config.SubcommandResetNumberOfOrderedSongRequests)
+        
+    def supports_autoinstall(self):
+        # We provide autoinstall for Chrome only.
+        return self._are_strings_equal(self.SelectedBrowserDriver, config.ChromeDriver)
 
     def _set_default(self):
         # Commands group.
@@ -194,6 +221,7 @@ class SongRequestSettings(object):
         self.SelectedBrowserDriver = config.SelectedBrowserDriver
         self.BrowserDriverPath = config.BrowserDriverPath
         self.BrowserDriverExecutableName = config.BrowserDriverExecutableName
+        self.BrowserDriverWindowsExtension = config.BrowserDriverWindowsExtension
         self.ElementIdOfNewSongTextField = config.ElementIdOfNewSongTextField
         self.ElementIdOfAddSongButton = config.ElementIdOfAddSongButton
         self.ClassNameOfNotificationIcon = config.ClassNameOfNotificationIcon
@@ -247,6 +275,8 @@ class SongRequestSettings(object):
         self.SkipCurrentSongRequestMessage = config.SkipCurrentSongRequestMessage
         self.NoSongRequestsToSkipMessage = config.NoSongRequestsToSkipMessage
         self.FailedToSkipSongRequestsMessage = config.FailedToSkipSongRequestsMessage
+        self.AutoInstallOrUpdateBrowserDriverMessage = config.AutoInstallOrUpdateBrowserDriverMessage
+        self.FailedToValidateBrowserDriverMessage = config.FailedToValidateBrowserDriverMessage
 
         # Debugging group.
         self.LoggingLevel = config.LoggingLevel
@@ -374,7 +404,14 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
 
     @property
     def BrowserDriverExecutableName(self):
-        return helpers.wrap_file_name(self._settings.BrowserDriverExecutableName)
+        return helpers.wrap_file_name(
+            self._settings.BrowserDriverExecutableName,
+            self._settings.BrowserDriverWindowsExtension
+        )
+
+    @property
+    def BrowserDriverWindowsExtension(self):
+        return self._settings.BrowserDriverWindowsExtension
 
     @property
     def ElementIdOfNewSongTextField(self):
@@ -573,6 +610,14 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
     @property
     def FailedToSkipSongRequestsMessage(self):
         return self._settings.FailedToSkipSongRequestsMessage
+
+    @property
+    def AutoInstallOrUpdateBrowserDriverMessage(self):
+        return self._settings.AutoInstallOrUpdateBrowserDriverMessage
+
+    @property
+    def FailedToValidateBrowserDriverMessage(self):
+        return self._settings.FailedToValidateBrowserDriverMessage
 
     # Debugging group.
     @property

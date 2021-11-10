@@ -2,6 +2,7 @@
 
 # Contains some helpful miscellaneous functions.
 
+import sys
 import os
 import re
 import time
@@ -274,6 +275,14 @@ def lazy_property(fn):
     return _lazy_property
 
 
+def is_windows_platform():
+    current_platform = sys.platform.lower()
+    return (
+        current_platform.startswith("win") or
+        current_platform.startswith("cli")
+    )
+
+
 def wrap_user_name(raw_value):
     """
     Returns wrapped user name record for C# part of the script.
@@ -316,8 +325,8 @@ def wrap_file_path(raw_value):
     return FilePath(raw_value)
 
 
-def wrap_file_name(raw_value):
+def wrap_file_name(raw_value, extension=None):
     """
     Returns wrapped file name record for C# part of the script.
     """
-    return FileName(raw_value)
+    return FileName(raw_value, extension)

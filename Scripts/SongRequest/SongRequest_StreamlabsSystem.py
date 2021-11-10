@@ -47,6 +47,9 @@ from song_request_settings import SongRequestCSharpSettings as CSharpSettings
 # pylint:disable=import-error
 from song_request_command_wrapper import SongRequestCommandWrapper as CommandWrapper
 
+# pylint:disable=import-error
+import song_request_drive_autoinstaller as autoinstaller
+
 import song_request_manager  # pylint:disable=import-error
 
 # Import your Settings class.
@@ -101,6 +104,9 @@ def Init():
 
     # Initialize global variables.
     helpers.init_logging(ParentHandler, ScriptSettings)
+
+    # Validate browser driver.
+    autoinstaller.ensure_browser_driver_is_installed(ScriptSettings, Logger())
 
     global PageScrapper
     PageScrapper = HttpWebScrapperFactory.Create(

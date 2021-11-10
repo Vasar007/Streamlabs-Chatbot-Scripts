@@ -5,14 +5,14 @@ Helper functions for filename and URL generation.
 
 import sys
 import os
-import subprocess
+import re
 import zipfile
 import xml.etree.ElementTree as elemTree
-import logging
-import re
 
-from six.moves import urllib
 from io import BytesIO
+from six.moves import urllib
+
+import song_request_helpers as helpers
 
 
 try:
@@ -22,22 +22,12 @@ except ImportError:
     DEVNULL = open(os.devnull, 'wb')
 
 
-def get_chromedriver_filename():
-    """
-    Returns the filename of the binary for the current platform.
-    :return: Binary filename
-    """
-    if sys.platform.startswith("win"):
-        return "chromedriver.exe"
-    return "chromedriver"
-
-
 def get_variable_separator():
     """
     Returns the environment variable separator for the current platform.
     :return: Environment variable separator
     """
-    if sys.platform.startswith("win"):
+    if helpers.is_windows_platform():
         return ";"
     return ":"
 
@@ -49,7 +39,7 @@ def get_platform_architecture():
     elif sys.platform == "darwin":
         platform = "mac"
         architecture = "64"
-    elif sys.platform.startswith("win"):
+    elif helpers.is_windows_platform():
         platform = "win"
         architecture = "32"
     else:
@@ -85,10 +75,14 @@ def find_binary_in_path(filename):
     return None
 
 
-def check_version(binary, required_version):
+def get_chromedriver_version(chromedriver_path):
+    version = subprocess.check_output([chromedriver_path, "-v"])
+    return re.match(r".*?([\d.]+).*?", version.decode("utf-8"))[1]
+
+
+def check_version(chromedriver_path, required_version):
     try:
-        version = subprocess.check_output([binary, "-v"])
-        version = re.match(r".*?([\d.]+).*?", version.decode("utf-8"))[1]
+        version = get_chromedriver_version(chromedriver_path)
         if version == required_version:
             return True
     except Exception:
@@ -121,8 +115,8 @@ def get_chrome_version():
 
 def get_major_version(version):
     """
-    :param version: the version of chrome
-    :return: the major version of chrome
+    :param version: the full version.
+    :return: the major version of input value.
     """
     return version.split(".")[0]
 
@@ -137,7 +131,7 @@ def get_matched_chromedriver_version(version):
     for k in root.iter("{http://doc.s3.amazonaws.com/2006-03-01}Key"):
         if k.text.find(get_major_version(version) + ".") == 0:
             return k.text.split("/")[0]
-    return
+    return None
 
 
 def get_chromedriver_path():
@@ -151,44 +145,43 @@ def print_chromedriver_path():
     """
     Print the path of the chromedriver binary.
     """
-    print(get_chromedriver_path())
+    print get_chromedriver_path()
 
 
-def download_chromedriver(path=None):
+def download_chromedriver(settings, logger):
     """
     Downloads, unzips and installs chromedriver.
     If a chromedriver binary is found in PATH it will be copied, otherwise downloaded.
 
-    :param str path: Path of the directory where to save the downloaded chromedriver to.
-    :return: The file path of chromedriver
+    :param SongRequestSettings settings: Instance of the script settings.
+    :param SongRequestLogger logger: Instance of logger.
+    :return: The file path of chromedriver.
     """
+    logger.info("Trying to download, unzip and installs chromedriver.")
+
     chrome_version = get_chrome_version()
     if not chrome_version:
-        logging.debug("Chrome is not installed.")
+        logger.debug("Chrome is not installed.")
         return
     chromedriver_version = get_matched_chromedriver_version(chrome_version)
     if not chromedriver_version:
-        logging.warning("Can not find chromedriver for currently installed chrome version.")
+        logger.warning("Can not find chromedriver for currently installed chrome version.")
         return
     major_version = get_major_version(chromedriver_version)
+    logger.info(
+        settings.AutoInstallOrUpdateBrowserDriverMessage
+        .format(settings.SelectedBrowserDriver, major_version)
+    )
 
-    if path:
-        if not os.path.isdir(path):
-            raise ValueError("Invalid path: {0}".format(path))
-        chromedriver_dir = os.path.join(
-            os.path.abspath(path),
-            major_version
-        )
-    else:
-        chromedriver_dir = os.path.join(
-            os.path.abspath(os.path.dirname(__file__)),
-            major_version
-        )
-    chromedriver_filename = get_chromedriver_filename()
+    if not os.path.isdir(settings.BrowserDriverPath):
+        raise ValueError("Invalid path: {0}".format(settings.BrowserDriverPath))
+    chromedriver_dir = settings.BrowserDriverPath
+  
+    chromedriver_filename = settings.get_full_browser_driver_filename()
     chromedriver_filepath = os.path.join(chromedriver_dir, chromedriver_filename)
     if not os.path.isfile(chromedriver_filepath) or \
             not check_version(chromedriver_filepath, chromedriver_version):
-        logging.info("Downloading chromedriver ({0})...".format(chromedriver_version))
+        logger.info("Downloading chromedriver ({0})...".format(chromedriver_version))
         if not os.path.isdir(chromedriver_dir):
             os.makedirs(chromedriver_dir)
         url = get_chromedriver_url(version=chromedriver_version)
@@ -202,12 +195,43 @@ def download_chromedriver(path=None):
         with zipfile.ZipFile(archive) as zip_file:
             zip_file.extract(chromedriver_filename, chromedriver_dir)
     else:
-        logging.info("Chromedriver is already installed.")
+        logger.info("Chromedriver is already installed.")
+
     if not os.access(chromedriver_filepath, os.X_OK):
         os.chmod(chromedriver_filepath, 0o744)
     return chromedriver_filepath
 
 
-if __name__ == "__main__":
-    print get_chrome_version()
-    print download_chromedriver()
+def autoinstall_or_update_browser_driver(settings, logger):
+    # We provide autoinstall for Chrome only.
+    download_chromedriver(settings, logger)
+
+
+def ensure_browser_driver_is_installed(settings, logger):
+    browser_driver = settings.get_full_browser_driver_filepath()
+
+    logger.info(
+        "Checking browser driver in {0} for selected {1}."
+        .format(browser_driver, settings.SelectedBrowserDriver)
+    )  # debug
+
+    # Check whether browser file exists.
+    if os.path.exists(browser_driver):
+        # If autoupdate is not supported, finish validation.
+        if not settings.supports_autoinstall():
+            logger.info("Browser driver installed, autoupdate is not supported.")
+            return
+
+        # If it exists, then try to check driver and autoupdate if needed.
+        autoinstall_or_update_browser_driver(settings, logger)
+    else:
+        # If it is not exist, check that script can autoinstall it.
+        if not settings.supports_autoinstall():
+            # If cannot, raise exception.
+            raise RuntimeError(
+                settings.FailedToValidateBrowserDriverMessage
+                .format(settings.SelectedBrowserDriver)
+            )
+
+        # If can, autoinstall it.
+        autoinstall_or_update_browser_driver(settings, logger)

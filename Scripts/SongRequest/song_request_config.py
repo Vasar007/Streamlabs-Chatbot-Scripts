@@ -115,7 +115,8 @@ FilterNonChatMessages = False
 EnableWebDriverDebug = False
 
 BrowserDriverPath = "C:\\Program Files\\Common Files\\Webdrivers"
-BrowserDriverExecutableName = "chromedriver.exe"
+BrowserDriverExecutableName = "chromedriver"
+BrowserDriverWindowsExtension = ".exe"
 
 EdgeDriver = "Edge"
 ChromeDriver = "Chromium/Chrome"
@@ -179,3 +180,5 @@ SkipAllSongRequestsMessage = "{0}, all song requests were skipped."
 SkipCurrentSongRequestMessage = "{0}, current song requests was skipped."
 NoSongRequestsToSkipMessage = "No songs in playlist available to skip."
 FailedToSkipSongRequestsMessage = "{0}, failed to skip song requests: {1}"
+AutoInstallOrUpdateBrowserDriverMessage = "Browser driver for {0} version {1} will be installed or updated by script. In case of failure you have to install it by yourself."
+FailedToValidateBrowserDriverMessage = "Failed to validate browser driver for {0}: you have to install it by yourself."

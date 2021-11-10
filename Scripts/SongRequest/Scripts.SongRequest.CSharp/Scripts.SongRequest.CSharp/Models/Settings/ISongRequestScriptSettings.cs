@@ -51,6 +51,7 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         WebDriverType SelectedBrowserDriver { get; }
         FilePath BrowserDriverPath { get; }
         FileName BrowserDriverExecutableName { get; }
+        string BrowserDriverWindowsExtension { get; }
         string ElementIdOfNewSongTextField { get; }
         string ElementIdOfAddSongButton { get; }
         string ClassNameOfNotificationIcon { get; }
@@ -112,6 +113,8 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         string SkipCurrentSongRequestMessage { get; }
         string NoSongRequestsToSkipMessage { get; }
         string FailedToSkipSongRequestsMessage { get; }
+        string AutoInstallOrUpdateBrowserDriverMessage { get; }
+        string FailedToValidateBrowserDriverMessage { get; }
 
         #endregion
 
