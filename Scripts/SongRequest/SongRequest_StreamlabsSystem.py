@@ -100,18 +100,6 @@ def Init():
     # Initialize global variables.
     helpers.init_logging(ParentHandler, ScriptSettings)
 
-    # Create Web Scrapper and validate web driver for selected browser.
-    global PageScrapper
-    PageScrapper = HttpWebScrapperFactory.Create(
-        CSharpSettings(ScriptSettings),
-        CSharpLogWrapper(Logger())
-    )
-
-    global Manager
-    Manager = song_request_manager.create_manager(
-        ParentHandler, ScriptSettings, Logger(), PageScrapper
-    )
-
     Logger().info("Script successfully initialized.")
 
 
@@ -134,6 +122,17 @@ def Execute(data):
         if parsed_command.is_unknown_command():
             return
 
+        # If script is not fully initialized, skip processing.
+        if not DidPageOpenned:
+            notInitializedMessage = (
+                ScriptSettings.FailedToUseNotInitializedScriptMessage
+                .format(data_wrapper.user_name, ScriptName)
+            )
+            Logger().info(notInitializedMessage)
+            # Cannot use "Manager" here because it can be None.
+            ParentHandler.send_stream_message(notInitializedMessage)
+            return
+
         # Check if it is invalid command call.
         if parsed_command.is_invalid_command_call():
             # If user doesn't have permission, write about it at first.
@@ -150,7 +149,7 @@ def Execute(data):
                 .format(parsed_command.command, parsed_command.usage_example)
             )
             Logger().debug(message)
-            ParentHandler.send_stream_message(message)
+            Manager.get_messenger().send_message(message)
             return
 
         # If user doesn't have permission, "func" will be equal to "None".
@@ -186,6 +185,19 @@ def Tick():
 
     if not DidPageOpenned:
         DidPageOpenned = True
+
+        # Create Web Scrapper and validate web driver for selected browser.
+        global PageScrapper
+        PageScrapper = HttpWebScrapperFactory.Create(
+            CSharpSettings(ScriptSettings),
+            CSharpLogWrapper(Logger())
+        )
+
+        global Manager
+        Manager = song_request_manager.create_manager(
+            ParentHandler, ScriptSettings, Logger(), PageScrapper
+        )
+
         PageScrapper.OpenUrl()
 
     Manager.run_dispatch()
@@ -201,7 +213,8 @@ def ReloadSettings(jsondata):
         ScriptSettings.reload(jsondata)
         ScriptSettings.save(SettingsFile)
 
-        PageScrapper.OpenUrl()
+        if PageScrapper:
+            PageScrapper.OpenUrl()
     except Exception as ex:
         Logger().exception(
             "Failed to save or reload settings to file: " + str(ex)

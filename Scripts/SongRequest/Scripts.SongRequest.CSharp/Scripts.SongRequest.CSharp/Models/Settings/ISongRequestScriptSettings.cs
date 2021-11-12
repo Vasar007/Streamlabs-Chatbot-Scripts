@@ -78,6 +78,7 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
 
         #region Chat Messages Group
 
+        string FailedToUseNotInitializedScriptMessage { get; }
         string InvalidCommandCallMessage { get; }
         string TimeRemainingMessage { get; }
         string OptionValueTheSameMessage { get; }

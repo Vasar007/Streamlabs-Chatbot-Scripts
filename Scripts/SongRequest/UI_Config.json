@@ -323,6 +323,13 @@
         "group": "Permission"
     },
 
+    "FailedToUseNotInitializedScriptMessage": {
+        "type": "textbox",
+        "value": "{0}, {1} is not fully initialized. Please, try again later.",
+        "label": "Failed To Use Not Initialized Script Message",
+        "tooltip": "Chat message will be sent if any script's command is invoked during script initialization. 0 — user name, 1 — script name.",
+        "group": "Chat Messages"
+    },
     "InvalidCommandCallMessage": {
         "type": "textbox",
         "value": "Invalid {0} command call. Usage: {1}",

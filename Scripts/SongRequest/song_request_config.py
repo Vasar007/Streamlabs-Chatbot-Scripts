@@ -80,7 +80,7 @@ ScriptName = "Song Request Script"
 Website = "https://github.com/Vasar007/Streamlabs-Chatbot-Scripts"
 Description = "Extended song request script."
 Creator = "Vasar007"
-Version = "1.2.0"
+Version = "1.3.0"
 
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).
@@ -144,6 +144,7 @@ PermissionInfoOnManageSongRequest = ""
 
 PermissionDeniedMessage = "Permission denied: You have to be a {0} to use {1} command!"
 
+FailedToUseNotInitializedScriptMessage = "{0}, {1} is not fully initialized. Please, try again later."
 InvalidCommandCallMessage = "Invalid {0} command call. Usage: {1}"
 TimeRemainingMessage = "Command {0} is on cooldown. Time remaining: {1} (seconds)."
 OptionValueTheSameMessage = "{0}, option {1} value cannot be changed to the same value [{2}]"

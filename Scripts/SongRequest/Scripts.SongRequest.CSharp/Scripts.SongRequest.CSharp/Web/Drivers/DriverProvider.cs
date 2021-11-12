@@ -65,22 +65,22 @@ namespace Scripts.SongRequest.CSharp.Web.Drivers
                 // If it is exist, check whether we can resolve it version or not.
                 if (!canAutoResolveVersion)
                 {
-                    _logger.Debug("Browser driver installed, cannot check version, update will be skipped.");
+                    _logger.Info("Browser driver installed, cannot check version, update will be skipped.");
                     return fullDriverPath;
                 }
 
                 // If we can autoupdate it, check whether we should update it or not.
                 if (ChromeVersionChecker.DoesDriverVersionEqualToBrowser(fullDriverPath))
                 {
-                    _logger.Debug("Appropriate browser driver installed, update is not required.");
+                    _logger.Info("Appropriate browser driver installed, update is not required.");
                     return fullDriverPath;
                 }
 
-                _logger.Debug("Browser driver must be updated.");
+                _logger.Info("Browser driver must be updated.");
             }
             else
             {
-                _logger.Debug("Browser driver is not installed.");
+                _logger.Info("Browser driver is not installed.");
             }
 
             // Install or update driver.
@@ -98,10 +98,7 @@ namespace Scripts.SongRequest.CSharp.Web.Drivers
 
         private string AutoInstallOrUpdateDriver(bool canAutoResolveVersion)
         {
-
             string driverVersionToUse = _driverVersion.GetActualValueToUse(canAutoResolveVersion);
-            _logger.Debug($"Driver version to use based on settings: '{driverVersionToUse}'.");
-
             _logger.Info($"Browser driver for {_driverConfig.GetName()} version {driverVersionToUse} will be installed or updated by script. In case of failure you have to install it by yourself.");
 
             string binaryPath = _customDriverManager.SetUpDriver(

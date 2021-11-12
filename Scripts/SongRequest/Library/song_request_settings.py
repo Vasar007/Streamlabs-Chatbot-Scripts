@@ -213,6 +213,7 @@ class SongRequestSettings(object):
         self.PermissionDeniedMessage = config.PermissionDeniedMessage
 
         # Chat Messages group.
+        self.FailedToUseNotInitializedScriptMessage = config.FailedToUseNotInitializedScriptMessage
         self.InvalidCommandCallMessage = config.InvalidCommandCallMessage
         self.TimeRemainingMessage = config.TimeRemainingMessage
         self.OptionValueTheSameMessage = config.OptionValueTheSameMessage
@@ -438,6 +439,10 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
         return self._settings.PermissionDeniedMessage
     
     # Chat Messages group.
+    @property
+    def FailedToUseNotInitializedScriptMessage(self):
+        return self._settings.FailedToUseNotInitializedScriptMessage
+
     @property
     def InvalidCommandCallMessage(self):
         return self._settings.InvalidCommandCallMessage
