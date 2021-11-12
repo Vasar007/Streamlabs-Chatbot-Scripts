@@ -64,10 +64,7 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
             SetCommonDriverServiceSettings(driverService, enableWebDriverDebug);
             driverService.UseVerboseLogging = enableWebDriverDebug;
 
-            var options = new EdgeOptions
-            {
-                UseInPrivateBrowsing = !enableWebDriverDebug
-            };
+            var options = new EdgeOptions();
 
             var driver = new EdgeDriver(driverService, options);
             return scope.ReleaseAllAndReturn(driver);
