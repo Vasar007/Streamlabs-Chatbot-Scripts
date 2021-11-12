@@ -15,6 +15,7 @@ namespace Scripts.SongRequest.TestConsoleApp.Mocks
             mock.Setup(x => x.EnableWebDriverDebug).Returns(TestConfig.EnableWebDriverDebug);
             mock.Setup(x => x.BrowserDriverPath).Returns(TestConfig.BrowserDriverPath);
             mock.Setup(x => x.BrowserDriverExecutableName).Returns(TestConfig.BrowserDriverExecutableName);
+            mock.Setup(x => x.BrowserDriverVersion).Returns(TestConfig.BrowserDriverVersion);
             mock.Setup(x => x.SelectedBrowserDriver).Returns(TestConfig.SelectedBrowserDriver);
             mock.Setup(x => x.HttpPageLinkToParse).Returns(httpPageLink);
             mock.Setup(x => x.TimeoutToWaitInMilliseconds).Returns(TestConfig.TimeoutToWaitInMilliseconds);

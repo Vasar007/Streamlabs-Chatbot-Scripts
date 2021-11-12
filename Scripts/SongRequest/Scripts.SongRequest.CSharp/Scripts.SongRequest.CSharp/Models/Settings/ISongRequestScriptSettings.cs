@@ -1,5 +1,6 @@
 ﻿using Scripts.SongRequest.CSharp.Core.Models;
 using Scripts.SongRequest.CSharp.Logging;
+using Scripts.SongRequest.CSharp.Models.Drivers;
 
 namespace Scripts.SongRequest.CSharp.Models.Settings
 {
@@ -51,7 +52,7 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         WebDriverType SelectedBrowserDriver { get; }
         FilePath BrowserDriverPath { get; }
         FileName BrowserDriverExecutableName { get; }
-        string BrowserDriverWindowsExtension { get; }
+        DriverVersion BrowserDriverVersion { get; }
         string ElementIdOfNewSongTextField { get; }
         string ElementIdOfAddSongButton { get; }
         string ClassNameOfNotificationIcon { get; }

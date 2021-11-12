@@ -8,6 +8,7 @@ using Scripts.SongRequest.CSharp.Core.Helpers;
 using Scripts.SongRequest.CSharp.Core.Models;
 using Scripts.SongRequest.CSharp.Logging;
 using Scripts.SongRequest.CSharp.Models.Settings;
+using Scripts.SongRequest.CSharp.Web.Drivers;
 
 namespace Scripts.SongRequest.CSharp.Web.Scrapper
 {
@@ -21,12 +22,16 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
             logger.Info($"WebDriver path: [{settings.BrowserDriverPath.Value}].");
             logger.Info($"WebDriver executable name: [{settings.BrowserDriverExecutableName.GetFullFilename()}].");
 
-            var webDriver = CreateWebDriver(settings);
+            var webDriver = CreateWebDriver(settings, logger);
             return new HttpWebScrapper(settings, logger, webDriver);
         }
 
-        private static IWebDriver CreateWebDriver(ISongRequestScriptSettings settings)
+        private static IWebDriver CreateWebDriver(
+            ISongRequestScriptSettings settings,
+            IScriptLogger logger)
         {
+            EnsureBrowserDriverIsInstalled(settings, logger);
+
             return settings.SelectedBrowserDriver.Value switch
             {
                 WebDriverType.RawEdgeDriver => CreateEdgeDriver(settings),
@@ -65,8 +70,7 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
             };
 
             var driver = new EdgeDriver(driverService, options);
-            scope.ReleaseAll();
-            return driver;
+            return scope.ReleaseAllAndReturn(driver);
         }
 
         private static IWebDriver CreateChromeDriver(ISongRequestScriptSettings settings)
@@ -86,13 +90,12 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
             var options = new ChromeOptions();
             if (!enableWebDriverDebug)
             {
-                options.AddArgument("headless");
-                options.AddArgument("mute-audio");
+                options.AddArgument(WebDriverArguments.Headless);
+                options.AddArgument(WebDriverArguments.MuteAudio);
             }
 
             var driver = new ChromeDriver(driverService, options);
-            scope.ReleaseAll();
-            return driver;
+            return scope.ReleaseAllAndReturn(driver);
         }
 
         private static IWebDriver CreateFirefoxDriver(ISongRequestScriptSettings settings)
@@ -111,13 +114,12 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
             var options = new FirefoxOptions();
             if (!enableWebDriverDebug)
             {
-                options.AddArgument("headless");
-                options.AddArgument("mute-audio");
+                options.AddArgument(WebDriverArguments.Headless);
+                options.AddArgument(WebDriverArguments.MuteAudio);
             }
 
             var driver = new FirefoxDriver(driverService);
-            scope.ReleaseAll();
-            return driver;
+            return scope.ReleaseAllAndReturn(driver);
         }
 
         private static IWebDriver CreateOperaDriver(ISongRequestScriptSettings settings)
@@ -137,13 +139,12 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
             var options = new OperaOptions();
             if (!enableWebDriverDebug)
             {
-                options.AddArgument("headless");
-                options.AddArgument("mute-audio");
+                options.AddArgument(WebDriverArguments.Headless);
+                options.AddArgument(WebDriverArguments.MuteAudio);
             }
 
             var driver = new OperaDriver(driverService, options);
-            scope.ReleaseAll();
-            return driver;
+            return scope.ReleaseAllAndReturn(driver);
         }
 
         private static void SetCommonDriverServiceSettings(DriverService driverService,
@@ -151,6 +152,14 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
         {
             driverService.SuppressInitialDiagnosticInformation = enableWebDriverDebug;
             driverService.HideCommandPromptWindow = !enableWebDriverDebug;
+        }
+
+        private static void EnsureBrowserDriverIsInstalled(
+            ISongRequestScriptSettings settings,
+            IScriptLogger logger)
+        {
+            var driverProvider = DriverProviderFactory.Create(settings, logger);
+            driverProvider.ProvideBrowserDriver();
         }
     }
 }

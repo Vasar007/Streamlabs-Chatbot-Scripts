@@ -32,6 +32,12 @@ namespace Scripts.SongRequest.CSharp.Core.Helpers
             _disposables.Clear();
         }
 
+        public T ReleaseAllAndReturn<T>(T value)
+        {
+            ReleaseAll();
+            return value;
+        }
+
         #region IDisposable Implementation
 
         private bool _disposed;

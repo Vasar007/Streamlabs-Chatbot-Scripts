@@ -216,16 +216,16 @@
     },
     "BrowserDriverExecutableName": {
         "type": "textbox",
-        "value": "chromedriver",
+        "value": "chromedriver.exe",
         "label": "Browser Driver Executable Name",
         "tooltip": "Browser driver executable name in driver path.",
         "group": "Parsing"
     },
-    "BrowserDriverWindowsExtension": {
+    "BrowserDriverVersion": {
         "type": "textbox",
-        "value": ".exe",
-        "label": "Browser Driver File Extension",
-        "tooltip": "Browser driver file extension for Windows platform.",
+        "value": "Auto",
+        "label": "Browser Driver Version",
+        "tooltip": "Browser driver version to install or update.",
         "group": "Parsing"
     },
     "ElementIdOfNewSongTextField": {

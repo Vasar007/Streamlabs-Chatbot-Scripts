@@ -115,8 +115,8 @@ FilterNonChatMessages = False
 EnableWebDriverDebug = False
 
 BrowserDriverPath = "C:\\Program Files\\Common Files\\Webdrivers"
-BrowserDriverExecutableName = "chromedriver"
-BrowserDriverWindowsExtension = ".exe"
+BrowserDriverExecutableName = "chromedriver.exe"
+BrowserDriverVersion = "Auto"
 
 EdgeDriver = "Edge"
 ChromeDriver = "Chromium/Chrome"

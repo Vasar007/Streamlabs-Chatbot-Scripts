@@ -1,4 +1,5 @@
 ﻿using Scripts.SongRequest.CSharp.Core.Models;
+using Scripts.SongRequest.CSharp.Models.Drivers;
 using Scripts.SongRequest.CSharp.Models.Settings;
 
 namespace Scripts.SongRequest.TestConsoleApp.Mocks
@@ -9,7 +10,8 @@ namespace Scripts.SongRequest.TestConsoleApp.Mocks
         public const string ParameterAll = "all";
 
         public static readonly FilePath BrowserDriverPath = new("C:\\Program Files\\Common Files\\Webdrivers");
-        public static readonly FileName BrowserDriverExecutableName = new("chromedriver", "exe");
+        public static readonly FileName BrowserDriverExecutableName = new("chromedriver", ".exe");
+        public static readonly DriverVersion BrowserDriverVersion = DriverVersion.Auto;
 
         public static readonly WebDriverType SelectedBrowserDriver = WebDriverType.ChromeDriver;
 

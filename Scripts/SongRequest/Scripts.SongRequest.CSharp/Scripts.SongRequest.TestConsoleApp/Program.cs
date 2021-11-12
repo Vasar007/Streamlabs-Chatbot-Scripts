@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Acolyte.Common;
 using Scripts.SongRequest.CSharp.Core.Models;
 using Scripts.SongRequest.CSharp.Core.Processes;
 using Scripts.SongRequest.CSharp.Logging;
 using Scripts.SongRequest.CSharp.Models.Requests;
+using Scripts.SongRequest.CSharp.Web.Drivers;
+using Scripts.SongRequest.CSharp.Web.Drivers.Chrome;
 using Scripts.SongRequest.CSharp.Web.Scrapper;
 using Scripts.SongRequest.TestConsoleApp.Logging;
 using Scripts.SongRequest.TestConsoleApp.Mocks;
@@ -29,9 +29,10 @@ namespace Scripts.SongRequest.TestConsoleApp
                 {
                     TestAddSongRequest(args);
                     TestSkipSongRequest(args);
+                    TestGetChromeVersionViaProcess();
+                    TestGetChromeDriverVersionViaProcess();
                 }
-                TestGetChromeVersionViaProcess();
-                TestGetChromeDriverVersionViaProcess();
+                TestGetBrowserDriverUsingProvider();
 
                 Console.WriteLine("All tests were performed.");
 
@@ -123,13 +124,16 @@ namespace Scripts.SongRequest.TestConsoleApp
 
             Logger.Info($"Result of the output: {output}");
 
-            string finalResult = output.Split(" ", StringSplitOptions.RemoveEmptyEntries).Last();
+            string finalResult = ChromeVersionParser.ParseBrowserVersionFromRegistry(output);
             Logger.Info($"Final result: {finalResult}");
         }
 
         private static void TestGetChromeDriverVersionViaProcess()
         {
-            string fileName = "C:\\Program Files\\Common Files\\Webdrivers\\chromedriver.exe";
+            string fileName = Path.Combine(
+                TestConfig.BrowserDriverPath.Value,
+                TestConfig.BrowserDriverExecutableName.GetFullFilename()
+            );
             string args = "-v";
 
             var manager = new ProcessManager();
@@ -137,8 +141,20 @@ namespace Scripts.SongRequest.TestConsoleApp
 
             Logger.Info($"Result of the output: {output}");
 
-            string finalResult = output.Split(" ", StringSplitOptions.RemoveEmptyEntries).ElementAt(1);
+            string finalResult = ChromeVersionParser.ParseDriverVersion(output);
             Logger.Info($"Final result: {finalResult}");
+        }
+
+        private static void TestGetBrowserDriverUsingProvider()
+        {
+            var httpLink = new HttpLink("https://www.google.com/");
+
+            var settings = TestSettings.MockSettings(httpLink);
+
+            var driverProvider = DriverProviderFactory.Create(settings, Logger);
+            string binaryPath = driverProvider.ProvideBrowserDriver();
+
+            Logger.Info($"Result: {binaryPath}");
         }
     }
 }
