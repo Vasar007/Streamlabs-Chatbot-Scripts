@@ -114,8 +114,6 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         string SkipCurrentSongRequestMessage { get; }
         string NoSongRequestsToSkipMessage { get; }
         string FailedToSkipSongRequestsMessage { get; }
-        string AutoInstallOrUpdateBrowserDriverMessage { get; }
-        string FailedToValidateBrowserDriverMessage { get; }
 
         #endregion
 

@@ -98,8 +98,11 @@ namespace Scripts.SongRequest.CSharp.Web.Drivers
 
         private string AutoInstallOrUpdateDriver(bool canAutoResolveVersion)
         {
+
             string driverVersionToUse = _driverVersion.GetActualValueToUse(canAutoResolveVersion);
             _logger.Debug($"Driver version to use based on settings: '{driverVersionToUse}'.");
+
+            _logger.Info($"Browser driver for {_driverConfig.GetName()} version {driverVersionToUse} will be installed or updated by script. In case of failure you have to install it by yourself.");
 
             string binaryPath = _customDriverManager.SetUpDriver(
                 _driverConfig, driverVersionToUse, _architecture

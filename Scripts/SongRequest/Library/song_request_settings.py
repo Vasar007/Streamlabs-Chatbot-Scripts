@@ -249,8 +249,6 @@ class SongRequestSettings(object):
         self.SkipCurrentSongRequestMessage = config.SkipCurrentSongRequestMessage
         self.NoSongRequestsToSkipMessage = config.NoSongRequestsToSkipMessage
         self.FailedToSkipSongRequestsMessage = config.FailedToSkipSongRequestsMessage
-        self.AutoInstallOrUpdateBrowserDriverMessage = config.AutoInstallOrUpdateBrowserDriverMessage
-        self.FailedToValidateBrowserDriverMessage = config.FailedToValidateBrowserDriverMessage
 
         # Debugging group.
         self.LoggingLevel = config.LoggingLevel
@@ -583,14 +581,6 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
     @property
     def FailedToSkipSongRequestsMessage(self):
         return self._settings.FailedToSkipSongRequestsMessage
-
-    @property
-    def AutoInstallOrUpdateBrowserDriverMessage(self):
-        return self._settings.AutoInstallOrUpdateBrowserDriverMessage
-
-    @property
-    def FailedToValidateBrowserDriverMessage(self):
-        return self._settings.FailedToValidateBrowserDriverMessage
 
     # Debugging group.
     @property
