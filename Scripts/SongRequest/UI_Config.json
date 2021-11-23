@@ -199,6 +199,20 @@
         "group": "Setup"
     },
 
+    "UseDriverAutoinstaller": {
+        "type": "checkbox",
+        "value": true,
+        "label": "Use Driver Autoinstaller",
+        "tooltip": "Allows script to autoinstall webdriver. Working only with Google Chrome now.",
+        "group": "Parsing"
+    },
+    "BrowserPath": {
+        "type": "textbox",
+        "value": "Auto",
+        "label": "Browser Path",
+        "tooltip": "Browser path to use if it has non-default location. Type Auto to use autodetection.",
+        "group": "Parsing"
+    },
     "SelectedBrowserDriver": {
         "type": "dropdown",
         "value": "Chromium/Chrome",
@@ -225,7 +239,7 @@
         "type": "textbox",
         "value": "Auto",
         "label": "Browser Driver Version",
-        "tooltip": "Browser driver version to install or update.",
+        "tooltip": "Browser driver version to install or update. Type Auto to use autodetection (working only with Google Chrome now).",
         "group": "Parsing"
     },
     "ElementIdOfNewSongTextField": {

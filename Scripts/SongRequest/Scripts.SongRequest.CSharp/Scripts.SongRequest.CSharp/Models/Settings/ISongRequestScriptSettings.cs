@@ -6,7 +6,7 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
 {
     public interface ISongRequestScriptSettings
     {
-        #region Setup Group
+        #region Commands Group
 
         string CommandAddSongRequest { get; }
         int CommandAddSongRequestCooldown { get; }
@@ -49,6 +49,8 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
 
         #region Parsing Group
 
+        FilePath BrowserPath { get; }
+        bool UseDriverAutoinstaller { get; }
         WebDriverType SelectedBrowserDriver { get; }
         FilePath BrowserDriverPath { get; }
         FileName BrowserDriverExecutableName { get; }

@@ -5,7 +5,7 @@ namespace Scripts.SongRequest.CSharp.Models.Drivers
 {
     public sealed record DriverVersion
     {
-        public static DriverVersion Auto = new("Auto");
+        public static DriverVersion Auto { get; } = new("Auto");
 
         public static DriverVersion Latest = new(VersionResolveStrategy.Latest);
 

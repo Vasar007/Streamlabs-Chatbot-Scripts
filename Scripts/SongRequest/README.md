@@ -2,7 +2,7 @@
 
 Extended song request script.
 
-Documentation for script version: `1.2.0`
+Documentation for script version: `1.3.0`
 
 ## Available features
 
@@ -11,7 +11,8 @@ Documentation for script version: `1.2.0`
 - Skip ordered songs;
 - Get ordered songs for user;
 - Moderators can approve or reject song requests. If there are no moderators, song requests will be auto-approved;
-- Change script settings on the fly (does not require to reload script).
+- Change script settings on the fly (does not require to reload script);
+- Autoinstall webdriver (only Chrome is supported now).
 
 ## How to install script
 

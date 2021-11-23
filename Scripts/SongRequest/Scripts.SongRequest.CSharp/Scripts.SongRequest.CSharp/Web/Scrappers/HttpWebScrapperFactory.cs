@@ -66,6 +66,11 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
 
             var options = new EdgeOptions();
 
+            if (!settings.BrowserPath.IsAutoDetect())
+            {
+                options.BinaryLocation = settings.BrowserPath.Value;
+            }
+
             var driver = new EdgeDriver(driverService, options);
             return scope.ReleaseAllAndReturn(driver);
         }
@@ -89,6 +94,11 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
             {
                 options.AddArgument(WebDriverArguments.Headless);
                 options.AddArgument(WebDriverArguments.MuteAudio);
+            }
+
+            if (!settings.BrowserPath.IsAutoDetect())
+            {
+                options.BinaryLocation = settings.BrowserPath.Value;
             }
 
             var driver = new ChromeDriver(driverService, options);
@@ -140,6 +150,11 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
                 options.AddArgument(WebDriverArguments.MuteAudio);
             }
 
+            if (!settings.BrowserPath.IsAutoDetect())
+            {
+                options.BinaryLocation = settings.BrowserPath.Value;
+            }
+
             var driver = new OperaDriver(driverService, options);
             return scope.ReleaseAllAndReturn(driver);
         }
@@ -155,6 +170,12 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
             ISongRequestScriptSettings settings,
             IScriptLogger logger)
         {
+            if (!settings.UseDriverAutoinstaller)
+            {
+                logger.Info("Driver autoinstaller is turned off.");
+                return;
+            }
+
             var driverProvider = DriverProviderFactory.Create(settings, logger);
             driverProvider.ProvideBrowserDriver();
         }

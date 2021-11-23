@@ -192,6 +192,8 @@ class SongRequestSettings(object):
         self.FilterNonChatMessages = config.FilterNonChatMessages
 
         # Parsing group.
+        self.UseDriverAutoinstaller = config.UseDriverAutoinstaller
+        self.BrowserPath = config.BrowserPath
         self.SelectedBrowserDriver = config.SelectedBrowserDriver
         self.BrowserDriverPath = config.BrowserDriverPath
         self.BrowserDriverExecutableName = config.BrowserDriverExecutableName
@@ -367,6 +369,14 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
         return self._settings.FilterNonChatMessages
 
     # Parsing group.
+    @property
+    def UseDriverAutoinstaller(self):
+        return self._settings.UseDriverAutoinstaller
+
+    @property
+    def BrowserPath(self):
+      return helpers.wrap_file_path(self._settings.BrowserPath)
+
     @property
     def SelectedBrowserDriver(self):
         return WebDriverType.Wrap(self._settings.SelectedBrowserDriver)
