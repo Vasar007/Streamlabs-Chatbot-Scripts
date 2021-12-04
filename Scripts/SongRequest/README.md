@@ -2,7 +2,7 @@
 
 Extended song request script.
 
-Documentation for script version: `1.3.0`
+Documentation for script version: `1.3.1`
 
 ## Available features
 
