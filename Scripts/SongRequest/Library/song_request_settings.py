@@ -200,6 +200,8 @@ class SongRequestSettings(object):
         self.BrowserDriverVersion = config.BrowserDriverVersion
         self.ElementIdOfNewSongTextField = config.ElementIdOfNewSongTextField
         self.ElementIdOfAddSongButton = config.ElementIdOfAddSongButton
+        self.ShouldParseResult = config.ShouldParseResult
+        self.DefaultSuccessMessage = config.DefaultSuccessMessage
         self.ClassNameOfNotificationIcon = config.ClassNameOfNotificationIcon
         self.ClassNameOfSuccessNotificationIcon = config.ClassNameOfSuccessNotificationIcon
         self.ClassNameOfErrorNotificationIcon = config.ClassNameOfErrorNotificationIcon
@@ -402,6 +404,14 @@ class SongRequestCSharpSettings(ISongRequestScriptSettings):
     @property
     def ElementIdOfAddSongButton(self):
         return self._settings.ElementIdOfAddSongButton
+
+    @property
+    def ShouldParseResult(self):
+        return self._settings.ShouldParseResult
+
+    @property
+    def DefaultSuccessMessage(self):
+        return self._settings.DefaultSuccessMessage
 
     @property
     def ClassNameOfNotificationIcon(self):

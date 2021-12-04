@@ -9,7 +9,8 @@ namespace Scripts.SongRequest.TestConsoleApp.Mocks
         public const int TimeoutToWaitInMilliseconds = 3000;
         public const string ParameterAll = "all";
 
-        public static readonly FilePath BrowserDriverPath = new("C:\\Program Files\\Common Files\\Webdrivers");
+        public static readonly FilePath BrowserPath = new(@"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe");
+        public static readonly FilePath BrowserDriverPath = new(@"C:\Program Files\Common Files\Webdrivers");
         public static readonly FileName BrowserDriverExecutableName = new("chromedriver", ".exe");
         public static readonly DriverVersion BrowserDriverVersion = DriverVersion.Auto;
 

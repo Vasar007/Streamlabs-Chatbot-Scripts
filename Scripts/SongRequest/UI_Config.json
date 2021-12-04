@@ -263,6 +263,20 @@
         "tooltip": "Class name of notification item on song request page to parse and process result.",
         "group": "Parsing"
     },
+    "ShouldParseResult": {
+        "type": "checkbox",
+        "value": true,
+        "label": "Should Parse Result",
+        "tooltip": "If ShouldParseResult is set to False, then script will always return success result with DefaultSuccessMessage. Otherwise, script will wait for response from the site.",
+        "group": "Parsing"
+    },
+    "DefaultSuccessMessage": {
+        "type": "textbox",
+        "value": "Song has been added",
+        "label": "Default Success Message",
+        "tooltip": "If ShouldParseResult is set to False, then script will always return success result with this message. Otherwise, script will wait for response from the site.",
+        "group": "Parsing"
+    },
     "ClassNameOfSuccessNotificationIcon": {
         "type": "textbox",
         "value": "brighttheme-icon-success",

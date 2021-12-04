@@ -57,6 +57,8 @@ namespace Scripts.SongRequest.CSharp.Models.Settings
         DriverVersion BrowserDriverVersion { get; }
         string ElementIdOfNewSongTextField { get; }
         string ElementIdOfAddSongButton { get; }
+        bool ShouldParseResult { get; }
+        string DefaultSuccessMessage { get; }
         string ClassNameOfNotificationIcon { get; }
         string ClassNameOfSuccessNotificationIcon { get; }
         string ClassNameOfErrorNotificationIcon { get; }

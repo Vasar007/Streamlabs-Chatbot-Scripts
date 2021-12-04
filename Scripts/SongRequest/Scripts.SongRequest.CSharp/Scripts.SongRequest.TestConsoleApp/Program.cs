@@ -25,14 +25,14 @@ namespace Scripts.SongRequest.TestConsoleApp
                 ConsoleHelper.SetupUnicodeEncoding();
                 Console.WriteLine("Console application started.");
 
+                TestAddSongRequest(args);
                 if (args.Length == 1)
                 {
-                    TestAddSongRequest(args);
                     TestSkipSongRequest(args);
                     TestGetChromeVersionViaProcess();
                     TestGetChromeDriverVersionViaProcess();
+                    TestGetBrowserDriverUsingProvider();
                 }
-                TestGetBrowserDriverUsingProvider();
 
                 Console.WriteLine("All tests were performed.");
 

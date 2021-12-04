@@ -80,7 +80,7 @@ ScriptName = "Song Request Script"
 Website = "https://github.com/Vasar007/Streamlabs-Chatbot-Scripts"
 Description = "Extended song request script."
 Creator = "Vasar007"
-Version = "1.3.0"
+Version = "1.3.1"
 
 # Command settings and responses (caution: some of the response texts are
 # overwritten later/not refactored yet).
@@ -127,6 +127,8 @@ OperaDriver = "Opera"
 SelectedBrowserDriver = ChromeDriver
 ElementIdOfNewSongTextField = "newSong"
 ElementIdOfAddSongButton = "playerAddSong"
+ShouldParseResult = True
+DefaultSuccessMessage = "Song has been added"
 ClassNameOfNotificationIcon = "ui-pnotify-icon"
 ClassNameOfSuccessNotificationIcon = "brighttheme-icon-success"
 ClassNameOfErrorNotificationIcon = "brighttheme-icon-error"

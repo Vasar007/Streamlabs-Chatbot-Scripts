@@ -171,6 +171,12 @@ namespace Scripts.SongRequest.CSharp.Web.Scrapper
 
         private SongRequestResult ProcessResult(SongRequestModel songRequest)
         {
+            if (!_settings.ShouldParseResult)
+            {
+                _logger.Info("No need to parse result. Returning success.");
+                return SongRequestResult.Success(songRequest, _settings.DefaultSuccessMessage);
+            }
+
             _logger.Info(
                 $"Song request '{songRequest.RequestId.ToString()}' seems to be added, " +
                  "processing result."

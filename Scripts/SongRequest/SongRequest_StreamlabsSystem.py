@@ -200,7 +200,12 @@ def Tick():
 
         PageScrapper.OpenUrl()
 
-    Manager.run_dispatch()
+    if Manager:
+        Manager.run_dispatch()
+    else:
+        Logger().debug(
+            "Failed to dispatch with initialized song request manager."
+        )
 
 
 def ReloadSettings(jsondata):
