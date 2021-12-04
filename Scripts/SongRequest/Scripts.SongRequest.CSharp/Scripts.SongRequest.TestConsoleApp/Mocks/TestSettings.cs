@@ -23,6 +23,8 @@ namespace Scripts.SongRequest.TestConsoleApp.Mocks
 
             mock.Setup(x => x.ElementIdOfNewSongTextField).Returns(TestConfig.ElementIdOfNewSongTextField);
             mock.Setup(x => x.ElementIdOfAddSongButton).Returns(TestConfig.ElementIdOfAddSongButton);
+            mock.Setup(x => x.ShouldParseResult).Returns(TestConfig.ShouldParseResult);
+            mock.Setup(x => x.DefaultSuccessMessage).Returns(TestConfig.DefaultSuccessMessage);
             mock.Setup(x => x.ClassNameOfNotificationIcon).Returns(TestConfig.ClassNameOfNotificationIcon);
             mock.Setup(x => x.ClassNameOfSuccessNotificationIcon).Returns(TestConfig.ClassNameOfSuccessNotificationIcon);
             mock.Setup(x => x.ClassNameOfErrorNotificationIcon).Returns(TestConfig.ClassNameOfErrorNotificationIcon);

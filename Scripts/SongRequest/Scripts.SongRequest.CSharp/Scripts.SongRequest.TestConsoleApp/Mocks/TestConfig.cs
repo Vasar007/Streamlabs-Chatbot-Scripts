@@ -20,6 +20,8 @@ namespace Scripts.SongRequest.TestConsoleApp.Mocks
 
         public const string ElementIdOfNewSongTextField = "newSong";
         public const string ElementIdOfAddSongButton = "playerAddSong";
+        public const bool ShouldParseResult = true;
+        public const string DefaultSuccessMessage = "Song has been added";
         public const string ClassNameOfNotificationIcon = "ui-pnotify-icon";
         public const string ClassNameOfSuccessNotificationIcon = "brighttheme-icon-success";
         public const string ClassNameOfErrorNotificationIcon = "brighttheme-icon-error";
