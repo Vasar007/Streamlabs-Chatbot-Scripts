@@ -409,9 +409,9 @@
     },
     "ResetUserSongRequestOptionsMessage": {
         "type": "textbox",
-        "value": "{0}, {1} reseted your number of ordered requests.",
+        "value": "{0}, {1} reset your number of ordered requests.",
         "label": "On Reset Song Request Options Message",
-        "tooltip": "The message that will be sent to chat when user resets number of ordered song requests for another user. 0 — target user name, 1 — user name who reseted number of song requests.",
+        "tooltip": "The message that will be sent to chat when user resets number of ordered song requests for another user. 0 — target user name, 1 — user name who reset number of song requests.",
         "group": "Chat Messages"
     },
     "InvalidOptionsSubcommandMessage": {
